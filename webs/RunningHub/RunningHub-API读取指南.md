@@ -319,7 +319,7 @@ PowerShell 要点:列表接口同样是 POST,Body 用 UTF-8 JSON;分页判断 `h
 ## 12.1 2026-09-17 复核(下载量与文件名冲突)
 
 - 本次条件:`sort=HOTTEST`、`days=3`、每类前 50,21 个分类共 **804** 条唯一工作流;本地已有 384 条直接复用,
-  新增下载 **420** 个全部成功(脚本 `scripts/runninghub-update.py`,token 走环境变量 `RUNNINGHUB_TOKEN`)。
+  新增下载 **420** 个全部成功(脚本 `runninghub-update.py`,token 走环境变量 `RUNNINGHUB_TOKEN`;脚本随根 `scripts\` 于 2026-10-11 移除)。
 - **不要每次全量重下**:`export` 单请求最慢 1~2 分钟,2500+ 个文件逐个重下不可行;应按 ID 与本地比对,只补缺失的。
 - **同名不同工作流是常态**:不同 ID 的工作流可能取完全相同的名字(如多个"换衣服++衣服展示+一键换装"),且内容长短不一。
   保存前若目标名已存在,**必须加 `<工作流ID>_` 前缀**而不是覆盖,否则会永久丢掉旧文件(本库现有约 160 组这类前缀文件)。
@@ -340,7 +340,7 @@ PowerShell 要点:列表接口同样是 POST,Body 用 UTF-8 JSON;分页判断 `h
   3. 抽样 `json.load` 校验合法性 → 60 个样本全部可解析,平均 46.2 节点,大小 2.5 KB ~ 3.19 MB。
 - ⚠️ **token 前缀与 AutoDL 相反,别搞混**:本脚本内部写死 `"Authorization": "Bearer " + TOKEN`,
   所以环境变量 `RUNNINGHUB_TOKEN` 要传**裸 JWT**(不带 `Bearer `),否则会拼成 `Bearer Bearer eyJ...` 而 412。
-  AutoDL 那边(`scripts/autodl-update-models.py`)则是**裸 token 直接放**,两者口径不同。
+  AutoDL 那边(`autodl-update-models.py`)则是**裸 token 直接放**,两者口径不同。
 - 反解 md 时**别用 `[^)>]+?` 匹配文件名**:工作流名里可能含 `)`(如 `xxx(1).json`),该正则会截断而漏掉约 30 条;
   用 `post/(\d{15,20})` 统计 ID 数才是准的(本次 804,与脚本一致)。
 
@@ -613,7 +613,7 @@ print("成功:", sum(1 for v in results.values() if v["ok"]), "/", len(ids))
 
 ## 12. 2026-10-10 实际下载(2831 → 4571 个工作流)
 
-需求是「实际下载工作流」而非只拉列表,故本轮用 `scripts/pull-runninghub.py` 走完三段接口把 JSON 落到 `webs/RunningHub/workflows/<分类>/`。
+需求是「实际下载工作流」而非只拉列表,故本轮用一次性下载脚本(`pull-runninghub.py`,随根 `scripts\` 于 2026-10-11 移除)走完三段接口把 JSON 落到 `webs/RunningHub/workflows/<分类>/`。
 
 ### 12.1 本轮口径与结果
 
@@ -640,7 +640,7 @@ print("成功:", sum(1 for v in results.values() if v["ok"]), "/", len(ids))
 
 ```powershell
 $env:RH_TOKEN='<Bearer token>'
-.\.venv\Scripts\python.exe -X utf8 scripts\pull-runninghub.py
+.\.venv\Scripts\python.exe -X utf8 scripts\pull-runninghub.py  # 脚本已于 2026-10-11 随根 scripts 目录移除
 ```
 
 token 只经环境变量传入,**不落盘、不入 md、不提交 git**。

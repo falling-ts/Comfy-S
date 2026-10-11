@@ -13,12 +13,12 @@ description: Qwen-Image 2.1 (and Qwen-Image-Edit) image prompt engineering per A
 
 | 技能 | 管什么 | 本技能的关系 |
 |---|---|---|
-| `stories-resource-tables` | 资源表 md 结构、`<br>` 分段、三段/五段段序、尺寸桶、`@{表/ID}` 引用 | **上游总纲**。本技能只管**送进模型的提示词文本本身**,不改表结构 |
+| `stories`（原 `stories-resource-tables`，2026-10-11 并入 `stories`） | 资源表 md 结构、`<br>` 分段、三段/五段段序、尺寸桶、`@{表/ID}` 引用 | **上游总纲**。本技能只管**送进模型的提示词文本本身**,不改表结构 |
 | `qwen-image-2-1-prompting`(本技能) | Qwen 2.1 提示词的**写法与诊断** | 官方规范层 |
 
 ### ⚠️ 两套规范已知冲突点(必须知道,别盲目照一边)
 
-| 冲突项 | `stories-resource-tables` | 官方 Qwen 2.1 规范 | 处置 |
+| 冲突项 | `stories`（原 `stories-resource-tables`） | 官方 Qwen 2.1 规范 | 处置 |
 |---|---|---|---|
 | 分段 | 必须 `<br>` 分 5 段(否则 md 表被换行断开) | **单段连续文本,禁任何换行** | **表内用 `<br>` 保表结构,送模型前把 `<br>` 合成单段** —— 见 `references/local-edit.md` |
 | 图号 | `图1`/`图2`/`图3` | **必须 `<image1>`/`<image2>`**,自然语言引用被明文禁止 | 改表内文本为 `<imageN>`;实测槽位一一对应,无需改线 |

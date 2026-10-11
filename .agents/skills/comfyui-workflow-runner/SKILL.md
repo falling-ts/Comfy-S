@@ -112,6 +112,10 @@ therefore equivalent — and needs no browser at all.
 - `references/mdtable-refresh.md` — FallingTS mdtable state shape, endpoints, and refresh mechanism.
 - `references/output-verification.md` — probing, contact sheets, and motion/audio analysis recipes,
   including why `pblack` cannot see subject motion under H3 grain.
+- `references/media-analysis-toolchain.md` — the offline video/audio analysis chain this workspace uses
+  (locate artifact → ffprobe → frame grabs/contact sheets → SenseVoiceSmall transcript + emotion + event,
+  loudness/rhythm/spectrum), its capability limits (no speaker diarization, no track ID, gender is a heuristic)
+  and the four traps; full source and upgrade list in `docs\视频音频分析工具链.md`.
 - `references/h3-scene-generation.md` — **measured findings for H3 scene video**: the variant performance
   table, why a single anchor image beats multi-image references, five prompt rules (positive phrasing,
   fixed camera, one action per shot, never describe the reference's own layout, and unambiguous object

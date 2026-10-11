@@ -124,7 +124,7 @@
   `architecture_taxonomies` / `training_paradigms`。
   其中 **`model_name` 是归类时最有价值的信号**(同一 `model_name` 下的分片必属同一本地目录,可直接传播);
   `architecture_taxonomies` / `training_paradigms` 实测多为 `others`,暂无区分力。
-- 更新脚本 `scripts/autodl-update-models.py`:token 走环境变量 `AUTODL_TOKEN`(不落盘);
+- 更新脚本 `autodl-update-models.py`(已随根 `scripts\` 于 2026-10-11 移除):token 走环境变量 `AUTODL_TOKEN`(不落盘);
   `models.md` 的「本地目录」列优先沿用旧 md 的 `instance_path` 映射(归类含人工判断,无法纯规则复现),
   再依次按 `model_name` 传播 → 仓库传播 → 文件名规则判定,判不出的标「未识别(需人工核对)」。
 
@@ -160,12 +160,12 @@
   完全不带 `Authorization` 才是「登录超时，请重新登录」。⇒ 见「登录失败」即 token 被读到但不被接受,
   不要去调传参方式(本次已排除:8 种前缀、8 种 header/cookie/query 传法、4 种 Origin、HTTP/1.1 vs 2、
   完整 Chrome 指纹、cookie 会话绑定、IP 绑定 —— 浏览器能通、本机也能通,只有 `aud` 是关键)。
-- 更新脚本:**`scripts/autodl-update-models.py`**(09-30 清理 `scripts/` 时丢失,本次重建)。
-  - `AUTODL_TOKEN=<裸token> python scripts/autodl-update-models.py` 抓取并重建;
+- 更新脚本:**`autodl-update-models.py`**(09-30 清理 `scripts/` 时丢失,10-07 重建;后随该目录于 2026-10-11 一并移除)。
+  - `AUTODL_TOKEN=<裸token> python autodl-update-models.py` 抓取并重建;
     `AUTODL_USE_CACHE=1` 复用 `/tmp/autodl_models_full.json` 不抓取;`AUTODL_DRY=1` 只报告不写;
     `AUTODL_OLD_MD=<md>` 指定旧表基准。
   - **零回归**:旧表已识别的 `instance_path` 一律沿用旧结论(含「一级/仓库名」二级形态),
-    只有新路径走 `classify-models-dir.py` 的规则表(该文件是规则唯一来源,更新脚本用 importlib 复用)。
+    只有新路径走 `classify-models-dir.py` 的规则表(该文件是规则唯一来源,更新脚本用 importlib 复用;现已随临时目录移除,规则以本文档为准)。
     本次实测 3819 条共同路径中「旧值已识别却被改动」= **0**;82 条变化全部来自旧值为「未识别」的行,
     其中 27 条被新规则识别成功(未识别总数 928 → 872)。
   - 为 79 个新条目补了 26 条 `MANUAL_EXACT` 人工核对(依据上传备注与体积:`h3_upscaler_*` 备注写明
@@ -179,10 +179,10 @@
 - 本次抓取:`result_total = 5239`(较 10-01 的 5063 增加 176 条记录 / **111 个新实例路径**),消失 0。
   `max_page = 53`(page_size=100);按 `max_page` 循环 + 按 `id` 去重后恰好 5239 条。
   另实测第 54、55 页返回的 39 条与第 53 页完全相同 —— **超出 `max_page` 重复末页**的老坑依旧成立。
-- ⚠️ **脚本 09-30 清理 `scripts/` 时又丢了,本次第三次重建**(前两次为 09-21、10-01)。两个文件仍放 `scripts/`:
-  - `scripts/classify-models-dir.py` —— 归类规则唯一来源(`MANUAL_EXACT` 人工精确表 + `RULES` 正则表,按序命中);
+- ⚠️ **脚本已随根 `scripts\` 临时目录于 2026-10-11 移除**,不再落盘;下列脚本名仅作历史记录,归类规则与抓取逻辑以本文档描述为准,需要时现场重建。两个文件原放 `scripts\`:
+  - `classify-models-dir.py` —— 归类规则唯一来源(`MANUAL_EXACT` 人工精确表 + `RULES` 正则表,按序命中);
     旧表 40 个一级槽位、171 个二级形态(`TTS/IndexTTS-2.5-Comfy` 等)全部沿用。
-  - `scripts/autodl-update-models.py` —— 抓取 + 零回归重建 `models.md`;用法见文件头
+  - `autodl-update-models.py` —— 抓取 + 零回归重建 `models.md`;用法见文件头
     (`AUTODL_TOKEN` / `AUTODL_USE_CACHE` / `AUTODL_DRY` / `AUTODL_OLD_MD`)。
   - **本次新增两处实现约束**(都踩过坑):
     1. **同一 `instance_path` 会有多行且结论冲突**(`unet.pth` = MuseTalk 同文件,一行 `ASR`、一行 `未识别(口型)`)。

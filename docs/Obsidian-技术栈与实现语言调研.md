@@ -4,6 +4,7 @@
 > （`C:\Program Files\Obsidian\Obsidian.exe`，FileVersion/ProductVersion = 1.13.7）
 > 取证日期：2026-09-18 · 方法：asar 静态逆向 + 可执行文件版本串扫描
 > 配套文档：`Obsidian-MD表格渲染机制.md`（表格渲染深入）、`Obsidian表格渲染实现调研-1.13.7取证附录.md`（原始取证）
+> ⚠️ 根 `scripts\` 临时目录已于 2026-10-11 移除，下文的 `scripts\obsidian-*.py` 仅作历史记录
 
 ---
 

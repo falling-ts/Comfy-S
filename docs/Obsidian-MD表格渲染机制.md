@@ -1,6 +1,7 @@
 # Obsidian Markdown 表格渲染机制(逆向 1.13.7 / 1.12.4)
 
 > **版本说明(重要)**: 本报告的核心结论已在本机**两个版本上逐项验证** ——
+> ⚠️ 根 `scripts\` 临时目录已于 2026-10-11 移除，下文的 `scripts\obsidian-*.py` 仅作历史记录，源码以内嵌于本文档为准。
 > **1.13.7**(当前运行版本, `C:\Program Files\Obsidian\resources\obsidian.asar`, 24.59 MB / 358 个文件)
 > 与 **1.12.4**(取证时的版本, 22.9 MB / 352 个文件)。
 >
@@ -703,8 +704,8 @@ Live Preview(类名与创建顺序均有实证):
    offset 16  ...     JSON 头(文件树)
    offset 8+H ...     文件内容, 按 JSON 中每个条目的 offset 定位
    ```
-   脚本: `scripts\obsidian-asar.py`(list / extract / grep)。
-2. **按字符偏移取窗口**, 不按行: `scripts\obsidian-ctx.py <file> <pattern> --before N --after N`。
+   脚本: `obsidian-asar.py`(list / extract / grep; 已随临时目录移除)。
+2. **按字符偏移取窗口**, 不按行: `obsidian-ctx.py <file> <pattern> --before N --after N`(同上)。
 3. 关键认知: **minifier 改不动属性名与字符串**。所以 `cm-table-widget`、`alignments`、
    `cellChildMap`、`updateCellReadonly` 这些**字段名/类名/方法名全部可信**;
    而 `EditorView` / `WidgetType` 这类**导入的类名会被重命名**(`Uo` / `Rn`),
@@ -715,7 +716,7 @@ Live Preview(类名与创建顺序均有实证):
 
 ### 12.1 配套脚本源码(完整, 自包含)
 
-`scripts\` 是临时目录、随时可能被清空, 所以源码以本文件为准。
+`scripts\` 是临时目录、已于 2026-10-11 移除, 所以源码以内嵌于本文件为准。
 
 **① asar 解析器** —— 列清单 / 提取单个文件 / 检索
 

@@ -5,6 +5,8 @@
 - 磁盘：D: 剩余 **187.5GB**｜models 现有最大单模型 **19.53GB**
 - 数据来源：HF `tencent/HY-World-2.0` 官方文件清单（blobs=true，总 **162.73GB**）、官方 README/DOCUMENTATION、运行中 ComfyUI 的 `/object_info`（**2900 个已注册节点**）、本机 `templates\3D模型\`（41 个官方 3D 模板）、GitHub 插件 README
 
+> ⚠️ 根 `scripts\` 临时目录已于 2026-10-11 移除，下文的 `scripts\_hywm2-*` / `scripts\_out-0034-*` 仅作历史记录。
+
 ---
 
 ## 0. 三句话结论

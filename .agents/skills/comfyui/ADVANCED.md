@@ -73,7 +73,7 @@ The 2026 stack moved from SD-era flow hacks to native video models. Honest hiera
   Result: an `int8-convrot` checkpoint is ~half the size of FP16, runs FASTER than FP16, and does not lose to
   (often beats) FP8 on image / video quality. Integer INT8 is also faster + cleaner than FP8 on Turing / Ampere
   tensor cores (RTX 20xx / 30xx - v0.27.0 explicitly added Turing support), and the smaller weights bring modern
-  models within reach of 8-12 GB (and even Pascal GTX 10xx) cards. Measured (LTXV 2.3, 1920x1088, RTX 5090): base
+  models within reach of 8-12 GB (and even Pascal GTX 10xx) cards. Measured (LTXV 2.3, native resolution, RTX 5090): base
   268 s vs int8-convrot 140 s. v0.27.0 also fixed INT8 LoRA quality/speed and an INT8 memory leak. **Convert** a
   bf16 model with Comfy's own **`Comfy-Org/comfy-model-tools`** (`quant_int8_convrot.py`, dry-run first); Comfy-Org is
   uploading official int8-convrot weights to HF (Wan 2.2 Animate, Z-Image, SeedVR2, more). **INT4 is native as of

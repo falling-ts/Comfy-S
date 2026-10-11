@@ -1,6 +1,6 @@
 # Comfy — AI-driven ComfyUI all-modal workspace
 
-> This repository is a **ready-to-use ComfyUI all-modal workspace**: the ComfyUI main program, MiniMax H3 video + Qwen-series image + Stable Audio/Qwen3-TTS audio generation, 43 custom node packs (GGUF/KJNodes/upscaling/speedup, etc.), 24 image/video/audio workflows, and a model catalog plan.
+> This repository is a **ready-to-use ComfyUI all-modal workspace**: the ComfyUI main program, MiniMax H3 video + Qwen-series image + Stable Audio/Qwen3-TTS audio generation, 45 custom node packs (GGUF/KJNodes/upscaling/speedup, etc.), 35 image/video/audio workflows, and a model catalog plan.
 >
 > **Core idea: all installing, configuring, running, generating, and workflow training is delegated to the AI (OpenCode).** You only need to: install Git → clone this repository → install OpenCode → let it work.
 
@@ -26,13 +26,13 @@
 
 ## What is this
 
-- **ComfyUI main program** (`ComfyUI\` submodule, master branch, v0.33.1) — a local node-based AI image/video/audio generation engine
+- **ComfyUI main program** (`ComfyUI\` submodule, detached HEAD following upstream release tags, currently v0.39.2) — a local node-based AI image/video/audio generation engine
 - **Custom nodes** (45, centralized in the root `custom_nodes\`, loaded via a **directory-level** symlink at `ComfyUI\custom_nodes\`; the full list is in `AGENTS.md`):
-  - `ComfyUI-FallingTS` — our own general-purpose utility node pack (5 nodes: Continue/Selector/Table/Switch/PreviewVideo + frontend enhancements)
+  - `ComfyUI-FallingTS` — our own general-purpose utility node pack (22 nodes: Continue/Route/Fanout/Selector/Table/Switch/MarkDownTable/FrameRateConvert/ImageComposite/LoadImage/LoadVideo/LoadAudio/VideoComponents/H3AddGuide + the 3 world-model nodes WorldSurroundPanorama/WorldPanoramaViews/WorldRefinePLY, plus PreviewVideo/PreviewImageSave/AutoSaveImage/PreviewAudioSave/AudioTrim and 27 frontend enhancements)
   - `ComfyUI-GGUF` / `ComfyUI-KJNodes` — GGUF quantized loading / large utility node pack
   - `ComfyUI-SeedVR2_VideoUpscaler` / `ComfyUI-SUPIR` / `ComfyUI_UltimateSDUpscale` — super-resolution upscaling/restoration
-  - The 6 H3-ecosystem plugins (Spectrum / SolAttn / ReservedVRAM / Qwen3-TTS / latent-upscaler / OrbitSheets scene reference boards) + the other 33
-- **Workflow suite**: 24, grouped by number (001x Everything / 002x Scene camera / 003x-004x Video generation / 005x Decomposition / 006x-007x Audio; see [Appendix B](#appendix-b--workflow-catalog))
+  - The 6 H3-ecosystem plugins (Spectrum / SolAttn / ReservedVRAM / Qwen3-TTS / latent-upscaler / OrbitSheets scene reference boards) + the other 39
+- **Workflow suite**: 35, grouped by number (001x Everything / 002x Scene camera / 003x Scene generation + world model / 004x Video generation / 005x Decomposition / 006x Audio generation / 007x Audio extraction; see [Appendix B](#appendix-b--workflow-catalog))
 - **Model directory** (`models\`, symlinked to the project root) — see [Appendix C](#appendix-c--model-download-list)
 - **Docs**: a local clone of the official docs at `refs\ComfyUI-Docs\`; the workspace description in `AGENTS.md`
 
@@ -86,11 +86,11 @@ OpenCode is the AI workhorse between you and this workspace — it installs soft
 1. Find OpenCode in the Start menu, right-click → **Run as administrator**
 2. Open this project (add the `Comfy` directory) and send it the following:
 
-> Please check and repair this project's symlinks per the "symlink plan" below (all **relative-path** symlinks, 7 total; the full list is in `AGENTS.md` "Symlink map"):
+> Please check and repair this project's symlinks per the "symlink plan" below (all **relative-path** symlinks, 8 total; the full list is in `AGENTS.md` "Symlink map"):
 >
 > 1. **Directory-level plugin link**: make sure `ComfyUI\custom_nodes` is a symlink pointing to `..\custom_nodes` (the root plugin aggregation directory; all 45 plugins are loaded through this single link; **not** the old one-link-per-plugin scheme);
-> 2. **Base links**: `ComfyUI\input` → `..\media`, `ComfyUI\output` → `..\media`, `ComfyUI\models` → `..\models`, `ComfyUI\user\default\workflows` → `..\..\..\workflows`;
-> 3. **Sub-links**: `custom_nodes\H3ReferenceSuite` → `..\refs\minimax-h3-guide\custom_nodes\H3ReferenceSuite`; `.claude` → `.agents`;
+> 2. **Base links**: `ComfyUI\input` → `..\media\七纹刻印`, `ComfyUI\output` → `..\media\七纹刻印`, `ComfyUI\models` → `..\models`, `ComfyUI\user\default\workflows` → `..\..\..\workflows`;
+> 3. **Sub-links**: `custom_nodes\H3ReferenceSuite` → `..\refs\minimax-h3-guide\custom_nodes\H3ReferenceSuite`; `.claude` → `.agents`; `stories\.obsidian\plugins` → `..\plugins`;
 > 4. Once everything is done, confirm these paths show as "symbolic links" and verify subdirectories like `ComfyUI\models\diffusion_models` can be entered normally.
 >
 > Note: only replace real directories; keep real directories like `ComfyUI\temp\`; all links use relative paths so they survive moving the whole project folder.
@@ -138,7 +138,7 @@ Send this to OpenCode (it will, in order: install the CUDA build of PyTorch → 
 >    `pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu130`
 >    (first detect which CUDA version my NVIDIA GPU/driver supports and pick the matching `cuXXX`; if there's no NVIDIA card, install the CPU build)
 > 2. Then install the rest: `pip install -r requirements.txt`
-> 3. Then go into every plugin directory under `custom_nodes\` (43 of them, see the directory layout in `AGENTS.md`), check each one's required dependencies (its `requirements.txt` or README) and install them all.
+> 3. Then go into every plugin directory under `custom_nodes\` (45 of them, see the directory layout in `AGENTS.md`), check each one's required dependencies (its `requirements.txt` or README) and install them all.
 > 4. Finally, back in `ComfyUI`, start it: `python main.py --enable-manager`
 >
 > Once it starts successfully, tell me the frontend address.
@@ -163,7 +163,7 @@ In one sentence: **you say "what you want"; the AI handles "how to do it".**
 ## FAQ
 
 - **Proxy / slow downloads**: direct connection by default; on failure use a local proxy (e.g. Clash's `127.0.0.1:7890`); for HuggingFace models inside China use the `hf-mirror.com` mirror — just replace the `huggingface.co` prefix in the link with `hf-mirror.com` (see Appendix E)
-- **Symlinks**: `ComfyUI\custom_nodes` (directory-level, aggregates 43 plugins), `models`/`input`/`output`/`workflows`, etc. — 7 relative-path symlinks in total. Creating links needs administrator privileges; the recommended way is to **run OpenCode as administrator** and have it repair them (see [Step 4](#step-4-run-opencode-as-administrator-and-set-up-the-symlinks)); or manually enable "Developer Mode" (Settings → Privacy & security → For developers → Developer mode on)
+- **Symlinks**: `ComfyUI\custom_nodes` (directory-level, aggregates 45 plugins), `models`/`input`/`output`/`workflows`, etc. — 8 relative-path symlinks in total. Creating links needs administrator privileges; the recommended way is to **run OpenCode as administrator** and have it repair them (see [Step 4](#step-4-run-opencode-as-administrator-and-set-up-the-symlinks)); or manually enable "Developer Mode" (Settings → Privacy & security → For developers → Developer mode on)
 - **Not enough VRAM**: the Klein 9B distilled version is VRAM-hungry (a 24G card is tight at 1024 tiles; drop to 768 if OOM); MiniMax H3 needs a lot of VRAM — for low-VRAM cards use the quantized version or the cloud (see the Appendix C notes)
 - **After placing models, remember to restart ComfyUI** so the loaders pick up the new models
 
@@ -175,66 +175,82 @@ In one sentence: **you say "what you want"; the AI handles "how to do it".**
 
 ```
 Comfy/
-├── ComfyUI/                  # ComfyUI main program (master branch, submodule)
+├── ComfyUI/                  # ComfyUI main program (submodule, detached HEAD, currently v0.39.2)
 │   ├── main.py               # startup entry (python main.py --enable-manager)
 │   ├── custom_nodes/         # custom nodes (directory-level symlink → ../custom_nodes)
-│   ├── input/  output/       # input/output (symlink → ../media)
-│   ├── user/default/workflows  # user workflows (symlink → ../../../../workflows)
+│   ├── input/  output/       # input/output (symlink → ../media/七纹刻印)
+│   ├── user/default/workflows  # user workflows (symlink → ../../../workflows)
 │   └── models/               # models (symlink → ../models)
 ├── custom_nodes/             # plugin aggregation directory: 45 plugin submodules + H3ReferenceSuite link
-│   ├── ComfyUI-FallingTS/    # our own general-purpose utility node pack (Continue/Selector/Table/Switch/PreviewVideo)
+│   ├── ComfyUI-FallingTS/    # our own general-purpose utility node pack (22 nodes + world-model nodes + frontend enhancements)
 │   ├── ComfyUI-GGUF/  ComfyUI-KJNodes/   # quantized loading / utility node pack
 │   ├── ComfyUI-OrbitSheets/  # H3 scene/character reference boards (multi-angle camera + visual frame picking into grid images)
 │   └── ...(the other 41, see the directory layout in AGENTS.md)
-├── docs/                     # 39 categorized docs
+├── docs/                     # 44 categorized docs
 ├── refs/                     # 7 reference submodules (ComfyUI-Docs / Obsidian-Dev-Docs / Obsidian-API / Qwen-Image-2.1 / qwen-image-2.1-skill / MiniMax-H3 / minimax-h3-guide) + Qwen-Image-Edit-Skills (local dir, not a submodule)
-├── workflows/                # 24 user workflows (001x~007x, see Appendix B)
-├── models/                   # where models actually live (~189 GB, 38 slot directories, see Appendix C)
-├── media/                    # input images/audio + generated results (3d/qwen3tts/clipspace)
+├── workflows/                # 35 user workflows (001x~007x, see Appendix B)
+├── models/                   # where models actually live (~263.5 GB, 40 top-level directories, see Appendix C)
+├── media/                    # input images/audio + generated results (template/ + per-story project dirs, currently 七纹刻印/)
 ├── templates/  webs/         # official template cache + third-party research (RunningHub/Bilibili/AutoDL)
 ├── stories/                  # Obsidian story-writing workspace
-├── scripts/                  # utility scripts (connection checks/layout checks, etc., local only, not committed)
-├── backups/                  # pre-change backups of workflows/docs
+├── backups/                  # pre-change backups of workflows/docs (local only)
 └── AGENTS.md                 # workspace description (for AI to read; directory layout/symlinks/conventions all here)
 ```
 
-### Symlinks (7 total, all relative paths)
+### Symlinks (8 total, all relative paths)
 
-`ComfyUI\input`/`output` → `media`, `ComfyUI\models` → `models`, `ComfyUI\user\default\workflows` → `workflows`, `ComfyUI\custom_nodes` → `custom_nodes` (**directory-level, aggregates 45 plugins**), `custom_nodes\H3ReferenceSuite` → `refs\minimax-h3-guide\...`, `.claude` → `.agents`. All are **relative-path** symlinks — they survive moving the whole project; creating/repairing them needs administrator privileges; the full list is in `AGENTS.md` "Symlink map"; `ComfyUI\temp\` is a real directory (not a link) and can be cleaned up anytime.
+`ComfyUI\input`/`output` → `media\七纹刻印`, `ComfyUI\models` → `models`, `ComfyUI\user\default\workflows` → `workflows`, `ComfyUI\custom_nodes` → `custom_nodes` (**directory-level, aggregates 45 plugins**), `custom_nodes\H3ReferenceSuite` → `refs\minimax-h3-guide\...`, `.claude` → `.agents`, `stories\.obsidian\plugins` → `stories\plugins`. All are **relative-path** symlinks — they survive moving the whole project; creating/repairing them needs administrator privileges; the full list is in `AGENTS.md` "Symlink map"; `ComfyUI\temp\` is a real directory (not a link) and can be cleaned up anytime.
 
 ## Appendix B · Workflow catalog
 
-`workflows\` contains **24** main workflows, named "number-purpose" and grouped (the frontend saves right here):
+`workflows\` contains **35** main workflows, named "number-purpose" and grouped (the frontend saves right here):
 
-### Image / "Everything" class (001x, 3, based on Qwen-Image-2512 / Qwen-Edit 2511 / FLUX.2-Klein)
-
-| Workflow | Purpose |
-|--------|------|
-| `0011-万物建模` | Main pipeline (everything modeling) |
-| `0010-灰度遮罩` | Grayscale mask tool |
-| `0012-万物变化` | Everything change/transform |
-
-### Scene camera class (002x, 4)
+### Image / "Everything" class (001x, 10; image side based on Qwen-Image-2512 / Qwen-Image 2.1 / Qwen-Edit 2511, 0013–0015 on MiniMax H3)
 
 | Workflow | Purpose |
 |--------|------|
-| `0020-场景首帧` | Scene first-frame generation |
-| `0021-场景拉镜` | Camera pull-out / push-in transform |
-| `0022-场景推镜` | Camera push-in transform |
-| `0023-场景旋镜` | Camera orbit rotation |
+| `0011_万物建模` | Main pipeline (everything modeling) |
+| `0010_灰度遮罩` | Grayscale mask tool |
+| `0012_万物变化` | Everything change/transform |
+| `0013_首图建模` | H3 I2VA: first-image → video → frame extraction → character asset |
+| `0014_参考建模` | H3 Ref2VA: reference-image modeling |
+| `0015_建模截帧` | Modeling frame extraction |
+| `0016_建模拆图` | Split a contact sheet into 2×2 / 3×3 tiles and auto-save each |
+| `0017_建模细节` | Per-tile local detail refinement (Qwen-Image-Edit) |
+| `00110_万物建模_QI2.1` | Qwen-Image 2.1 version of `0011` (**shares** `0011`'s data table) |
+| `00120_万物变化_QI2.1` | Qwen-Image 2.1 version of `0012` (**shares** `0012`'s data table) |
 
-### Video generation class (003x-004x, 9, MiniMax H3)
+### Scene camera class (002x, 6)
+
+| Workflow | Purpose |
+|--------|------|
+| `0020_场景首帧` | Scene first-frame generation |
+| `0021_场景拉镜` | Camera pull-out / push-in transform |
+| `0022_场景推镜` | Camera push-in transform |
+| `0023_场景旋镜` | Camera orbit rotation |
+| `00200_场景首帧_QI2.1` | Qwen-Image 2.1 version of `0020` (**shares** `0020`'s data table) |
+| `00220_场景推镜_QI2.1` | Qwen-Image 2.1 version of `0022` (**shares** `0022`'s data table) |
+
+### Scene generation + world model class (003x, 6, MiniMax H3)
 
 | Workflow | Purpose | H3 mode |
 |--------|------|---------|
-| `0030-文生场景` | text → scene video (visual only, no audio track) | T2VA (fl2va) |
-| `0031-首帧场景` | first-frame image → scene video | I2V (fl2va) |
-| `0032-参考场景` | multi-image + multi-video reference → video | R2V (ref2va) |
-| `0033-OrbitSheets场景` | anchor image → H3 multi-angle camera → visual frame picking into a "scene reference board" grid image | I2V (fl2va) + OrbitSheets plugin |
-| `0040-文生视频` | text → video (generic version isomorphic to 0030) | T2VA (fl2va) |
-| `0041-首帧视频` | first-frame image → video | I2V (fl2va) |
-| `0042-首尾视频` | first+last frame → video | fl2va |
-| `0044-参考视频` | reference image/video → video | R2V (ref2va) |
+| `0030_文生场景` | text → scene video (visual only, no audio track) | T2VA (fl2va) |
+| `0031_首帧场景` | first-frame image → scene video | I2V (fl2va) |
+| `0032_参考场景` | multi-image + multi-video reference → video | R2V (ref2va) |
+| `0033_OrbitSheets场景` | anchor image → H3 multi-angle camera → visual frame picking into a "scene reference board" grid image | I2V (fl2va) + OrbitSheets plugin |
+| `0034_世界模型` | 360° orbit video → panorama strip → view batch → one highest-quality 3DGS PLY | world model (self-owned nodes + HYWM2) |
+| `0035_场景截帧` | load video → frame extraction → 8 single frames + 4-view/8-direction composites auto-saved | — |
+
+### Video generation class (004x, 5, MiniMax H3)
+
+| Workflow | Purpose | H3 mode |
+|--------|------|---------|
+| `0040_文生视频` | text → video (generic version isomorphic to 0030) | T2VA (fl2va) |
+| `0041_首帧视频` | first-frame image → video | I2V (fl2va) |
+| `0042_首尾视频` | first+last frame → video | fl2va |
+| `0043_关键帧视频` | arbitrary keyframe anchoring via AddGuide | keyframe (fl2va) |
+| `0044_参考视频` | reference image/video → video | R2V (ref2va) |
 
 > 0030/0031/0032 correspond one-to-one with 0040/0041/0042/0044 (the former is the scene-pipeline version, the latter the generic version); the audio track has been removed from all — video + audio are merged in the post pipeline (005x-007x). 0033 supplements scene-reference production: it produces "scene reference board" grid images (for use as reference input to 0032/0044).
 
@@ -242,25 +258,30 @@ Comfy/
 
 | Workflow | Purpose |
 |--------|------|
-| `0050-视频截帧` | video → per-frame images |
-| `0051-视频拆音` | video → separated audio |
+| `0050_视频截帧` | video → per-frame images |
+| `0051_视频拆音` | video → separated audio |
 
-### Audio generation class (006x-007x, 6)
+### Audio generation class (006x, 5)
 
 | Workflow | Purpose | Core model |
 |--------|------|---------|
-| `0060-背景音乐` | Pure instrumental BGM | Stable Audio 3 (built-in Sage acceleration) |
-| `0061-环境音效` | Ambient/atmosphere sound | Stable Audio 3 |
-| `0062-效果音效` | One-shot / SFX | Stable Audio 3 |
-| `0063-文生人声` | text voice description → speech | Qwen3-TTS VoiceDesign |
-| `0064-参考人声` | 3-second reference audio clone → speech | Qwen3-TTS CustomVoice |
-| `0070-截取声音` | Audio crop/extract tool | — |
+| `0060_背景音乐` | Pure instrumental BGM | Stable Audio 3 (built-in Sage acceleration) |
+| `0061_环境音效` | Ambient/atmosphere sound | Stable Audio 3 |
+| `0062_效果音效` | One-shot / SFX | Stable Audio 3 |
+| `0063_文生人声` | text voice description → speech | Qwen3-TTS VoiceDesign |
+| `0064_参考人声` | 3-second reference audio clone → speech | Qwen3-TTS CustomVoice |
+
+### Audio extraction class (007x, 1)
+
+| Workflow | Purpose |
+|--------|------|
+| `0070_截取声音` | Load an audio file, crop a segment on the waveform, preview/save three takes |
 
 > The old image 8 / video 4 / audio 5 workflows that used to be archived under `templates\` before 2026-08-09 have been deleted; the current numbering scheme is canonical.
 
 ## Appendix C · Model download list
 
-> Scheme principles: fully open-source, local inference, zero API cost. The list below corresponds **one-to-one** with the local `models\` directory (verified 2026-08-19); the status column reflects what is actually ready locally. A brand-new environment (Linux 5090 server) must re-fetch from the download URLs, or migrate `models` wholesale via rsync per [Appendix H.4](#h4--file-transfer-and-symlinks). **Recommended download order**: audio small items first (the full Qwen3-TTS set, SenseVoice, Stable Audio 3) → video large items (the full MiniMax H3 set — download both fl2va and ref2va) → image large items (Qwen-Image 2512/Edit 2511, FLUX.2 Klein). Note that `flux-2-klein-9b-fp8` is a **gated repo** (you must log in to HF and accept the BFL terms); after placing models, **restart ComfyUI** so they are recognized.
+> Scheme principles: fully open-source, local inference, zero API cost. The list below corresponds **one-to-one** with the local `models\` directory (verified 2026-10-11: ~263.5 GB across 40 top-level directories); the status column reflects what is actually ready locally. A brand-new environment (Linux 5090 server) must re-fetch from the download URLs, or migrate `models` wholesale via rsync per [Appendix H.4](#h4--file-transfer-and-symlinks). **Recommended download order**: audio small items first (the full Qwen3-TTS set, SenseVoice, Stable Audio 3) → video large items (the full MiniMax H3 set — download both fl2va and ref2va) → image large items (Qwen-Image 2512/Edit 2511, Qwen-Image 2.1, FLUX.2 Klein). Note that `flux-2-klein-9b-fp8` is a **gated repo** (you must log in to HF and accept the BFL terms); after placing models, **restart ComfyUI** so they are recognized.
 
 ### Image class
 
@@ -269,11 +290,17 @@ Comfy/
 | `qwen_image_2512_fp8_e4m3fn.safetensors` | `models\diffusion_models\` | ✅ ready | <https://huggingface.co/Comfy-Org/Qwen-Image_ComfyUI/resolve/main/split_files/diffusion_models/qwen_image_2512_fp8_e4m3fn.safetensors> |
 | `qwen_image_fp8_e4m3fn.safetensors` (predecessor of 2512, backup) | `models\diffusion_models\` | ✅ ready | <https://huggingface.co/Comfy-Org/Qwen-Image_ComfyUI/resolve/main/split_files/diffusion_models/qwen_image_fp8_e4m3fn.safetensors> |
 | `qwen_image_edit_2511_fp8mixed.safetensors` | `models\diffusion_models\` | ✅ ready | <https://www.modelscope.cn/models/Kakazhuce/qwen_image_edit_2511_fp8mixed/resolve/master/qwen_image_edit_2511_fp8mixed.safetensors> |
+| `qwen_image_2.1_bf16.safetensors` (Qwen-Image 2.1 base, 7B unified generate+edit) | `models\diffusion_models\` | ✅ ready | <https://huggingface.co/Comfy-Org/Qwen-Image-2.1_ComfyUI/resolve/main/split_files/diffusion_models/qwen_image_2.1_bf16.safetensors> |
 | `flux-2-klein-9b-fp8.safetensors` | `models\diffusion_models\` | ✅ ready | <https://huggingface.co/black-forest-labs/FLUX.2-klein-9b-fp8/resolve/main/flux-2-klein-9b-fp8.safetensors> ⚠️ gated |
+| `triposplat_fp16.safetensors` (legacy, not used by any current workflow) | `models\diffusion_models\` | ✅ ready | local file (kept from an earlier experiment) |
 | `qwen_3_8b_fp8mixed.safetensors` (Klein text encoder) | `models\text_encoders\` | ✅ ready | <https://huggingface.co/Comfy-Org/flux2-klein-9B/resolve/main/split_files/text_encoders/qwen_3_8b_fp8mixed.safetensors> |
 | `full_encoder_small_decoder.safetensors` (Klein/FLUX.2 decoder) | `models\vae\` | ✅ ready | <https://huggingface.co/black-forest-labs/FLUX.2-small-decoder/resolve/main/full_encoder_small_decoder.safetensors> |
 | `qwen_2.5_vl_7b_fp8_scaled.safetensors` (Qwen-Edit text encoder) | `models\text_encoders\` | ✅ ready | <https://huggingface.co/Comfy-Org/HunyuanVideo_1.5_repackaged/resolve/main/split_files/text_encoders/qwen_2.5_vl_7b_fp8_scaled.safetensors> |
+| `qwen3vl_8b_bf16.safetensors` (Qwen-Image 2.1 text encoder) | `models\text_encoders\` | ✅ ready | <https://huggingface.co/Comfy-Org/Qwen-Image-2.1_ComfyUI/resolve/main/split_files/text_encoders/qwen3vl_8b_bf16.safetensors> |
 | `qwen_image_vae.safetensors` | `models\vae\` | ✅ ready | <https://huggingface.co/Comfy-Org/Qwen-Image_ComfyUI/resolve/main/split_files/vae/qwen_image_vae.safetensors> |
+| `qwen_image_2.1_vae_bf16.safetensors` (Qwen-Image 2.1 VAE, 64-channel RGBA) | `models\vae\` | ✅ ready | <https://huggingface.co/Comfy-Org/Qwen-Image-2.1_ComfyUI/resolve/main/split_files/vae/qwen_image_2.1_vae_bf16.safetensors> |
+| `flux2-vae.safetensors` (legacy, not used by any current workflow) | `models\vae\` | ✅ ready | local file (kept from an earlier experiment) |
+| `triposplat_vae_decoder_fp16.safetensors` (legacy, not used by any current workflow) | `models\vae\` | ✅ ready | local file (kept from an earlier experiment) |
 | `4xNomos8kDAT.safetensors` (upscaling, recommended) | `models\upscale_models\` | ✅ ready | <https://huggingface.co/Phips/4xNomos8kDAT/resolve/main/4xNomos8kDAT.safetensors> |
 | `Qwen-Image-2512-Lightning-4steps-V1.0-fp32.safetensors` (2512 acceleration LoRA) | `models\loras\` | ✅ ready | <https://huggingface.co/Comfy-Org/Qwen-Image_ComfyUI/resolve/main/split_files/loras/Qwen-Image-2512-Lightning-4steps-V1.0-fp32.safetensors> |
 | `Qwen-Image-Lightning-4steps-V1.0.safetensors` (predecessor 2512 acceleration LoRA, backup) | `models\loras\` | ✅ ready | <https://huggingface.co/Comfy-Org/Qwen-Image_ComfyUI/resolve/main/split_files/loras/Qwen-Image-Lightning-4steps-V1.0.safetensors> |
@@ -292,6 +319,19 @@ Comfy/
 | `GFPGANv1.3.pth` (backup) | same as above | ✅ ready | <https://huggingface.co/datasets/Gourieff/ReActor/resolve/main/models/facerestore_models/GFPGANv1.3.pth> |
 | `codeformer-v0.1.0.pth` (CodeFormer detail enhancement, non-commercial license) | same as above | ✅ ready | <https://huggingface.co/datasets/Gourieff/ReActor/resolve/main/models/facerestore_models/codeformer-v0.1.0.pth> |
 | `GPEN-BFR-512.onnx` (GPEN, lightweight speedup) | same as above | ✅ ready | <https://huggingface.co/datasets/Gourieff/ReActor/resolve/main/models/facerestore_models/GPEN-BFR-512.onnx> |
+
+### Other ready slots (2026-10-11)
+
+| Model | Target directory | Status | Download URL |
+|------|---------|------|---------|
+| `minimax_h3_fun_controlnet_union_pruned_int8_convrot.safetensors` (H3 fun-controlnet) | `models\model_patches\` | ✅ ready | <https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/model_patches/minimax_h3_fun_controlnet_union_pruned_int8_convrot.safetensors> |
+| `minimax_h3_latent_upscaler_3d_fp16.safetensors` (pairs with the `h3-latent-upscaler` plugin) | `models\latent_upscale_models\` | ✅ ready | <https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/latent_upscale_models/minimax_h3_latent_upscaler_3d_fp16.safetensors> |
+| `minimaxh3_*.safetensors` — 10 H3 motion embeddings (`art_is_explosion`/`blooming_flowers`/`bullet_time`/`dark_magic`/`fire_breath`/`four_seasons`/`kiss_camera`/`spiral_ascent`/`storm_magic`/`truman_show`) | `models\embeddings\` | ✅ ready | <https://huggingface.co/Comfy-Org/MiniMax-H3/tree/main/embeddings> |
+| `depth_anything_3_base` / `depth_anything_3_mono_large` / `depth_anything_3_small` | `models\geometry_estimation\` | ✅ ready | <https://huggingface.co/depth-anything/Depth-Anything-3> |
+| `dino_v3_vit_h.safetensors` (CLIP vision) | `models\clip_vision\` | ✅ ready | <https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/clip_vision/dino_v3_vit_h.safetensors> |
+| `taeh3.safetensors` (approximate VAE for H3 preview) | `models\vae_approx\` | ✅ ready | <https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/vae_approx/taeh3.safetensors> |
+| HY-World 2.0 weights: `model.safetensors` + `config.json` (3.05 GB, for the `ComfyUI-HYWM2` plugin / workflow `0034_世界模型`) | `models\hywm2\` | ✅ ready | <https://huggingface.co/tencent/HY-World-2.0> |
+| SD1.x / SD2.x standard inference configs, 11 yaml files | `models\configs\` | ✅ ready | ships with the ComfyUI repo |
 
 ### Audio class
 
@@ -316,7 +356,9 @@ Comfy/
 | `minimax_h3_fl2va_pruned_int8_convrot.safetensors` (FL2VA, for T2V/I2V) | `models\diffusion_models\` | ✅ ready | <https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/diffusion_models/minimax_h3_fl2va_pruned_int8_convrot.safetensors> |
 | `minimax_h3_ref2va_pruned_int8_convrot.safetensors` (Ref2VA, **for R2V reference-to-video, a separate file**) | `models\diffusion_models\` | ✅ ready | <https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/diffusion_models/minimax_h3_ref2va_pruned_int8_convrot.safetensors> |
 | `qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors` (text encoder) | `models\text_encoders\` | ✅ ready | <https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/text_encoders/qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors> |
+| `qwen3vl_32b_minimax_h3_int8_convrot.safetensors` (text encoder, second quantisation tier kept alongside nvfp4) | `models\text_encoders\` | ✅ ready | <https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/text_encoders/qwen3vl_32b_minimax_h3_int8_convrot.safetensors> |
 | `minimax_h3_video_vae_fp16.safetensors` (video VAE) | `models\vae\` | ✅ ready | <https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/vae/minimax_h3_video_vae_fp16.safetensors> |
+| `minimax_h3_video_vae_int8_convrot.safetensors` (video VAE, second quantisation tier kept alongside fp16) | `models\vae\` | ✅ ready | <https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/vae/minimax_h3_video_vae_int8_convrot.safetensors> |
 | `minimax_h3_audio_vae_fp32.safetensors` (audio VAE) | `models\vae\` | ✅ ready | <https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/vae/minimax_h3_audio_vae_fp32.safetensors> |
 
 > **fl2va and ref2va are task variants of the same base**: the text/image-to-video workflows (0030/0031/0040/0041) use fl2va, the reference-generation workflows (0032/0044) use ref2va — download both. The repo also has bf16/int8_convrot/pruned_fp8_scaled variants to choose from.
@@ -328,8 +370,10 @@ Comfy/
 | Model | Target directory | Status | Download URL |
 |------|---------|------|---------|
 | `minimax_h3_fl2v_turbo_4step_v1.0_768p_comfyui_bf16.safetensors` (fl2va 4-step, 768p training domain, 1.82 GB, workflow default) | `models\loras\` | ✅ ready | <https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/loras/minimax_h3_fl2v_turbo_4step_v1.0_768p_comfyui_bf16.safetensors> |
+| `minimax_h3_fl2v_turbo_4step_v1.2_768p_comfyui_bf16.safetensors` (fl2va 4-step v1.2, newer revision) | `models\loras\` | ✅ ready | <https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/loras/minimax_h3_fl2v_turbo_4step_v1.2_768p_comfyui_bf16.safetensors> |
 | `minimax_h3_fl2v_turbo_8step_v1.0_comfyui_bf16.safetensors` (fl2va 8-step, higher quality, 1.82 GB) | `models\loras\` | ✅ ready | <https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/loras/minimax_h3_fl2v_turbo_8step_v1.0_comfyui_bf16.safetensors> |
 | `minimax_h3_ref2v_turbo_4step_v0.1_comfyui_bf16.safetensors` (ref2va 4-step, for R2V workflows, 0.36 GB) | `models\loras\` | ✅ ready | <https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/loras/minimax_h3_ref2v_turbo_4step_v0.1_comfyui_bf16.safetensors> |
+| `minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors` (ref2va 8-step, higher quality) | `models\loras\` | ✅ ready | <https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/loras/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors> |
 
 ### MiniMax H3 speedup essentials
 
@@ -417,10 +461,10 @@ python main.py --enable-manager
 ### H.4 File transfer and symlinks
 
 - The super-project: `git clone --recurse-submodules <remote>` (**54 submodules**)
-- **models ~189 GB are rsynced separately** (`rsync -avP`); the server needs ≥300 GB NVMe reserved
-- Rebuild the symlinks (`ln -s` relative paths, 7 total, see the Appendix A list):
-  - `ComfyUI/input → ../media`, `ComfyUI/output → ../media`, `ComfyUI/models → ../models`, `ComfyUI/user/default/workflows → ../../../workflows`
-  - `ComfyUI/custom_nodes → ../custom_nodes` (**directory-level, aggregates 45 plugins**), `custom_nodes/H3ReferenceSuite → ../refs/minimax-h3-guide/custom_nodes/H3ReferenceSuite`, `.claude → .agents`
+- **models ~263.5 GB are rsynced separately** (`rsync -avP`); the server needs ≥350 GB NVMe reserved
+- Rebuild the symlinks (`ln -s` relative paths, 8 total, see the Appendix A list):
+  - `ComfyUI/input → ../media/七纹刻印`, `ComfyUI/output → ../media/七纹刻印`, `ComfyUI/models → ../models`, `ComfyUI/user/default/workflows → ../../../workflows`
+  - `ComfyUI/custom_nodes → ../custom_nodes` (**directory-level, aggregates 45 plugins**), `custom_nodes/H3ReferenceSuite → ../refs/minimax-h3-guide/custom_nodes/H3ReferenceSuite`, `.claude → .agents`, `stories/.obsidian/plugins → ../plugins`
 - `ComfyUI-FallingTS/.env` (API keys) does not go into git; place it separately on the server and `chmod 600`
 - Chinese file names/paths are fine under Linux UTF-8
 

@@ -2,7 +2,7 @@
 
 
 
-`<divider> 由 `scripts/pull-runninghub.py` 于 2026-10-10 生成。
+`<divider> 由 `pull-runninghub.py` 于 2026-10-10 生成(该脚本随根 `scripts\` 于 2026-10-11 移除,重建逻辑见 `RunningHub-API读取指南.md`)。
 
 `<divider> 拉取口径:tag/tree(rang=WORKFLOW) 取 21 个一级分类;每类用 template/list(size=30, sort=REPUTATION, days=90, tags=子标签ID数组) 翻页,按点赞降序取前 100 条;再逐条 getContent 取 workflowContent 落盘。已存在的同名文件跳过(增量)。
 

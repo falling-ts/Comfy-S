@@ -197,5 +197,4 @@ POST(f"/proceed/continue/{continue_id}")        # 未跑到该节点 => 400 "没
 | `POST /proceed/reset` | **200** `{status:"ok"}` |
 | `POST /proceed/continue/43`(无缓存) | **400** `没有上游数据, 请先运行到该节点` |
 
-复现脚本范式(先跑一个便宜工作流把媒体缓存进节点,再打按钮端点):
-`.venv\Scripts\python.exe scripts\probe-plugin-api.py`
+复现脚本范式(先跑一个便宜工作流把媒体缓存进节点,再打按钮端点):用一次性脚本经 stdin 就地执行(`.venv\Scripts\python.exe - <<'PY' ... PY`),不落盘。

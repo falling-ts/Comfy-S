@@ -357,7 +357,7 @@ checkpoint with no special loader**. Community packs are now an optional layer, 
   `ComfyUI-LTXVideo` pack (`LTX-2.3_V2V_ICLoRA_Single_Stage_Distilled.json` + `LTXICLoRALoaderModelOnly`); no water-specific
   workflow ships yet. **Strength sweet spot 1.2** (1.0-1.05 natural / identity-safe; 1.1-1.5 hard surface replacement like
   ground -> sea; >= 1.5 maximizes drama but warps faces). **CRITICAL recipe:** render the distilled **stage-1 ONLY at native
-  resolution** (1920x1088 / 1088x1920, 24 fps), CFG 1.0, 8 fixed sigmas, no negative - the two-stage path applies the
+  resolution** (native resolution, 24 fps), CFG 1.0, 8 fixed sigmas, no negative - the two-stage path applies the
   reference only in stage 1, and the stage-2 upscaler drifts the subject's identity; lowering strength does NOT fix it
   (structural). Trained on real water, so other liquids (lava / slime / paint) generalize only loosely. **Higher res without the
   stage-2 identity drift (kit tip, inferred, not card-tested):** the drift comes from the LTX stage-2 upscaler
