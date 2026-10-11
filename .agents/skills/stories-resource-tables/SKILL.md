@@ -1,21 +1,27 @@
 ---
 name: stories-resource-tables
-description: Story-library resource-table and prompt conventions — frame terminology (face/side/edge/view/word), image prompt ordering and segmentation rules, image and MiniMax H3 video size buckets (entity modeling of people, creatures and objects alike is three-view front/side/back at a fixed 832x480 bucket), the H3 prompt language rules (Chinese body as of 2026-09-25, verbatim English skeleton, camera-language terms in English, on-screen text and dialogue kept in their original language) with the measured known costs of a Chinese body, entity/scene-still resource types (three-view front/side/back modeling for characters as well as creatures and objects, variation, Qwen-Image-Edit wording, nine-grid, scene first-frame/pull-in/push-in/orbit), table md field types, and the overhead view. Use when writing or editing any image-type resource table, or when a task needs the shared size, segmentation, or H3 language rules.
+description: Story-library resource-table and prompt conventions — frame terminology (face/side/grid-edge/view/word/frame-edge 缘), image prompt ordering and segmentation rules, image and MiniMax H3 video size buckets (entity modeling of people, creatures and objects alike is three-view front/side/back at a fixed 832x480 bucket), the H3 prompt language rules (Chinese body as of 2026-09-25, verbatim English skeleton, camera-language terms in English, on-screen text and dialogue kept in their original language) with the measured known costs of a Chinese body, entity/scene-still resource types (three-view front/side/back modeling for characters as well as creatures and objects, variation, Qwen-Image-Edit wording, nine-grid, scene first-frame/pull-in/push-in/orbit), table md field types, and the overhead view. Use when writing or editing any image-type resource table, or when a task needs the shared size, segmentation, or H3 language rules.
 ---
 
 # 故事库资源表与提示词通用规范（总纲）
 
 > 本技能是资源表的**总纲**：尺寸规范、分段规则与 H3 语言规范对**所有**资源类型都适用，场景与视频类技能会引用它。各类型条目分散在技能 `stories-scene-video`、`stories-video-prompts`、`stories-audio-resources` 中。
 
-## 画面术语定义（面/侧/边/视/词）
+## 画面术语定义（面/侧/边/视/词/缘）
 
-五种术语全文档严格区分，严禁混用：
+六种术语全文档严格区分，严禁混用：
 
 1. **面**：代表三维空间拍摄的具体画面（场景某一朝向的画面），共**九方位**：前面（正面）、前右、右面、右后、后面、后左、左面、左前、全图（四个正方向 + 四个斜方向 + 全景俯瞰）；场景类列名与提示词内容中的「面」一律指被描述的画面朝向
 2. **侧**：代表摄像机在哪侧，**永远与面相对**：左侧相机拍摄的是右面，右侧相机拍摄的是左面，后侧相机拍摄的是前面，前侧相机拍摄的是后面；斜向同理——左前侧相机拍摄的是右后面，右后侧相机拍摄的是左前面，后左侧相机拍摄的是前右面，前右侧相机拍摄的是后左面；上下同理（上侧相机拍摄的是下面，下侧相机拍摄的是上面）
 3. **边**：代表一个场景画面九宫格的哪一边（方位格），例如 左边在中间的左边，右上在中间的右边的上边
 4. **视**：与场景无关，只与万物有关；万物类画面（**人物、生物、物品一律**）统一采用三视图（横向并排三个视角，**左边是正面、中间是侧面、右边是后面**）；不是九宫格
 5. **词**：仅分 正词 与 负词；资源表提示词列后缀一律写 -正词 / -负词，词名中不得出现「面」字（避免与画面的面冲突）；提示词正文中出现的「面」指画面的面（如旋镜提示词「右面是…」）
+6. **缘**：代表**画面边缘**，共八处——左缘、左上缘、上缘、右上缘、右缘、右下缘、下缘、左下缘（**四缘** = 左缘 / 上缘 / 右缘 / 下缘，四角缘 = 左上缘 / 右上缘 / 右下缘 / 左下缘）；**只与画面变化（运镜）有关，与场景方位无关**，专门用来描述视频画面里元素的**进出方向与进出快慢**（不是场景的边、不是九宫格方位格的「边」，也不与万物三视图的「视」混用）。判据（2026-10-08 定，方向口径与 `stories-scene-video` 的「12 秒八镜 360° 旋镜定式」一致）：
+   - **一进一出定旋转**：画面内容从**右缘进入、左缘移出**（地平线保持水平）＝镜头**顺时针旋转**（pan right）；反向从**左缘进入、右缘移出**＝**逆时针旋转**（pan left）；从**上缘进入、下缘移出**＝镜头**上仰**（tilt up），从**下缘进入、上缘移出**＝**下俯**（tilt down）
+   - **四缘同进 = 拉镜**：元素从四面边缘同时向画面中心进入（画面范围变大、视点后退）＝**拉镜头**；**四缘同出 = 推镜**：元素从画面中心向四面边缘移出（画面范围变小、视点前进）＝**推镜头**
+   - **一侧快一侧慢 = 侧拉镜**：两侧缘进出速度不等（如左缘移出快、右缘进入慢）＝**侧拉镜**（拉镜叠加横移 / 斜向拉镜）；上下两缘速度不等则为上下斜拉
+   - **有无视差是分水岭**：缘上内容有进出、透视关系不变（只是视线被扫过）＝角运动（pan / tilt）；四缘同进同出但**前后景无视差**＝光学变焦（zoom）；**有视差**＝物理推拉（dolly in / out）
+   - 写入提示词时直接点名缘即可（如「右侧内容自画幅右缘进入、向画幅左缘移出」「四面内容同时向画幅中心汇聚进入」），**镜头术语仍取英文**（见「H3 提示词语言规范」）
 
 ## 资源表
 

@@ -5,7 +5,7 @@ description: Scene-video resource types for the story library — shared scene r
 
 # 故事库场景视频资源规范
 
-> 尺寸与语言规范见技能 `stories-resource-tables`（H3 canvas 桶与「提示词正文一律中文」）。场景方位词（面/侧/边）定义见技能 `stories-resource-tables` 的「画面术语定义」。镜头运动术语见技能 `stories-shot-language`。本技能与 `stories-video-prompts` 同属 H3 视频，只是对象是场景而非人物/主体。
+> 尺寸与语言规范见技能 `stories-resource-tables`（H3 canvas 桶与「提示词正文一律中文」）。场景方位词（面/侧/边）与画面边缘词（缘）的定义见技能 `stories-resource-tables` 的「画面术语定义」。镜头运动术语见技能 `stories-shot-language`。本技能与 `stories-video-prompts` 同属 H3 视频，只是对象是场景而非人物/主体。
 
 ### 场景类公共要求（文生场景 / 首帧场景 / 参考场景 通用）
 
