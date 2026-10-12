@@ -1,6 +1,6 @@
 # 双机同步:Syncthing 实时文件同步 + Git 代码同步(2026-08-19)
 
-本地 Windows(`D:\AI\Comfy`)与 AutoDL GPU 服务器(`/root/Comfy`)之间的整套同步方案:
+本地 Windows(`D:\AI\Comfy-S`)与 AutoDL GPU 服务器(`/root/Comfy`)之间的整套同步方案:
 **Syncthing** 负责 `media / workflows / stories\七纹刻印` 三个目录的实时双向文件同步,
 **Git** 负责 Comfy 代码(根仓库文件 + 子模块指针)的提交级同步。冲突策略统一为
 "谁最后修改谁赢"。
@@ -89,9 +89,9 @@ AutoDL 容器无 systemd(PID 1 是平台 boot 脚本),服务规范见旧实例 `
 
 | 文件夹 ID | 本地路径 | 服务器路径 |
 |-----------|----------|------------|
-| `media` | `D:\AI\Comfy\media` | `/root/Comfy/media` |
-| `workflows` | `D:\AI\Comfy\workflows` | `/root/Comfy/workflows` |
-| `stories-qwx` | `D:\AI\Comfy\stories\七纹刻印` | `/root/Comfy/stories/七纹刻印` |
+| `media` | `D:\AI\Comfy-S\media` | `/root/Comfy/media` |
+| `workflows` | `D:\AI\Comfy-S\workflows` | `/root/Comfy/workflows` |
+| `stories-qwx` | `D:\AI\Comfy-S\stories\七纹刻印` | `/root/Comfy/stories/七纹刻印` |
 
 首跑即完成全量同步,并自动创建了服务器上原本不存在的 `stories/七纹刻印`
 (顺带解决了服务器端 `/root/Shares` 悬空软链接的问题)。
@@ -114,14 +114,14 @@ AutoDL 容器无 systemd(PID 1 是平台 boot 脚本),服务规范见旧实例 `
 
 ### 3.1 拓扑
 
-- 两端都是 GitHub 仓库 `git@github.com:falling-ts/Comfy.git` 的克隆(分支 `main`),
+- 两端都是 GitHub 仓库 `git@github.com:falling-ts/Comfy-S.git` 的克隆(分支 `main`),
   互为备份与中转;日常直连不走 GitHub
 - 直连通道:本地 → 服务器 SSH(`connect.westd.seetacloud.com:16362`,root 用户,2026-08-20 换实例)
   - 本地 `~/.ssh/id_rsa` 公钥已加入服务器 `/root/.ssh/authorized_keys`
   - 服务器自带密钥 `id_rsa` + `~/.ssh/config` 中 github.com 走 Clash 代理
     (`ProxyCommand /usr/bin/connect -H 127.0.0.1:7890 %h %p`),供服务器直连 GitHub
 - 本地 remote:
-  - `origin` = `git@github.com:falling-ts/Comfy.git`
+  - `origin` = `git@github.com:falling-ts/Comfy-S.git`
   - `server` = `ssh://root@connect.westd.seetacloud.com:16362/root/Comfy` ← 直连服务器
 - 服务器仓库已设 `receive.denyCurrentBranch=updateInstead`:本地 push 会自动更新
   服务器工作树(若服务器工作树对将更新的文件有本地修改,push 会被安全拒绝,不会静默

@@ -186,7 +186,7 @@
 
 ```python
 spec = importlib.util.spec_from_file_location(
-    "vp", r"D:\AI\Comfy\refs\qwen-image-2.1-skill\skills\qwen-image-2-1-prompter\scripts\validate_prompt.py")
+    "vp", r"D:\AI\Comfy-S\refs\qwen-image-2.1-skill\skills\qwen-image-2-1-prompter\scripts\validate_prompt.py")
 vp = importlib.util.module_from_spec(spec); spec.loader.exec_module(vp)
 ok, errors = vp.validate_qwen_prompt(
     {"rewritten_prompt": p, "wh_ratio": "", "ratio_follow": "<image1>"})
