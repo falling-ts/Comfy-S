@@ -1,17 +1,7 @@
 ---
 name: comfyui-workflow-runner
-description: |
-  Run local ComfyUI workflows headlessly through the HTTP API without touching the browser: convert a
-  saved workflow JSON into the API prompt format, refresh a FallingTS Markdown data table from its md file
-  (equivalent to clicking that node's refresh button), submit to /prompt, poll /history to completion, and
-  verify the produced artifact by probing it and extracting frames. Use whenever a workflow must be
-  executed or re-run autonomously, when a prompt or model edited inside an md data table has to actually
-  take effect, or when a render needs objective inspection (duration, fps, audio presence, motion,
-  continuity). Also carries measured findings on H3 scene video: which reference/prompt variants actually
-  win, rotation speed ceilings, and the OrbitSheets parameter recipe. And measured findings on H3 shot
-  order and timing: why prose cannot pin a shot's position in ref2video mode, and the frame-anchoring
-  recipe — with its node-wiring and layout caveats — that can. Not for authoring prompt text or for
-  developing custom nodes.
+description: >-
+  Run local ComfyUI workflows headlessly through the HTTP API without a browser: convert a saved workflow JSON into API prompt format, refresh a FallingTS Markdown data table from its md file (equivalent to clicking that node’s refresh button), submit to /prompt, poll /history to completion, and verify the artifact by probing it and extracting frames. Use whenever a workflow must be executed or re-run autonomously, when a prompt or model edited in an md table has to actually take effect, or when a render needs objective inspection (duration, fps, audio presence, motion, continuity). Also carries measured findings on H3 scene video (which reference/prompt variants win, rotation speed ceilings, the OrbitSheets recipe) and on H3 shot order/timing (why prose cannot pin a shot’s position in ref2video mode, and the frame-anchoring recipe that can, plus its node-wiring and layout caveats). Not for authoring prompt text or developing custom nodes.
 ---
 
 # ComfyUI Workflow Runner
