@@ -81,6 +81,34 @@ L190 State requirements affirmatively ("保持背景与输入图完全一致") r
 | iPad/平板 | `4:3` |
 | 全景图 | `2:1` |
 
+### 6.1 官方精确像素表(原生 2K,README L210-216)
+
+`wh_ratio` 取值对应的实际生成像素(以官方模型卡为准;上方语义映射表只决定"填哪个比值",像素由下表锁定):
+
+| `wh_ratio` | 像素 (W×H) |
+|---|---|
+| `1:1`  | 2048 × 2048 |
+| `4:3`  | 2400 × 1792 |
+| `3:4`  | 1792 × 2400 |
+| `3:2`  | 2528 × 1696 |
+| `2:3`  | 1696 × 2528 |
+| `16:9` | 2752 × 1536 |
+| `9:16` | 1536 × 2752 |
+
+> 官方**仅明确内置这 7 个标准比**。其余(21:9 / 2:1 / 5:3 等)为语义指引,实际像素未在模型卡枚举;
+> 走 `ratio_follow` 跟底图,或自定义 `wh_ratio` 由管线按比例推导。
+
+### 6.2 默认参数与步数(README Default Parameters)
+
+- `num_inference_steps` 默认 **40**(原版 Qwen-Image-2.1)
+- 默认分辨率 **2048 × 2048**(原生 2K 级)
+- **多参考图上限:10 张**(N≥11 未声明支持)
+
+### 6.3 Turbo 变体(README,2026-10-09 新增)
+
+`Qwen-Image-2.1-Turbo` 同架构 7B,**8 步**生成/编辑,自带推荐采样 schedule(Diffusers 自动加载),默认 `CFG=1`。
+⚠️ 单独设 `num_inference_steps` **不会**覆盖 Turbo 保存的 8 步 schedule;要用 Turbo 必须加载 `Qwen-Image-2.1-Turbo` 权重。
+
 **编辑类默认跟随底图**:`ratio_follow = "<imageX>"`,`wh_ratio = ""`。
 **扩图**:不跟随输入比例,按延伸方向推新比例。
 **多宫格**:2×2 并排 `1:1`(**不要**过度拉成 3:1)。
@@ -138,5 +166,12 @@ refs\Qwen-Image-2.1\
   README.md                          ← 模型卡:circles/painted annotations/separate masks
 ```
 
-官方提供本地跑改写器的脚本(`run_transformers.py` / `run_vllm.py`),可用 Qwen3-VL 8B
-(本机已有 `models\text_encoders\qwen3vl_8b_bf16`)在本地复现官方改写流程。
+官方提供本地跑改写器的脚本(`run_transformers.py` / `run_vllm.py` / `serve.sh`)。
+官方 PE 改写器为**两个微调 checkpoint**(统一代码库,`--task t2i|edit` 自动判别):
+- T2I:`Qwen/Qwen-Image-2.1-PE-T2I`
+- Edit:`Qwen/Qwen-Image-2.1-PE-I2I`
+- 基座写作 **Qwen3.5-VL 9B**(README L240)。
+
+⚠️ 本文件旧版写作"Qwen3-VL 8B"并已说本机有 `models\text_encoders\qwen3vl_8b_bf16`——
+那是本机现有可读权重,与官方当前 9B PE 不一致;要**完整复现官方 PE 改写**需另行获取 9B 权重,
+8B 仅可沿用既有本地流程。

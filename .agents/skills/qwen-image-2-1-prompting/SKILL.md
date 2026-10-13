@@ -119,6 +119,26 @@ description: Qwen-Image 2.1 (and Qwen-Image-Edit) image prompt engineering per A
 由 `TextEncodeQwenImage21` 单节点同时产出 positive/negative 与 latent(带参考图编码)。
 ⇒ **表里写 `<image1>` 就等于模型端 `<image1>`,是纯文本改动,无需重接工作流。**
 
+## 官方模型卡新增事实(2026-10-09,提示词/接线相关)
+
+> 来源:`refs/Qwen-Image-2.1/README.md`(当前 HEAD `1993c3a`)。下列为模型能力,非"提示词格式错误",
+> 但直接影响怎么写提示词、怎么接工作流。权威数值见 `references/official-rules.md` §6.1–6.3。
+
+### ① 原生透明图(RGBA)—— 官方指定前缀
+模型原生支持透明背景生成;**必须用这个开头格式**:
+> `This is an RGBA image with transparency. <你的描述>. The image has alpha channel and the background is transparent.`
+例:`This is an RGBA image with transparency. A cute cartoon dragon sticker. The image has alpha channel and the background is transparent.`
+⇒ 这**不是**可选美化,是官方要求的提示词前缀;做贴纸/图标/合成遮罩前序图时要用。
+
+### ② 精确比例像素表(原生 2K)
+`wh_ratio` → 实际像素:`1:1`=2048×2048、`4:3`=2400×1792、`3:4`=1792×2400、`3:2`=2528×1696、`2:3`=1696×2528、`16:9`=2752×1536、`9:16`=1536×2752。官方仅内置这 7 个标准比。
+
+### ③ 默认参数
+`num_inference_steps=40`,默认 `2048×2048`。**多参考图上限 10 张**。
+
+### ④ Turbo 变体(8 步)
+`Qwen-Image-2.1-Turbo` 同架构,**8 步**、默认 `CFG=1`,自带采样 schedule;单设 `num_inference_steps` 不覆盖其 schedule,需加载 Turbo 权重才生效。本机 QI2.1 工作流若要走快出,需另接 Turbo 权重(当前工作流未用)。
+
 ## 校验器(浅层 lint,别当语义判据)
 
 ```python
