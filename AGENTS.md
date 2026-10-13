@@ -46,6 +46,7 @@ ComfyUI 及自定义节点的本地开发工作区。下文路径均相对项目
 ## 开发规范
 
 - **临时脚本不落盘进项目**:一次性逻辑经 stdin 就地执行(`.venv\Scripts\python.exe - <<'PY' ... PY`;Node 用 `node - <<'JS' ... JS`);确需落盘用系统临时目录;**能复跑的工具链**一律放 `custom_nodes\ComfyUI-FallingTS\dev\`
+- **超大文件例外**:修改超大文件、添加超多内容,实在没法用编辑工具(`edit`/`write`)时,才允许写脚本代劳;脚本文件**只能放根目录 `temp\`**(该目录已 git 忽略),用完即删
 - **根目录是 git 仓库**(`main`),子模块经 `.gitmodules` 以**指针提交**(gitlink)跟踪:子模块内先 commit/push,再回根仓库 `git add <路径>`;不要留子模块脏工作树,也不要混入无关文件
 - 改 ComfyUI 主程序遵守 `ComfyUI\AGENTS.md`:改动小且直接、少改文件、不引入新依赖、核心代码不发网络请求、保持节点/API/工作流兼容、删死代码、代码须像手写
 - 修改工作流/重要文件前先备份到 `backups\`(`backup-<文件名>-<YYYYMMDD>-<说明>.json`);备份只放 `backups`

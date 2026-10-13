@@ -32,7 +32,10 @@ pnpm-debug.log*
 .env
 .env.*
 
-# 运行时临时文件(根 temp/ 已于 2026-10-11 删除;ComfyUI/temp 为运行时目录)
+# 根目录 temp/:超大文件编辑的应急脚本落盘处(见 AGENTS.md 开发规范),不入库
+/temp/
+
+# 运行时临时文件(ComfyUI/temp 为运行时目录)
 ComfyUI/temp/
 
 # 根 input/(已于 2026-10-11 删除;由 ComfyUI-HYWM2 的 prestartup_script.py 每次启动
