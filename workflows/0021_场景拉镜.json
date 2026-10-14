@@ -9,7 +9,7 @@
       "type": "FallingTSMarkDownTable",
       "pos": [
         670,
-        10
+        40
       ],
       "size": [
         480,
@@ -225,12 +225,12 @@
       "id": 2,
       "type": "CLIPLoader",
       "pos": [
-        1200,
-        0
+        1230,
+        724
       ],
       "size": [
-        230,
-        170
+        250,
+        226
       ],
       "flags": {},
       "order": 1,
@@ -291,12 +291,12 @@
         }
       },
       "widgets_values": [
-        "qwen_2.5_vl_fp16.safetensors",
+        "qwen_2.5_vl_7b_fp8_scaled.safetensors",
         "qwen_image",
         "default"
       ],
       "widgets_values_named": {
-        "clip_name": "qwen_2.5_vl_fp16.safetensors",
+        "clip_name": "qwen_2.5_vl_7b_fp8_scaled.safetensors",
         "type": "qwen_image",
         "device": "default"
       }
@@ -305,12 +305,12 @@
       "id": 3,
       "type": "VAELoader",
       "pos": [
-        1200,
-        200
+        1230,
+        1220
       ],
       "size": [
-        230,
-        90
+        250,
+        118
       ],
       "flags": {},
       "order": 2,
@@ -371,12 +371,12 @@
       "id": 4,
       "type": "UNETLoader",
       "pos": [
-        1520,
-        0
+        1230,
+        260
       ],
       "size": [
-        230,
-        140
+        250,
+        172
       ],
       "flags": {},
       "order": 3,
@@ -437,12 +437,12 @@
       "id": 5,
       "type": "ModelSamplingAuraFlow",
       "pos": [
-        1800,
-        0
+        1580,
+        714
       ],
       "size": [
-        230,
-        120
+        250,
+        196
       ],
       "flags": {},
       "order": 20,
@@ -509,12 +509,12 @@
       "id": 6,
       "type": "LoraLoaderModelOnly",
       "pos": [
-        2080,
-        0
+        1580,
+        458
       ],
       "size": [
         270,
-        140
+        196
       ],
       "flags": {},
       "order": 21,
@@ -579,8 +579,8 @@
       "id": 7,
       "type": "ControlNetLoader",
       "pos": [
-        1200,
-        340
+        1230,
+        1010
       ],
       "size": [
         270,
@@ -634,12 +634,12 @@
       "id": 8,
       "type": "ImagePadForOutpaint",
       "pos": [
-        1800,
-        340
+        1580,
+        40
       ],
       "size": [
         270,
-        220
+        358
       ],
       "flags": {},
       "order": 23,
@@ -750,12 +750,12 @@
       "id": 9,
       "type": "CLIPTextEncode",
       "pos": [
-        3670,
-        340
+        1580,
+        1226
       ],
       "size": [
         270,
-        140
+        142
       ],
       "flags": {},
       "order": 18,
@@ -810,12 +810,12 @@
       "id": 11,
       "type": "VAEEncode",
       "pos": [
-        4380,
-        0
+        2280,
+        876
       ],
       "size": [
-        230,
-        80
+        250,
+        112
       ],
       "flags": {},
       "order": 30,
@@ -860,8 +860,8 @@
       "id": 12,
       "type": "ControlNetInpaintingAliMamaApply",
       "pos": [
-        4310,
-        340
+        2660,
+        40
       ],
       "size": [
         300,
@@ -983,8 +983,8 @@
       "id": 13,
       "type": "KSampler",
       "pos": [
-        4660,
-        0
+        3040,
+        416
       ],
       "size": [
         250,
@@ -1120,12 +1120,12 @@
       "id": 14,
       "type": "VAEDecode",
       "pos": [
-        4960,
-        230
+        3420,
+        40
       ],
       "size": [
-        230,
-        80
+        250,
+        112
       ],
       "flags": {},
       "order": 36,
@@ -1170,12 +1170,12 @@
       "id": 15,
       "type": "ImageCompositeMasked",
       "pos": [
-        5240,
-        190
+        3750,
+        40
       ],
       "size": [
         300,
-        190
+        298
       ],
       "flags": {},
       "order": 37,
@@ -1264,8 +1264,8 @@
       "id": 16,
       "type": "PreviewImageSave",
       "pos": [
-        5590,
-        0
+        4130,
+        40
       ],
       "size": [
         760,
@@ -1373,12 +1373,12 @@
       "id": 17,
       "type": "UNETLoader",
       "pos": [
-        1200,
-        900
+        1230,
+        492
       ],
       "size": [
         270,
-        140
+        172
       ],
       "flags": {},
       "order": 5,
@@ -1439,12 +1439,12 @@
       "id": 18,
       "type": "ModelSamplingAuraFlow",
       "pos": [
-        1520,
-        900
+        1580,
+        970
       ],
       "size": [
         270,
-        120
+        196
       ],
       "flags": {},
       "order": 22,
@@ -1512,12 +1512,12 @@
       "id": 19,
       "type": "CFGNorm",
       "pos": [
-        1840,
-        900
+        1930,
+        40
       ],
       "size": [
         270,
-        120
+        196
       ],
       "flags": {},
       "order": 25,
@@ -1585,12 +1585,12 @@
       "id": 20,
       "type": "LoraLoaderModelOnly",
       "pos": [
-        2160,
-        900
+        2280,
+        620
       ],
       "size": [
         270,
-        120
+        196
       ],
       "flags": {},
       "order": 29,
@@ -1656,12 +1656,12 @@
       "id": 21,
       "type": "LoraLoaderModelOnly",
       "pos": [
-        2480,
-        900
+        2660,
+        590
       ],
       "size": [
         270,
-        120
+        196
       ],
       "flags": {},
       "order": 32,
@@ -1726,12 +1726,12 @@
       "id": 22,
       "type": "VAEEncode",
       "pos": [
-        1200,
-        1250
+        5300,
+        760
       ],
       "size": [
-        230,
-        110
+        250,
+        112
       ],
       "flags": {},
       "order": 41,
@@ -1776,8 +1776,8 @@
       "id": 23,
       "type": "TextEncodeQwenImageEditPlus",
       "pos": [
-        1520,
-        1250
+        5300,
+        40
       ],
       "size": [
         400,
@@ -1864,8 +1864,8 @@
       "id": 25,
       "type": "KSampler",
       "pos": [
-        3150,
-        900
+        5780,
+        40
       ],
       "size": [
         250,
@@ -2002,12 +2002,12 @@
       "id": 26,
       "type": "VAEDecode",
       "pos": [
-        3450,
-        1130
+        6110,
+        40
       ],
       "size": [
-        230,
-        80
+        250,
+        112
       ],
       "flags": {},
       "order": 44,
@@ -2051,8 +2051,8 @@
       "id": 27,
       "type": "PreviewImageSave",
       "pos": [
-        3730,
-        900
+        6440,
+        40
       ],
       "size": [
         760,
@@ -2159,8 +2159,8 @@
       "id": 28,
       "type": "ImageCompare",
       "pos": [
-        4540,
-        900
+        7280,
+        40
       ],
       "size": [
         930,
@@ -2212,8 +2212,8 @@
       "id": 29,
       "type": "FallingTSSwitch",
       "pos": [
-        2720,
-        0
+        2280,
+        1048
       ],
       "size": [
         300,
@@ -2317,12 +2317,12 @@
       "id": 30,
       "type": "PrimitiveInt",
       "pos": [
-        2120,
-        340
+        1230,
+        1398
       ],
       "size": [
-        230,
-        90
+        250,
+        148
       ],
       "flags": {},
       "order": 6,
@@ -2372,12 +2372,12 @@
       "id": 31,
       "type": "PrimitiveInt",
       "pos": [
-        2400,
-        340
+        1230,
+        1606
       ],
       "size": [
-        230,
-        90
+        250,
+        148
       ],
       "flags": {},
       "order": 7,
@@ -2427,12 +2427,12 @@
       "id": 32,
       "type": "FallingTSSwitch",
       "pos": [
-        2800,
-        900
+        3040,
+        40
       ],
       "size": [
         300,
-        270
+        316
       ],
       "flags": {},
       "order": 34,
@@ -2555,12 +2555,12 @@
       "id": 33,
       "type": "PrimitiveInt",
       "pos": [
-        2250,
-        1250
+        1230,
+        1814
       ],
       "size": [
-        230,
-        90
+        250,
+        148
       ],
       "flags": {},
       "order": 8,
@@ -2610,12 +2610,12 @@
       "id": 34,
       "type": "PrimitiveInt",
       "pos": [
-        2530,
-        1250
+        1230,
+        2022
       ],
       "size": [
-        230,
-        90
+        250,
+        148
       ],
       "flags": {},
       "order": 9,
@@ -2665,8 +2665,8 @@
       "id": 35,
       "type": "MarkdownNote",
       "pos": [
-        70,
-        10
+        40,
+        40
       ],
       "size": [
         550,
@@ -2699,12 +2699,12 @@
       "id": 36,
       "type": "ResizeImageMaskNode",
       "pos": [
-        3350,
-        340
+        1930,
+        552
       ],
       "size": [
         270,
-        142
+        250
       ],
       "flags": {},
       "order": 26,
@@ -2781,12 +2781,12 @@
       "id": 37,
       "type": "ResizeImageMaskNode",
       "pos": [
-        2680,
-        340
+        1930,
+        862
       ],
       "size": [
         270,
-        142
+        250
       ],
       "flags": {},
       "order": 27,
@@ -2861,12 +2861,12 @@
       "id": 38,
       "type": "GrowMaskWithBlur",
       "pos": [
-        3000,
-        340
+        2280,
+        40
       ],
       "size": [
         300,
-        310
+        520
       ],
       "flags": {},
       "order": 31,
@@ -3005,12 +3005,12 @@
       "id": 39,
       "type": "GetImageSizeAndCount",
       "pos": [
-        1520,
-        340
+        1230,
+        40
       ],
       "size": [
-        230,
-        120
+        250,
+        160
       ],
       "flags": {},
       "order": 17,
@@ -3078,11 +3078,11 @@
       "id": 45,
       "type": "FallingTSContinue",
       "pos": [
-        6400,
-        0
+        4970,
+        40
       ],
       "size": [
-        230,
+        250,
         120
       ],
       "flags": {},
@@ -3131,12 +3131,12 @@
       "id": 46,
       "type": "PrimitiveFloat",
       "pos": [
-        2250,
-        1400
+        1230,
+        2230
       ],
       "size": [
-        230,
-        90
+        250,
+        118
       ],
       "flags": {},
       "order": 11,
@@ -3185,12 +3185,12 @@
       "id": 47,
       "type": "PrimitiveFloat",
       "pos": [
-        2530,
-        1400
+        1230,
+        2408
       ],
       "size": [
-        230,
-        90
+        250,
+        118
       ],
       "flags": {},
       "order": 12,
@@ -3239,12 +3239,12 @@
       "id": 50,
       "type": "ModelSamplingAuraFlow",
       "pos": [
-        2400,
-        0
+        1930,
+        296
       ],
       "size": [
         270,
-        120
+        196
       ],
       "flags": {},
       "order": 24,
@@ -3310,12 +3310,12 @@
       "id": 51,
       "type": "CLIPTextEncode",
       "pos": [
-        3990,
-        340
+        1580,
+        1428
       ],
       "size": [
         270,
-        140
+        142
       ],
       "flags": {},
       "order": 19,
@@ -3370,8 +3370,8 @@
       "id": 259,
       "type": "TextEncodeQwenImageEditPlus",
       "pos": [
-        1520,
-        1600
+        5300,
+        400
       ],
       "size": [
         400,
@@ -3459,12 +3459,12 @@
       "id": 54,
       "type": "PrimitiveFloat",
       "pos": [
-        2120,
-        470
+        1230,
+        2586
       ],
       "size": [
-        230,
-        90
+        250,
+        118
       ],
       "flags": {},
       "order": 13,
@@ -3513,12 +3513,12 @@
       "id": 55,
       "type": "PrimitiveFloat",
       "pos": [
-        2400,
-        470
+        1230,
+        2764
       ],
       "size": [
-        230,
-        90
+        250,
+        118
       ],
       "flags": {},
       "order": 14,
@@ -3567,12 +3567,12 @@
       "id": 56,
       "type": "PrimitiveFloat",
       "pos": [
-        2250,
-        1550
+        1230,
+        2942
       ],
       "size": [
-        230,
-        90
+        250,
+        118
       ],
       "flags": {},
       "order": 15,
@@ -3621,12 +3621,12 @@
       "id": 57,
       "type": "PrimitiveFloat",
       "pos": [
-        2530,
-        1550
+        1230,
+        3120
       ],
       "size": [
-        230,
-        90
+        250,
+        118
       ],
       "flags": {},
       "order": 16,

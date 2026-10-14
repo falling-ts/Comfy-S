@@ -1,1 +1,669 @@
-{"id":"6e637f4d-9028-4daa-8d32-6d27c3d1a281","revision":0,"last_node_id":6,"last_link_id":8,"nodes":[{"id":1,"type":"FallingTSLoadAudio","pos":[0,0],"size":[930,640],"flags":{},"order":0,"mode":0,"inputs":[{"localized_name":"audio_in","name":"audio_in","type":"AUDIO","link":null},{"localized_name":"name","name":"name","type":"STRING","widget":{"name":"name"},"link":null},{"localized_name":"sequence","name":"sequence","type":"STRING","widget":{"name":"sequence"},"link":null},{"localized_name":"audio","name":"audio","type":"COMBO","widget":{"name":"audio"},"link":null},{"localized_name":"audioUI","name":"audioUI","type":"AUDIO_UI","link":null},{"localized_name":"upload","name":"upload","type":"IMAGEUPLOAD","widget":{"name":"upload"},"link":null}],"outputs":[{"localized_name":"audio","name":"audio","type":"AUDIO","slot_index":0,"links":[1]},{"localized_name":"prefix","label":"文件名前缀","name":"prefix","type":"STRING","slot_index":1,"links":[2,3,4,5]}],"title":"音频 加载/试听","properties":{"Node name for S&R":"FallingTSLoadAudio","ue_properties":{"widget_ue_connectable":{},"version":"7.8","input_ue_unconnectable":{}}},"widgets_values":["","00001",null,"",null,null,null,null],"widgets_values_named":{"name":"","sequence":"00001","刷新序列号":null,"audio":"","Auto-refresh after generation":null,"refresh":null,"audioUI":null,"upload":null}},{"id":2,"type":"FallingTSAudioTrim","pos":[1010,0],"size":[660,660],"flags":{},"order":1,"mode":0,"inputs":[{"localized_name":"audio","name":"audio","type":"AUDIO","link":1},{"localized_name":"filename_prefix","name":"filename_prefix","type":"STRING","widget":{"name":"filename_prefix"},"link":2},{"localized_name":"filename_suffix","name":"filename_suffix","type":"STRING","widget":{"name":"filename_suffix"},"link":null},{"localized_name":"format","name":"format","type":"COMBO","widget":{"name":"format"},"link":null},{"localized_name":"quality","name":"quality","type":"COMBO","widget":{"name":"quality"},"link":null}],"outputs":[{"localized_name":"audio","name":"audio","type":"AUDIO","slot_index":0,"links":[]},{"label":"截段 1","localized_name":"截段 1","name":"audio_1","type":"AUDIO","slot_index":1,"links":[6]},{"label":"截段 2","localized_name":"截段 2","name":"audio_2","type":"AUDIO","slot_index":2,"links":[7]},{"label":"截段 3","localized_name":"截段 3","name":"audio_3","type":"AUDIO","slot_index":3,"links":[8]}],"properties":{"Node name for S&R":"FallingTSAudioTrim","ue_properties":{"widget_ue_connectable":{"filename_prefix":true,"filename_suffix":true,"format":true,"quality":true},"version":"7.8","input_ue_unconnectable":{}}},"widgets_values":["","","mp3","320k",null,"",null,null,3,""],"widgets_values_named":{"filename_prefix":"","filename_suffix":"","format":"mp3","quality":"320k","保存":null,"waveform":"","截段":null,"完成":null,"输出段数":3,"segment_list":""},"title":"截取音频"},{"id":3,"type":"PreviewAudioSave","pos":[1750,0],"size":[660,660],"flags":{},"order":2,"mode":0,"inputs":[{"localized_name":"audio","name":"audio","type":"AUDIO","link":6},{"localized_name":"filename_prefix","name":"filename_prefix","type":"STRING","widget":{"name":"filename_prefix"},"link":3},{"localized_name":"filename_suffix","name":"filename_suffix","type":"STRING","widget":{"name":"filename_suffix"},"link":null},{"localized_name":"format","name":"format","type":"COMBO","widget":{"name":"format"},"link":null},{"localized_name":"quality","name":"quality","type":"COMBO","widget":{"name":"quality"},"link":null}],"outputs":[{"localized_name":"audio","name":"audio","type":"AUDIO","slot_index":0,"links":[]}],"title":"截取音频预览-1","properties":{"Node name for S&R":"PreviewAudioSave","ue_properties":{"widget_ue_connectable":{"filename_prefix":true,"filename_suffix":true,"format":true,"quality":true},"version":"7.8","input_ue_unconnectable":{}}},"widgets_values":["","","mp3","320k",null,""],"widgets_values_named":{"filename_prefix":"","filename_suffix":"","format":"mp3","quality":"320k","保存":null,"player":""}},{"id":4,"type":"PreviewAudioSave","pos":[1750,720],"size":[660,660],"flags":{},"order":3,"mode":0,"inputs":[{"localized_name":"audio","name":"audio","type":"AUDIO","link":7},{"localized_name":"filename_prefix","name":"filename_prefix","type":"STRING","widget":{"name":"filename_prefix"},"link":4},{"localized_name":"filename_suffix","name":"filename_suffix","type":"STRING","widget":{"name":"filename_suffix"},"link":null},{"localized_name":"format","name":"format","type":"COMBO","widget":{"name":"format"},"link":null},{"localized_name":"quality","name":"quality","type":"COMBO","widget":{"name":"quality"},"link":null}],"outputs":[{"localized_name":"audio","name":"audio","type":"AUDIO","slot_index":0,"links":[]}],"title":"截取音频预览-2","properties":{"Node name for S&R":"PreviewAudioSave","ue_properties":{"widget_ue_connectable":{"filename_prefix":true,"filename_suffix":true,"format":true,"quality":true},"version":"7.8","input_ue_unconnectable":{}}},"widgets_values":["","","mp3","320k",null,""],"widgets_values_named":{"filename_prefix":"","filename_suffix":"","format":"mp3","quality":"320k","保存":null,"player":""}},{"id":5,"type":"PreviewAudioSave","pos":[1750,1440],"size":[660,660],"flags":{},"order":4,"mode":0,"inputs":[{"localized_name":"audio","name":"audio","type":"AUDIO","link":8},{"localized_name":"filename_prefix","name":"filename_prefix","type":"STRING","widget":{"name":"filename_prefix"},"link":5},{"localized_name":"filename_suffix","name":"filename_suffix","type":"STRING","widget":{"name":"filename_suffix"},"link":null},{"localized_name":"format","name":"format","type":"COMBO","widget":{"name":"format"},"link":null},{"localized_name":"quality","name":"quality","type":"COMBO","widget":{"name":"quality"},"link":null}],"outputs":[{"localized_name":"audio","name":"audio","type":"AUDIO","slot_index":0,"links":[]}],"title":"截取音频预览-3","properties":{"Node name for S&R":"PreviewAudioSave","ue_properties":{"widget_ue_connectable":{"filename_prefix":true,"filename_suffix":true,"format":true,"quality":true},"version":"7.8","input_ue_unconnectable":{}}},"widgets_values":["","","mp3","320k",null,""],"widgets_values_named":{"filename_prefix":"","filename_suffix":"","format":"mp3","quality":"320k","保存":null,"player":""}},{"id":6,"type":"MarkdownNote","pos":[-600,0],"size":[520,760],"flags":{},"order":5,"mode":0,"inputs":[],"outputs":[],"title":"使用说明","properties":{"Node name for S&R":"MarkdownNote","ue_properties":{"widget_ue_connectable":{},"version":"7.8","input_ue_unconnectable":{}}},"widgets_values":["## 截取声音\n\n- 「加载音频」(FallingTSLoadAudio) 自己就是起点: 在它的下拉里选 output 里的音频(点「刷新」重扫候选)\n- 加载音频直接输出 audio(节点内可试听)\n- 音频进「截取音频」: 波形上拖两侧把手选区 → 点「截段」累积(可多段) → 点「完成」输出 截段 1/2/3\n- 每段各接一个「截取音频预览」, 可试听并点「保存」落盘; 段数不够时把该节点的「输出段数」调大即可\n- 文件名前缀 = 加载音频的「文件名前缀」输出(序列号_名称, 一条线分发给截取音频与三个预览)\n- 本工作流不读数据表"],"widgets_values_named":{"text":"## 截取声音\n\n- 「加载音频」(FallingTSLoadAudio) 自己就是起点: 在它的下拉里选 output 里的音频(点「刷新」重扫候选)\n- 加载音频直接输出 audio(节点内可试听)\n- 音频进「截取音频」: 波形上拖两侧把手选区 → 点「截段」累积(可多段) → 点「完成」输出 截段 1/2/3\n- 每段各接一个「截取音频预览」, 可试听并点「保存」落盘; 段数不够时把该节点的「输出段数」调大即可\n- 文件名前缀 = 加载音频的「文件名前缀」输出(序列号_名称, 一条线分发给截取音频与三个预览)\n- 本工作流不读数据表"},"color":"#222","bgcolor":"#000"}],"links":[[1,1,0,2,0,"AUDIO"],[2,1,1,2,1,"STRING"],[3,1,1,3,1,"STRING"],[4,1,1,4,1,"STRING"],[5,1,1,5,1,"STRING"],[6,2,1,3,0,"AUDIO"],[7,2,2,4,0,"AUDIO"],[8,2,3,5,0,"AUDIO"]],"groups":[],"config":{},"extra":{"ds":{"scale":0.55,"offset":[1100,700]},"ue_links":[]},"version":0.4}
+{
+  "id": "6e637f4d-9028-4daa-8d32-6d27c3d1a281",
+  "revision": 0,
+  "last_node_id": 6,
+  "last_link_id": 8,
+  "nodes": [
+    {
+      "id": 1,
+      "type": "FallingTSLoadAudio",
+      "pos": [
+        640,
+        40
+      ],
+      "size": [
+        930,
+        640
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "audio_in",
+          "name": "audio_in",
+          "type": "AUDIO",
+          "link": null
+        },
+        {
+          "localized_name": "name",
+          "name": "name",
+          "type": "STRING",
+          "widget": {
+            "name": "name"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "sequence",
+          "name": "sequence",
+          "type": "STRING",
+          "widget": {
+            "name": "sequence"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "audio",
+          "name": "audio",
+          "type": "COMBO",
+          "widget": {
+            "name": "audio"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "audioUI",
+          "name": "audioUI",
+          "type": "AUDIO_UI",
+          "link": null
+        },
+        {
+          "localized_name": "upload",
+          "name": "upload",
+          "type": "IMAGEUPLOAD",
+          "widget": {
+            "name": "upload"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "audio",
+          "name": "audio",
+          "type": "AUDIO",
+          "slot_index": 0,
+          "links": [
+            1
+          ]
+        },
+        {
+          "localized_name": "prefix",
+          "label": "文件名前缀",
+          "name": "prefix",
+          "type": "STRING",
+          "slot_index": 1,
+          "links": [
+            2,
+            3,
+            4,
+            5
+          ]
+        }
+      ],
+      "title": "音频 加载/试听",
+      "properties": {
+        "Node name for S&R": "FallingTSLoadAudio",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "",
+        "00001",
+        null,
+        "",
+        null,
+        null,
+        null,
+        null
+      ],
+      "widgets_values_named": {
+        "name": "",
+        "sequence": "00001",
+        "刷新序列号": null,
+        "audio": "",
+        "Auto-refresh after generation": null,
+        "refresh": null,
+        "audioUI": null,
+        "upload": null
+      }
+    },
+    {
+      "id": 2,
+      "type": "FallingTSAudioTrim",
+      "pos": [
+        1650,
+        40
+      ],
+      "size": [
+        660,
+        660
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "audio",
+          "name": "audio",
+          "type": "AUDIO",
+          "link": 1
+        },
+        {
+          "localized_name": "filename_prefix",
+          "name": "filename_prefix",
+          "type": "STRING",
+          "widget": {
+            "name": "filename_prefix"
+          },
+          "link": 2
+        },
+        {
+          "localized_name": "filename_suffix",
+          "name": "filename_suffix",
+          "type": "STRING",
+          "widget": {
+            "name": "filename_suffix"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "format",
+          "name": "format",
+          "type": "COMBO",
+          "widget": {
+            "name": "format"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "quality",
+          "name": "quality",
+          "type": "COMBO",
+          "widget": {
+            "name": "quality"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "audio",
+          "name": "audio",
+          "type": "AUDIO",
+          "slot_index": 0,
+          "links": []
+        },
+        {
+          "label": "截段 1",
+          "localized_name": "截段 1",
+          "name": "audio_1",
+          "type": "AUDIO",
+          "slot_index": 1,
+          "links": [
+            6
+          ]
+        },
+        {
+          "label": "截段 2",
+          "localized_name": "截段 2",
+          "name": "audio_2",
+          "type": "AUDIO",
+          "slot_index": 2,
+          "links": [
+            7
+          ]
+        },
+        {
+          "label": "截段 3",
+          "localized_name": "截段 3",
+          "name": "audio_3",
+          "type": "AUDIO",
+          "slot_index": 3,
+          "links": [
+            8
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "FallingTSAudioTrim",
+        "ue_properties": {
+          "widget_ue_connectable": {
+            "filename_prefix": true,
+            "filename_suffix": true,
+            "format": true,
+            "quality": true
+          },
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "",
+        "",
+        "mp3",
+        "320k",
+        null,
+        "",
+        null,
+        null,
+        3,
+        ""
+      ],
+      "widgets_values_named": {
+        "filename_prefix": "",
+        "filename_suffix": "",
+        "format": "mp3",
+        "quality": "320k",
+        "保存": null,
+        "waveform": "",
+        "截段": null,
+        "完成": null,
+        "输出段数": 3,
+        "segment_list": ""
+      },
+      "title": "截取音频"
+    },
+    {
+      "id": 3,
+      "type": "PreviewAudioSave",
+      "pos": [
+        2390,
+        40
+      ],
+      "size": [
+        660,
+        660
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "audio",
+          "name": "audio",
+          "type": "AUDIO",
+          "link": 6
+        },
+        {
+          "localized_name": "filename_prefix",
+          "name": "filename_prefix",
+          "type": "STRING",
+          "widget": {
+            "name": "filename_prefix"
+          },
+          "link": 3
+        },
+        {
+          "localized_name": "filename_suffix",
+          "name": "filename_suffix",
+          "type": "STRING",
+          "widget": {
+            "name": "filename_suffix"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "format",
+          "name": "format",
+          "type": "COMBO",
+          "widget": {
+            "name": "format"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "quality",
+          "name": "quality",
+          "type": "COMBO",
+          "widget": {
+            "name": "quality"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "audio",
+          "name": "audio",
+          "type": "AUDIO",
+          "slot_index": 0,
+          "links": []
+        }
+      ],
+      "title": "截取音频预览-1",
+      "properties": {
+        "Node name for S&R": "PreviewAudioSave",
+        "ue_properties": {
+          "widget_ue_connectable": {
+            "filename_prefix": true,
+            "filename_suffix": true,
+            "format": true,
+            "quality": true
+          },
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "",
+        "",
+        "mp3",
+        "320k",
+        null,
+        ""
+      ],
+      "widgets_values_named": {
+        "filename_prefix": "",
+        "filename_suffix": "",
+        "format": "mp3",
+        "quality": "320k",
+        "保存": null,
+        "player": ""
+      }
+    },
+    {
+      "id": 4,
+      "type": "PreviewAudioSave",
+      "pos": [
+        2390,
+        760
+      ],
+      "size": [
+        660,
+        660
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "audio",
+          "name": "audio",
+          "type": "AUDIO",
+          "link": 7
+        },
+        {
+          "localized_name": "filename_prefix",
+          "name": "filename_prefix",
+          "type": "STRING",
+          "widget": {
+            "name": "filename_prefix"
+          },
+          "link": 4
+        },
+        {
+          "localized_name": "filename_suffix",
+          "name": "filename_suffix",
+          "type": "STRING",
+          "widget": {
+            "name": "filename_suffix"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "format",
+          "name": "format",
+          "type": "COMBO",
+          "widget": {
+            "name": "format"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "quality",
+          "name": "quality",
+          "type": "COMBO",
+          "widget": {
+            "name": "quality"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "audio",
+          "name": "audio",
+          "type": "AUDIO",
+          "slot_index": 0,
+          "links": []
+        }
+      ],
+      "title": "截取音频预览-2",
+      "properties": {
+        "Node name for S&R": "PreviewAudioSave",
+        "ue_properties": {
+          "widget_ue_connectable": {
+            "filename_prefix": true,
+            "filename_suffix": true,
+            "format": true,
+            "quality": true
+          },
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "",
+        "",
+        "mp3",
+        "320k",
+        null,
+        ""
+      ],
+      "widgets_values_named": {
+        "filename_prefix": "",
+        "filename_suffix": "",
+        "format": "mp3",
+        "quality": "320k",
+        "保存": null,
+        "player": ""
+      }
+    },
+    {
+      "id": 5,
+      "type": "PreviewAudioSave",
+      "pos": [
+        2390,
+        1480
+      ],
+      "size": [
+        660,
+        660
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "audio",
+          "name": "audio",
+          "type": "AUDIO",
+          "link": 8
+        },
+        {
+          "localized_name": "filename_prefix",
+          "name": "filename_prefix",
+          "type": "STRING",
+          "widget": {
+            "name": "filename_prefix"
+          },
+          "link": 5
+        },
+        {
+          "localized_name": "filename_suffix",
+          "name": "filename_suffix",
+          "type": "STRING",
+          "widget": {
+            "name": "filename_suffix"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "format",
+          "name": "format",
+          "type": "COMBO",
+          "widget": {
+            "name": "format"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "quality",
+          "name": "quality",
+          "type": "COMBO",
+          "widget": {
+            "name": "quality"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "audio",
+          "name": "audio",
+          "type": "AUDIO",
+          "slot_index": 0,
+          "links": []
+        }
+      ],
+      "title": "截取音频预览-3",
+      "properties": {
+        "Node name for S&R": "PreviewAudioSave",
+        "ue_properties": {
+          "widget_ue_connectable": {
+            "filename_prefix": true,
+            "filename_suffix": true,
+            "format": true,
+            "quality": true
+          },
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "",
+        "",
+        "mp3",
+        "320k",
+        null,
+        ""
+      ],
+      "widgets_values_named": {
+        "filename_prefix": "",
+        "filename_suffix": "",
+        "format": "mp3",
+        "quality": "320k",
+        "保存": null,
+        "player": ""
+      }
+    },
+    {
+      "id": 6,
+      "type": "MarkdownNote",
+      "pos": [
+        40,
+        40
+      ],
+      "size": [
+        520,
+        760
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "title": "使用说明",
+      "properties": {
+        "Node name for S&R": "MarkdownNote",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "## 截取声音\n\n- 「加载音频」(FallingTSLoadAudio) 自己就是起点: 在它的下拉里选 output 里的音频(点「刷新」重扫候选)\n- 加载音频直接输出 audio(节点内可试听)\n- 音频进「截取音频」: 波形上拖两侧把手选区 → 点「截段」累积(可多段) → 点「完成」输出 截段 1/2/3\n- 每段各接一个「截取音频预览」, 可试听并点「保存」落盘; 段数不够时把该节点的「输出段数」调大即可\n- 文件名前缀 = 加载音频的「文件名前缀」输出(序列号_名称, 一条线分发给截取音频与三个预览)\n- 本工作流不读数据表"
+      ],
+      "widgets_values_named": {
+        "text": "## 截取声音\n\n- 「加载音频」(FallingTSLoadAudio) 自己就是起点: 在它的下拉里选 output 里的音频(点「刷新」重扫候选)\n- 加载音频直接输出 audio(节点内可试听)\n- 音频进「截取音频」: 波形上拖两侧把手选区 → 点「截段」累积(可多段) → 点「完成」输出 截段 1/2/3\n- 每段各接一个「截取音频预览」, 可试听并点「保存」落盘; 段数不够时把该节点的「输出段数」调大即可\n- 文件名前缀 = 加载音频的「文件名前缀」输出(序列号_名称, 一条线分发给截取音频与三个预览)\n- 本工作流不读数据表"
+      },
+      "color": "#222",
+      "bgcolor": "#000"
+    }
+  ],
+  "links": [
+    [
+      1,
+      1,
+      0,
+      2,
+      0,
+      "AUDIO"
+    ],
+    [
+      2,
+      1,
+      1,
+      2,
+      1,
+      "STRING"
+    ],
+    [
+      3,
+      1,
+      1,
+      3,
+      1,
+      "STRING"
+    ],
+    [
+      4,
+      1,
+      1,
+      4,
+      1,
+      "STRING"
+    ],
+    [
+      5,
+      1,
+      1,
+      5,
+      1,
+      "STRING"
+    ],
+    [
+      6,
+      2,
+      1,
+      3,
+      0,
+      "AUDIO"
+    ],
+    [
+      7,
+      2,
+      2,
+      4,
+      0,
+      "AUDIO"
+    ],
+    [
+      8,
+      2,
+      3,
+      5,
+      0,
+      "AUDIO"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.55,
+      "offset": [
+        1100,
+        700
+      ]
+    },
+    "ue_links": []
+  },
+  "version": 0.4
+}

@@ -1,1 +1,946 @@
-{"id":"34322a1e-acb4-47ac-bce0-4d5f9e00fba1","revision":0,"last_node_id":9,"last_link_id":11,"nodes":[{"id":1,"type":"FallingTSMarkDownTable","pos":[0,0],"size":[480,574.5625],"flags":{},"order":0,"mode":0,"inputs":[{"localized_name":"data","name":"data","type":"FALLINGTS_MD_TABLE","widget":{"name":"data"},"link":null}],"outputs":[{"name":"ID","type":"STRING","slot_index":0,"links":[11]},{"name":"原人声","type":"AUDIO","slot_index":1,"links":[3,4]},{"name":"内容","type":"STRING","slot_index":2,"links":[7]},{"name":"情绪","type":"STRING","slot_index":3,"links":[8]},{"name":"整行数据","type":"STRING","links":[]}],"title":"MD 数据表 (参考人声)","properties":{"Node name for S&R":"FallingTSMarkDownTable","ue_properties":{"widget_ue_connectable":{"data":true},"version":"7.8","input_ue_unconnectable":{}}},"widgets_values":[{"md_path":"stories/七纹刻印/0064_参考人声.md","fields":[{"name":"ID","type":"STRING"},{"name":"原人声","type":"AUDIO"},{"name":"内容","type":"TEXT"},{"name":"情绪","type":"TEXT"}],"selected":{"id":"参考人声-人物-陈落台词","values":{"ID":"参考人声-人物-陈落台词","原人声":"@{文生人声_人物_陈落独白}","内容":"又来，三个晚上了，连续三天同一个时间醒，是不是有点不正常？","情绪":"困惑不安"}}}],"widgets_values_named":{"data":{"md_path":"stories/七纹刻印/0064_参考人声.md","fields":[{"name":"ID","type":"STRING"},{"name":"原人声","type":"AUDIO"},{"name":"内容","type":"TEXT"},{"name":"情绪","type":"TEXT"}],"selected":{"id":"参考人声-人物-陈落台词","values":{"ID":"参考人声-人物-陈落台词","原人声":"@{文生人声_人物_陈落独白}","内容":"又来，三个晚上了，连续三天同一个时间醒，是不是有点不正常？","情绪":"困惑不安"}}}}},{"id":2,"type":"Qwen3TTSLoader","pos":[540,200],"size":[410,200],"flags":{},"order":1,"mode":0,"inputs":[{"localized_name":"model_repo","name":"model_repo","type":"COMBO","widget":{"name":"model_repo"},"link":null},{"localized_name":"download_source","name":"download_source","type":"COMBO","widget":{"name":"download_source"},"link":null},{"localized_name":"precision","name":"precision","type":"COMBO","widget":{"name":"precision"},"link":null},{"localized_name":"attn_mode","name":"attn_mode","type":"COMBO","widget":{"name":"attn_mode"},"link":null},{"localized_name":"auto_download","name":"auto_download","type":"BOOLEAN","widget":{"name":"auto_download"},"link":null}],"outputs":[{"localized_name":"model_obj","name":"model_obj","type":"QWEN3_MODEL","links":[1,2]}],"properties":{"Node name for S&R":"Qwen3TTSLoader","ue_properties":{"widget_ue_connectable":{"model_repo":true,"download_source":true,"precision":true,"attn_mode":true,"auto_download":true},"version":"7.8","input_ue_unconnectable":{}}},"widgets_values":["Qwen/Qwen3-TTS-12Hz-1.7B-Base","ModelScope","bf16","sdpa",true],"widgets_values_named":{"model_repo":"Qwen/Qwen3-TTS-12Hz-1.7B-Base","download_source":"ModelScope","precision":"bf16","attn_mode":"sdpa","auto_download":true}},{"id":4,"type":"Qwen3TTSSenseVoiceASR","pos":[540,0],"size":[380,140],"flags":{},"order":3,"mode":0,"inputs":[{"localized_name":"audio","name":"audio","type":"AUDIO","link":4},{"localized_name":"model_id","name":"model_id","type":"COMBO","widget":{"name":"model_id"},"link":null},{"localized_name":"language","name":"language","type":"COMBO","widget":{"name":"language"},"link":null}],"outputs":[{"localized_name":"text","name":"text","type":"STRING","links":[5]},{"localized_name":"suggested_instruct","name":"suggested_instruct","type":"STRING","links":[]}],"properties":{"Node name for S&R":"Qwen3TTSSenseVoiceASR","ue_properties":{"widget_ue_connectable":{"model_id":true,"language":true},"version":"7.8","input_ue_unconnectable":{}}},"widgets_values":["iic/SenseVoiceSmall","zn"],"widgets_values_named":{"model_id":"iic/SenseVoiceSmall","language":"zn"}},{"id":5,"type":"Qwen3TTSVoiceClonePrompt","pos":[1160,0],"size":[400,200],"flags":{},"order":4,"mode":0,"inputs":[{"localized_name":"model_obj","name":"model_obj","type":"QWEN3_MODEL","link":1},{"localized_name":"ref_audio","name":"ref_audio","type":"AUDIO","link":3},{"localized_name":"x_vector_only","name":"x_vector_only","type":"BOOLEAN","widget":{"name":"x_vector_only"},"link":null},{"localized_name":"ref_text","name":"ref_text","shape":7,"type":"STRING","widget":{"name":"ref_text"},"link":5}],"outputs":[{"localized_name":"voice_clone_prompt","name":"voice_clone_prompt","type":"QWEN3_PROMPT","links":[6]}],"properties":{"Node name for S&R":"Qwen3TTSVoiceClonePrompt","ue_properties":{"widget_ue_connectable":{"x_vector_only":true,"ref_text":true},"version":"7.8","input_ue_unconnectable":{}}},"widgets_values":[false,""],"widgets_values_named":{"x_vector_only":false,"ref_text":""}},{"id":6,"type":"Qwen3TTSVoiceClone","pos":[1620,0],"size":[400,680],"flags":{},"order":5,"mode":0,"inputs":[{"localized_name":"model_obj","name":"model_obj","type":"QWEN3_MODEL","link":2},{"localized_name":"ref_audio","name":"ref_audio","shape":7,"type":"AUDIO","link":null},{"localized_name":"voice_clone_prompt","name":"voice_clone_prompt","shape":7,"type":"QWEN3_PROMPT","link":6},{"localized_name":"target_text","name":"target_text","type":"STRING","widget":{"name":"target_text"},"link":7},{"localized_name":"target_language","name":"target_language","type":"COMBO","widget":{"name":"target_language"},"link":null},{"localized_name":"output_mode","name":"output_mode","type":"COMBO","widget":{"name":"output_mode"},"link":null},{"localized_name":"seed","name":"seed","type":"INT","widget":{"name":"seed"},"link":null},{"localized_name":"ref_text","name":"ref_text","shape":7,"type":"STRING","widget":{"name":"ref_text"},"link":null},{"localized_name":"instruct","name":"instruct","shape":7,"type":"STRING","widget":{"name":"instruct"},"link":8},{"localized_name":"enable_x_vector_instant","name":"enable_x_vector_instant","shape":7,"type":"BOOLEAN","widget":{"name":"enable_x_vector_instant"},"link":null},{"localized_name":"max_new_tokens","name":"max_new_tokens","shape":7,"type":"INT","widget":{"name":"max_new_tokens"},"link":null},{"localized_name":"temperature","name":"temperature","shape":7,"type":"FLOAT","widget":{"name":"temperature"},"link":null},{"localized_name":"top_p","name":"top_p","shape":7,"type":"FLOAT","widget":{"name":"top_p"},"link":null},{"localized_name":"top_k","name":"top_k","shape":7,"type":"INT","widget":{"name":"top_k"},"link":null},{"localized_name":"repetition_penalty","name":"repetition_penalty","shape":7,"type":"FLOAT","widget":{"name":"repetition_penalty"},"link":null},{"localized_name":"subtalker_temperature","name":"subtalker_temperature","shape":7,"type":"FLOAT","widget":{"name":"subtalker_temperature"},"link":null},{"localized_name":"subtalker_top_p","name":"subtalker_top_p","shape":7,"type":"FLOAT","widget":{"name":"subtalker_top_p"},"link":null},{"localized_name":"subtalker_top_k","name":"subtalker_top_k","shape":7,"type":"INT","widget":{"name":"subtalker_top_k"},"link":null}],"outputs":[{"localized_name":"音频","name":"AUDIO","type":"AUDIO","links":[9]}],"properties":{"Node name for S&R":"Qwen3TTSVoiceClone","ue_properties":{"widget_ue_connectable":{"target_text":true,"target_language":true,"output_mode":true,"seed":true,"ref_text":true,"instruct":true,"enable_x_vector_instant":true,"max_new_tokens":true,"temperature":true,"top_p":true,"top_k":true,"repetition_penalty":true,"subtalker_temperature":true,"subtalker_top_p":true,"subtalker_top_k":true},"version":"7.8","input_ue_unconnectable":{}}},"widgets_values":["唉,[pause:0.3]第二百章...该写什么来着","Chinese","Concatenate (Merge)",0,"fixed","","语气疲惫消沉,声音低哑发虚,语速缓慢;[pause:0.4]开头先叹一口气唉;[pause:0.3]说到该写什么来着时尾音拖长上扬,带着苦笑和自嘲,像无奈地摇头,声音渐渐变小变弱",false,2048,0.9,1,50,1.05,0.9,1,50],"widgets_values_named":{"target_text":"唉,[pause:0.3]第二百章...该写什么来着","target_language":"Chinese","output_mode":"Concatenate (Merge)","seed":0,"control_after_generate":"fixed","ref_text":"","instruct":"语气疲惫消沉,声音低哑发虚,语速缓慢;[pause:0.4]开头先叹一口气唉;[pause:0.3]说到该写什么来着时尾音拖长上扬,带着苦笑和自嘲,像无奈地摇头,声音渐渐变小变弱","enable_x_vector_instant":false,"max_new_tokens":2048,"temperature":0.9,"top_p":1,"top_k":50,"repetition_penalty":1.05,"subtalker_temperature":0.9,"subtalker_top_p":1,"subtalker_top_k":50}},{"id":7,"type":"PreviewAudio","pos":[2080,0],"size":[260,130],"flags":{},"order":6,"mode":0,"inputs":[{"localized_name":"音频","name":"audio","type":"AUDIO","link":9},{"localized_name":"音频UI","name":"audioUI","type":"AUDIO_UI","widget":{"name":"audioUI"},"link":null}],"outputs":[{"localized_name":"audio","name":"audio","type":"AUDIO","slot_index":0,"links":[10]}],"properties":{"Node name for S&R":"PreviewAudio","cnr_id":"comfy-core","ver":"0.21.1","enableTabs":false,"tabWidth":65,"tabXOffset":10,"hasSecondTab":false,"secondTabText":"Send Back","secondTabOffset":80,"secondTabWidth":65,"ue_properties":{"widget_ue_connectable":{"audioUI":true},"version":"7.8","input_ue_unconnectable":{}}},"widgets_values":[],"widgets_values_named":{}},{"id":8,"type":"SaveAudioAdvanced","pos":[2400,0],"size":[270,177.984375],"flags":{},"order":7,"mode":0,"inputs":[{"localized_name":"audio","name":"audio","type":"AUDIO","link":10},{"localized_name":"filename_prefix","name":"filename_prefix","type":"STRING","widget":{"name":"filename_prefix"},"link":11},{"localized_name":"format","name":"format","type":"COMFY_DYNAMICCOMBO_V3","widget":{"name":"format"},"link":null},{"localized_name":"quality","name":"format.quality","type":"COMBO","widget":{"name":"format.quality"},"link":null},{"localized_name":"audioUI","name":"audioUI","type":"AUDIO_UI","widget":{"name":"audioUI"},"link":null}],"outputs":[{"localized_name":"audio","name":"audio","type":"AUDIO","slot_index":0,"links":[]}],"title":"保存音频","properties":{"Node name for S&R":"SaveAudioAdvanced","ue_properties":{"widget_ue_connectable":{"filename_prefix":true},"version":"7.8","input_ue_unconnectable":{}}},"widgets_values":["audio","mp3","320k"],"widgets_values_named":{"filename_prefix":"audio","format":"mp3","format.quality":"320k"}},{"id":9,"type":"MarkdownNote","pos":[540,460],"size":[560,900],"flags":{},"order":2,"mode":0,"inputs":[],"outputs":[],"title":"使用说明","properties":{"Node name for S&R":"MarkdownNote","ue_properties":{"widget_ue_connectable":{},"version":"7.8","input_ue_unconnectable":{}}},"widgets_values":["## 参考人声 (Qwen3-TTS VoiceClone)\n\n- 载入 原人声 作参考音色 (3-15 秒干净人声, 单一中性情绪)\n- 语音识别自动转写参考文本; 内容 = 要说的文本; 情绪 = 具体行为/声学描述\n- 模型: Qwen3-TTS-12Hz-1.7B-Base\n- 文件名前缀 = MD 表格 ID"],"widgets_values_named":{"text":"## 参考人声 (Qwen3-TTS VoiceClone)\n\n- 载入 原人声 作参考音色 (3-15 秒干净人声, 单一中性情绪)\n- 语音识别自动转写参考文本; 内容 = 要说的文本; 情绪 = 具体行为/声学描述\n- 模型: Qwen3-TTS-12Hz-1.7B-Base\n- 文件名前缀 = MD 表格 ID"},"color":"#222","bgcolor":"#000"}],"links":[[1,2,0,5,0,"QWEN3_MODEL"],[2,2,0,6,0,"QWEN3_MODEL"],[3,1,1,5,1,"AUDIO"],[4,1,1,4,0,"AUDIO"],[5,4,0,5,3,"STRING"],[6,5,0,6,2,"QWEN3_PROMPT"],[7,1,2,6,3,"STRING"],[8,1,3,6,8,"STRING"],[9,6,0,7,0,"AUDIO"],[10,7,0,8,0,"AUDIO"],[11,1,0,8,1,"STRING"]],"groups":[],"config":{},"extra":{"ds":{"scale":3.417187499999999,"offset":[-1531.4951989026065,-47.346593507087334]},"ue_links":[]},"version":0.4}
+{
+  "id": "34322a1e-acb4-47ac-bce0-4d5f9e00fba1",
+  "revision": 0,
+  "last_node_id": 9,
+  "last_link_id": 11,
+  "nodes": [
+    {
+      "id": 1,
+      "type": "FallingTSMarkDownTable",
+      "pos": [
+        680,
+        40
+      ],
+      "size": [
+        480,
+        575
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "data",
+          "name": "data",
+          "type": "FALLINGTS_MD_TABLE",
+          "widget": {
+            "name": "data"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "ID",
+          "type": "STRING",
+          "slot_index": 0,
+          "links": [
+            11
+          ]
+        },
+        {
+          "name": "原人声",
+          "type": "AUDIO",
+          "slot_index": 1,
+          "links": [
+            3,
+            4
+          ]
+        },
+        {
+          "name": "内容",
+          "type": "STRING",
+          "slot_index": 2,
+          "links": [
+            7
+          ]
+        },
+        {
+          "name": "情绪",
+          "type": "STRING",
+          "slot_index": 3,
+          "links": [
+            8
+          ]
+        },
+        {
+          "name": "整行数据",
+          "type": "STRING",
+          "links": []
+        }
+      ],
+      "title": "MD 数据表 (参考人声)",
+      "properties": {
+        "Node name for S&R": "FallingTSMarkDownTable",
+        "ue_properties": {
+          "widget_ue_connectable": {
+            "data": true
+          },
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        {
+          "md_path": "stories/七纹刻印/0064_参考人声.md",
+          "fields": [
+            {
+              "name": "ID",
+              "type": "STRING"
+            },
+            {
+              "name": "原人声",
+              "type": "AUDIO"
+            },
+            {
+              "name": "内容",
+              "type": "TEXT"
+            },
+            {
+              "name": "情绪",
+              "type": "TEXT"
+            }
+          ],
+          "selected": {
+            "id": "参考人声-人物-陈落台词",
+            "values": {
+              "ID": "参考人声-人物-陈落台词",
+              "原人声": "@{文生人声_人物_陈落独白}",
+              "内容": "又来，三个晚上了，连续三天同一个时间醒，是不是有点不正常？",
+              "情绪": "困惑不安"
+            }
+          }
+        }
+      ],
+      "widgets_values_named": {
+        "data": {
+          "md_path": "stories/七纹刻印/0064_参考人声.md",
+          "fields": [
+            {
+              "name": "ID",
+              "type": "STRING"
+            },
+            {
+              "name": "原人声",
+              "type": "AUDIO"
+            },
+            {
+              "name": "内容",
+              "type": "TEXT"
+            },
+            {
+              "name": "情绪",
+              "type": "TEXT"
+            }
+          ],
+          "selected": {
+            "id": "参考人声-人物-陈落台词",
+            "values": {
+              "ID": "参考人声-人物-陈落台词",
+              "原人声": "@{文生人声_人物_陈落独白}",
+              "内容": "又来，三个晚上了，连续三天同一个时间醒，是不是有点不正常？",
+              "情绪": "困惑不安"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": 2,
+      "type": "Qwen3TTSLoader",
+      "pos": [
+        1240,
+        40
+      ],
+      "size": [
+        410,
+        334
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "model_repo",
+          "name": "model_repo",
+          "type": "COMBO",
+          "widget": {
+            "name": "model_repo"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "download_source",
+          "name": "download_source",
+          "type": "COMBO",
+          "widget": {
+            "name": "download_source"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "precision",
+          "name": "precision",
+          "type": "COMBO",
+          "widget": {
+            "name": "precision"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "attn_mode",
+          "name": "attn_mode",
+          "type": "COMBO",
+          "widget": {
+            "name": "attn_mode"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "auto_download",
+          "name": "auto_download",
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "auto_download"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "model_obj",
+          "name": "model_obj",
+          "type": "QWEN3_MODEL",
+          "links": [
+            1,
+            2
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "Qwen3TTSLoader",
+        "ue_properties": {
+          "widget_ue_connectable": {
+            "model_repo": true,
+            "download_source": true,
+            "precision": true,
+            "attn_mode": true,
+            "auto_download": true
+          },
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
+        "ModelScope",
+        "bf16",
+        "sdpa",
+        true
+      ],
+      "widgets_values_named": {
+        "model_repo": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
+        "download_source": "ModelScope",
+        "precision": "bf16",
+        "attn_mode": "sdpa",
+        "auto_download": true
+      }
+    },
+    {
+      "id": 4,
+      "type": "Qwen3TTSSenseVoiceASR",
+      "pos": [
+        1240,
+        434
+      ],
+      "size": [
+        380,
+        196
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "audio",
+          "name": "audio",
+          "type": "AUDIO",
+          "link": 4
+        },
+        {
+          "localized_name": "model_id",
+          "name": "model_id",
+          "type": "COMBO",
+          "widget": {
+            "name": "model_id"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "language",
+          "name": "language",
+          "type": "COMBO",
+          "widget": {
+            "name": "language"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "text",
+          "name": "text",
+          "type": "STRING",
+          "links": [
+            5
+          ]
+        },
+        {
+          "localized_name": "suggested_instruct",
+          "name": "suggested_instruct",
+          "type": "STRING",
+          "links": []
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "Qwen3TTSSenseVoiceASR",
+        "ue_properties": {
+          "widget_ue_connectable": {
+            "model_id": true,
+            "language": true
+          },
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "iic/SenseVoiceSmall",
+        "zn"
+      ],
+      "widgets_values_named": {
+        "model_id": "iic/SenseVoiceSmall",
+        "language": "zn"
+      }
+    },
+    {
+      "id": 5,
+      "type": "Qwen3TTSVoiceClonePrompt",
+      "pos": [
+        1730,
+        40
+      ],
+      "size": [
+        400,
+        220
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "model_obj",
+          "name": "model_obj",
+          "type": "QWEN3_MODEL",
+          "link": 1
+        },
+        {
+          "localized_name": "ref_audio",
+          "name": "ref_audio",
+          "type": "AUDIO",
+          "link": 3
+        },
+        {
+          "localized_name": "x_vector_only",
+          "name": "x_vector_only",
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "x_vector_only"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "ref_text",
+          "name": "ref_text",
+          "shape": 7,
+          "type": "STRING",
+          "widget": {
+            "name": "ref_text"
+          },
+          "link": 5
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "voice_clone_prompt",
+          "name": "voice_clone_prompt",
+          "type": "QWEN3_PROMPT",
+          "links": [
+            6
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "Qwen3TTSVoiceClonePrompt",
+        "ue_properties": {
+          "widget_ue_connectable": {
+            "x_vector_only": true,
+            "ref_text": true
+          },
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        false,
+        ""
+      ],
+      "widgets_values_named": {
+        "x_vector_only": false,
+        "ref_text": ""
+      }
+    },
+    {
+      "id": 6,
+      "type": "Qwen3TTSVoiceClone",
+      "pos": [
+        2210,
+        40
+      ],
+      "size": [
+        400,
+        976
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "model_obj",
+          "name": "model_obj",
+          "type": "QWEN3_MODEL",
+          "link": 2
+        },
+        {
+          "localized_name": "ref_audio",
+          "name": "ref_audio",
+          "shape": 7,
+          "type": "AUDIO",
+          "link": null
+        },
+        {
+          "localized_name": "voice_clone_prompt",
+          "name": "voice_clone_prompt",
+          "shape": 7,
+          "type": "QWEN3_PROMPT",
+          "link": 6
+        },
+        {
+          "localized_name": "target_text",
+          "name": "target_text",
+          "type": "STRING",
+          "widget": {
+            "name": "target_text"
+          },
+          "link": 7
+        },
+        {
+          "localized_name": "target_language",
+          "name": "target_language",
+          "type": "COMBO",
+          "widget": {
+            "name": "target_language"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "output_mode",
+          "name": "output_mode",
+          "type": "COMBO",
+          "widget": {
+            "name": "output_mode"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "seed",
+          "name": "seed",
+          "type": "INT",
+          "widget": {
+            "name": "seed"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "ref_text",
+          "name": "ref_text",
+          "shape": 7,
+          "type": "STRING",
+          "widget": {
+            "name": "ref_text"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "instruct",
+          "name": "instruct",
+          "shape": 7,
+          "type": "STRING",
+          "widget": {
+            "name": "instruct"
+          },
+          "link": 8
+        },
+        {
+          "localized_name": "enable_x_vector_instant",
+          "name": "enable_x_vector_instant",
+          "shape": 7,
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "enable_x_vector_instant"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "max_new_tokens",
+          "name": "max_new_tokens",
+          "shape": 7,
+          "type": "INT",
+          "widget": {
+            "name": "max_new_tokens"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "temperature",
+          "name": "temperature",
+          "shape": 7,
+          "type": "FLOAT",
+          "widget": {
+            "name": "temperature"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "top_p",
+          "name": "top_p",
+          "shape": 7,
+          "type": "FLOAT",
+          "widget": {
+            "name": "top_p"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "top_k",
+          "name": "top_k",
+          "shape": 7,
+          "type": "INT",
+          "widget": {
+            "name": "top_k"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "repetition_penalty",
+          "name": "repetition_penalty",
+          "shape": 7,
+          "type": "FLOAT",
+          "widget": {
+            "name": "repetition_penalty"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "subtalker_temperature",
+          "name": "subtalker_temperature",
+          "shape": 7,
+          "type": "FLOAT",
+          "widget": {
+            "name": "subtalker_temperature"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "subtalker_top_p",
+          "name": "subtalker_top_p",
+          "shape": 7,
+          "type": "FLOAT",
+          "widget": {
+            "name": "subtalker_top_p"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "subtalker_top_k",
+          "name": "subtalker_top_k",
+          "shape": 7,
+          "type": "INT",
+          "widget": {
+            "name": "subtalker_top_k"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "音频",
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "links": [
+            9
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "Qwen3TTSVoiceClone",
+        "ue_properties": {
+          "widget_ue_connectable": {
+            "target_text": true,
+            "target_language": true,
+            "output_mode": true,
+            "seed": true,
+            "ref_text": true,
+            "instruct": true,
+            "enable_x_vector_instant": true,
+            "max_new_tokens": true,
+            "temperature": true,
+            "top_p": true,
+            "top_k": true,
+            "repetition_penalty": true,
+            "subtalker_temperature": true,
+            "subtalker_top_p": true,
+            "subtalker_top_k": true
+          },
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "唉,[pause:0.3]第二百章...该写什么来着",
+        "Chinese",
+        "Concatenate (Merge)",
+        0,
+        "fixed",
+        "",
+        "语气疲惫消沉,声音低哑发虚,语速缓慢;[pause:0.4]开头先叹一口气唉;[pause:0.3]说到该写什么来着时尾音拖长上扬,带着苦笑和自嘲,像无奈地摇头,声音渐渐变小变弱",
+        false,
+        2048,
+        0.9,
+        1,
+        50,
+        1.05,
+        0.9,
+        1,
+        50
+      ],
+      "widgets_values_named": {
+        "target_text": "唉,[pause:0.3]第二百章...该写什么来着",
+        "target_language": "Chinese",
+        "output_mode": "Concatenate (Merge)",
+        "seed": 0,
+        "control_after_generate": "fixed",
+        "ref_text": "",
+        "instruct": "语气疲惫消沉,声音低哑发虚,语速缓慢;[pause:0.4]开头先叹一口气唉;[pause:0.3]说到该写什么来着时尾音拖长上扬,带着苦笑和自嘲,像无奈地摇头,声音渐渐变小变弱",
+        "enable_x_vector_instant": false,
+        "max_new_tokens": 2048,
+        "temperature": 0.9,
+        "top_p": 1,
+        "top_k": 50,
+        "repetition_penalty": 1.05,
+        "subtalker_temperature": 0.9,
+        "subtalker_top_p": 1,
+        "subtalker_top_k": 50
+      }
+    },
+    {
+      "id": 7,
+      "type": "PreviewAudio",
+      "pos": [
+        2690,
+        40
+      ],
+      "size": [
+        260,
+        130
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "音频",
+          "name": "audio",
+          "type": "AUDIO",
+          "link": 9
+        },
+        {
+          "localized_name": "音频UI",
+          "name": "audioUI",
+          "type": "AUDIO_UI",
+          "widget": {
+            "name": "audioUI"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "audio",
+          "name": "audio",
+          "type": "AUDIO",
+          "slot_index": 0,
+          "links": [
+            10
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "PreviewAudio",
+        "cnr_id": "comfy-core",
+        "ver": "0.21.1",
+        "enableTabs": false,
+        "tabWidth": 65,
+        "tabXOffset": 10,
+        "hasSecondTab": false,
+        "secondTabText": "Send Back",
+        "secondTabOffset": 80,
+        "secondTabWidth": 65,
+        "ue_properties": {
+          "widget_ue_connectable": {
+            "audioUI": true
+          },
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [],
+      "widgets_values_named": {}
+    },
+    {
+      "id": 8,
+      "type": "SaveAudioAdvanced",
+      "pos": [
+        3030,
+        40
+      ],
+      "size": [
+        270,
+        274
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "audio",
+          "name": "audio",
+          "type": "AUDIO",
+          "link": 10
+        },
+        {
+          "localized_name": "filename_prefix",
+          "name": "filename_prefix",
+          "type": "STRING",
+          "widget": {
+            "name": "filename_prefix"
+          },
+          "link": 11
+        },
+        {
+          "localized_name": "format",
+          "name": "format",
+          "type": "COMFY_DYNAMICCOMBO_V3",
+          "widget": {
+            "name": "format"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "quality",
+          "name": "format.quality",
+          "type": "COMBO",
+          "widget": {
+            "name": "format.quality"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "audioUI",
+          "name": "audioUI",
+          "type": "AUDIO_UI",
+          "widget": {
+            "name": "audioUI"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "audio",
+          "name": "audio",
+          "type": "AUDIO",
+          "slot_index": 0,
+          "links": []
+        }
+      ],
+      "title": "保存音频",
+      "properties": {
+        "Node name for S&R": "SaveAudioAdvanced",
+        "ue_properties": {
+          "widget_ue_connectable": {
+            "filename_prefix": true
+          },
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "audio",
+        "mp3",
+        "320k"
+      ],
+      "widgets_values_named": {
+        "filename_prefix": "audio",
+        "format": "mp3",
+        "format.quality": "320k"
+      }
+    },
+    {
+      "id": 9,
+      "type": "MarkdownNote",
+      "pos": [
+        40,
+        40
+      ],
+      "size": [
+        560,
+        900
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "title": "使用说明",
+      "properties": {
+        "Node name for S&R": "MarkdownNote",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "## 参考人声 (Qwen3-TTS VoiceClone)\n\n- 载入 原人声 作参考音色 (3-15 秒干净人声, 单一中性情绪)\n- 语音识别自动转写参考文本; 内容 = 要说的文本; 情绪 = 具体行为/声学描述\n- 模型: Qwen3-TTS-12Hz-1.7B-Base\n- 文件名前缀 = MD 表格 ID"
+      ],
+      "widgets_values_named": {
+        "text": "## 参考人声 (Qwen3-TTS VoiceClone)\n\n- 载入 原人声 作参考音色 (3-15 秒干净人声, 单一中性情绪)\n- 语音识别自动转写参考文本; 内容 = 要说的文本; 情绪 = 具体行为/声学描述\n- 模型: Qwen3-TTS-12Hz-1.7B-Base\n- 文件名前缀 = MD 表格 ID"
+      },
+      "color": "#222",
+      "bgcolor": "#000"
+    }
+  ],
+  "links": [
+    [
+      1,
+      2,
+      0,
+      5,
+      0,
+      "QWEN3_MODEL"
+    ],
+    [
+      2,
+      2,
+      0,
+      6,
+      0,
+      "QWEN3_MODEL"
+    ],
+    [
+      3,
+      1,
+      1,
+      5,
+      1,
+      "AUDIO"
+    ],
+    [
+      4,
+      1,
+      1,
+      4,
+      0,
+      "AUDIO"
+    ],
+    [
+      5,
+      4,
+      0,
+      5,
+      3,
+      "STRING"
+    ],
+    [
+      6,
+      5,
+      0,
+      6,
+      2,
+      "QWEN3_PROMPT"
+    ],
+    [
+      7,
+      1,
+      2,
+      6,
+      3,
+      "STRING"
+    ],
+    [
+      8,
+      1,
+      3,
+      6,
+      8,
+      "STRING"
+    ],
+    [
+      9,
+      6,
+      0,
+      7,
+      0,
+      "AUDIO"
+    ],
+    [
+      10,
+      7,
+      0,
+      8,
+      0,
+      "AUDIO"
+    ],
+    [
+      11,
+      1,
+      0,
+      8,
+      1,
+      "STRING"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 3.417187499999999,
+      "offset": [
+        -1531.4951989026065,
+        -47.346593507087334
+      ]
+    },
+    "ue_links": []
+  },
+  "version": 0.4
+}

@@ -8,8 +8,8 @@
       "id": 18,
       "type": "FallingTSLoadVideo",
       "pos": [
-        0,
-        346
+        40,
+        40
       ],
       "size": [
         930,
@@ -223,12 +223,12 @@
       "id": 116,
       "type": "FallingTSImageComposite",
       "pos": [
-        1620,
-        0
+        1660,
+        40
       ],
       "size": [
         300,
-        286
+        1432
       ],
       "flags": {},
       "order": 9,
@@ -688,8 +688,8 @@
       "id": 117,
       "type": "AutoSaveImage",
       "pos": [
-        2000,
-        0
+        2040,
+        40
       ],
       "size": [
         1670,
@@ -795,8 +795,8 @@
       "id": 118,
       "type": "AutoSaveImage",
       "pos": [
-        1010,
-        0
+        1050,
+        40
       ],
       "size": [
         530,
@@ -899,8 +899,8 @@
       "id": 119,
       "type": "AutoSaveImage",
       "pos": [
-        1010,
-        610
+        1050,
+        650
       ],
       "size": [
         530,
@@ -1002,8 +1002,8 @@
       "id": 120,
       "type": "AutoSaveImage",
       "pos": [
-        1010,
-        1220
+        1050,
+        1260
       ],
       "size": [
         530,
@@ -1106,8 +1106,8 @@
       "id": 121,
       "type": "AutoSaveImage",
       "pos": [
-        1010,
-        1830
+        1050,
+        1870
       ],
       "size": [
         530,
@@ -1209,8 +1209,8 @@
       "id": 122,
       "type": "AutoSaveImage",
       "pos": [
-        1010,
-        2440
+        1050,
+        2480
       ],
       "size": [
         530,
@@ -1313,8 +1313,8 @@
       "id": 123,
       "type": "AutoSaveImage",
       "pos": [
-        1010,
-        3050
+        1050,
+        3090
       ],
       "size": [
         530,
@@ -1416,8 +1416,8 @@
       "id": 124,
       "type": "AutoSaveImage",
       "pos": [
-        1010,
-        3660
+        1050,
+        3700
       ],
       "size": [
         530,
@@ -1520,8 +1520,8 @@
       "id": 125,
       "type": "AutoSaveImage",
       "pos": [
-        1010,
-        4270
+        1050,
+        4310
       ],
       "size": [
         530,
@@ -1623,12 +1623,12 @@
       "id": 126,
       "type": "FallingTSImageComposite",
       "pos": [
-        1620,
-        346
+        1660,
+        1532
       ],
       "size": [
         300,
-        462
+        1696
       ],
       "flags": {},
       "order": 10,
@@ -2144,8 +2144,8 @@
       "id": 127,
       "type": "AutoSaveImage",
       "pos": [
-        2000,
-        840
+        2040,
+        880
       ],
       "size": [
         1670,

@@ -8,8 +8,8 @@
       "id": 1,
       "type": "FallingTSMarkDownTable",
       "pos": [
-        610,
-        50
+        640,
+        40
       ],
       "size": [
         480,
@@ -480,12 +480,12 @@
       "id": 2,
       "type": "VAELoader",
       "pos": [
-        1180,
-        1470
+        1200,
+        1006
       ],
       "size": [
         270,
-        90
+        118
       ],
       "flags": {},
       "order": 1,
@@ -547,12 +547,12 @@
       "id": 3,
       "type": "VAELoader",
       "pos": [
-        1180,
-        1660
+        1200,
+        1184
       ],
       "size": [
         270,
-        90
+        118
       ],
       "flags": {},
       "order": 2,
@@ -614,12 +614,12 @@
       "id": 4,
       "type": "UNETLoader",
       "pos": [
-        1180,
-        1250
+        1200,
+        488
       ],
       "size": [
         270,
-        120
+        172
       ],
       "flags": {},
       "order": 3,
@@ -682,12 +682,12 @@
       "id": 5,
       "type": "CLIPLoader",
       "pos": [
-        1180,
-        40
+        1200,
+        720
       ],
       "size": [
         270,
-        150
+        226
       ],
       "flags": {},
       "order": 4,
@@ -762,8 +762,8 @@
       "id": 6,
       "type": "MiniMaxH3MemoryEfficientSageAttentionPatch",
       "pos": [
-        1180,
-        290
+        1600,
+        2646
       ],
       "size": [
         330,
@@ -788,7 +788,8 @@
           "slot_index": 0,
           "links": [
             131,
-            254
+            254,
+            277
           ]
         }
       ],
@@ -805,12 +806,12 @@
       "id": 8,
       "type": "LoraLoaderModelOnly",
       "pos": [
-        1180,
-        810
+        2010,
+        404
       ],
       "size": [
         270,
-        120
+        196
       ],
       "flags": {},
       "order": 28,
@@ -876,12 +877,12 @@
       "id": 10,
       "type": "KSamplerSelect",
       "pos": [
-        2820,
-        40
+        1200,
+        1540
       ],
       "size": [
         270,
-        90
+        118
       ],
       "flags": {},
       "order": 5,
@@ -903,7 +904,8 @@
           "name": "SAMPLER",
           "type": "SAMPLER",
           "links": [
-            258
+            258,
+            281
           ]
         }
       ],
@@ -926,12 +928,12 @@
       "id": 11,
       "type": "BasicScheduler",
       "pos": [
-        2820,
-        180
+        3330,
+        40
       ],
       "size": [
         270,
-        150
+        250
       ],
       "flags": {},
       "order": 34,
@@ -1004,12 +1006,12 @@
       "id": 12,
       "type": "RandomNoise",
       "pos": [
-        2820,
-        380
+        1200,
+        280
       ],
       "size": [
         270,
-        90
+        148
       ],
       "flags": {},
       "order": 6,
@@ -1056,12 +1058,12 @@
       "id": 13,
       "type": "BasicGuider",
       "pos": [
-        2820,
-        520
+        6060,
+        40
       ],
       "size": [
         270,
-        90
+        112
       ],
       "flags": {},
       "order": 41,
@@ -1103,7 +1105,7 @@
       "id": 14,
       "type": "SamplerCustomAdvanced",
       "pos": [
-        3140,
+        6410,
         40
       ],
       "size": [
@@ -1175,12 +1177,12 @@
       "id": 15,
       "type": "VAEDecode",
       "pos": [
-        3460,
+        6760,
         40
       ],
       "size": [
-        230,
-        80
+        250,
+        112
       ],
       "flags": {
         "collapsed": false
@@ -1224,12 +1226,12 @@
       "id": 16,
       "type": "VAEDecodeAudio",
       "pos": [
-        3460,
-        170
+        6760,
+        212
       ],
       "size": [
-        230,
-        80
+        250,
+        112
       ],
       "flags": {
         "collapsed": false
@@ -1273,12 +1275,12 @@
       "id": 17,
       "type": "CreateVideo",
       "pos": [
-        3740,
+        7090,
         40
       ],
       "size": [
         270,
-        190
+        328
       ],
       "flags": {},
       "order": 45,
@@ -1372,7 +1374,7 @@
       "id": 18,
       "type": "PreviewVideo",
       "pos": [
-        4060,
+        7440,
         40
       ],
       "size": [
@@ -1446,12 +1448,12 @@
       "id": 23,
       "type": "MiniMaxH3SigmaShift",
       "pos": [
-        1180,
-        1030
+        2550,
+        570
       ],
       "size": [
         270,
-        120
+        196
       ],
       "flags": {},
       "order": 30,
@@ -1517,12 +1519,12 @@
       "id": 24,
       "type": "EasyCache",
       "pos": [
-        1180,
-        480
+        2010,
+        40
       ],
       "size": [
         270,
-        230
+        304
       ],
       "flags": {},
       "order": 27,
@@ -1608,8 +1610,8 @@
       "id": 22,
       "type": "MarkdownNote",
       "pos": [
-        60,
-        50
+        40,
+        40
       ],
       "size": [
         520,
@@ -1641,12 +1643,12 @@
       "id": 20,
       "type": "MiniMaxH3ReferenceToVideo",
       "pos": [
-        1580,
-        40
+        2010,
+        868
       ],
       "size": [
         460,
-        600
+        694
       ],
       "flags": {},
       "order": 18,
@@ -1864,8 +1866,8 @@
       "id": 19,
       "type": "ComfyMathExpression",
       "pos": [
-        1580,
-        700
+        1200,
+        40
       ],
       "size": [
         320,
@@ -1947,7 +1949,7 @@
       "id": 30,
       "type": "ComfyMathExpression",
       "pos": [
-        2090,
+        1600,
         40
       ],
       "size": [
@@ -2029,8 +2031,8 @@
       "id": 31,
       "type": "ComfyMathExpression",
       "pos": [
-        2090,
-        240
+        1600,
+        300
       ],
       "size": [
         320,
@@ -2111,8 +2113,8 @@
       "id": 32,
       "type": "ComfyMathExpression",
       "pos": [
-        2090,
-        440
+        1600,
+        560
       ],
       "size": [
         320,
@@ -2193,8 +2195,8 @@
       "id": 33,
       "type": "ComfyMathExpression",
       "pos": [
-        2090,
-        640
+        1600,
+        820
       ],
       "size": [
         320,
@@ -2275,8 +2277,8 @@
       "id": 34,
       "type": "ComfyMathExpression",
       "pos": [
-        2090,
-        840
+        1600,
+        1080
       ],
       "size": [
         320,
@@ -2357,8 +2359,8 @@
       "id": 35,
       "type": "ComfyMathExpression",
       "pos": [
-        2090,
-        1040
+        1600,
+        1340
       ],
       "size": [
         320,
@@ -2439,8 +2441,8 @@
       "id": 36,
       "type": "ComfyMathExpression",
       "pos": [
-        2090,
-        1240
+        1600,
+        1600
       ],
       "size": [
         320,
@@ -2521,8 +2523,8 @@
       "id": 37,
       "type": "ComfyMathExpression",
       "pos": [
-        2090,
-        1440
+        1600,
+        1860
       ],
       "size": [
         320,
@@ -2596,12 +2598,12 @@
       "id": 40,
       "type": "FallingTSH3AddGuide",
       "pos": [
-        2460,
+        2550,
         40
       ],
       "size": [
         310,
-        190
+        262
       ],
       "flags": {},
       "order": 29,
@@ -2690,12 +2692,12 @@
       "id": 41,
       "type": "FallingTSH3AddGuide",
       "pos": [
-        2460,
-        270
+        2940,
+        40
       ],
       "size": [
         310,
-        190
+        262
       ],
       "flags": {},
       "order": 31,
@@ -2784,12 +2786,12 @@
       "id": 42,
       "type": "FallingTSH3AddGuide",
       "pos": [
-        2460,
-        500
+        3330,
+        350
       ],
       "size": [
         310,
-        190
+        262
       ],
       "flags": {},
       "order": 33,
@@ -2878,12 +2880,12 @@
       "id": 43,
       "type": "FallingTSH3AddGuide",
       "pos": [
-        2460,
-        730
+        3720,
+        40
       ],
       "size": [
         310,
-        190
+        262
       ],
       "flags": {},
       "order": 35,
@@ -2972,12 +2974,12 @@
       "id": 44,
       "type": "FallingTSH3AddGuide",
       "pos": [
-        2460,
-        960
+        4110,
+        40
       ],
       "size": [
         310,
-        190
+        262
       ],
       "flags": {},
       "order": 36,
@@ -3066,12 +3068,12 @@
       "id": 45,
       "type": "FallingTSH3AddGuide",
       "pos": [
-        2460,
-        1190
+        4500,
+        40
       ],
       "size": [
         310,
-        190
+        262
       ],
       "flags": {},
       "order": 37,
@@ -3160,12 +3162,12 @@
       "id": 46,
       "type": "FallingTSH3AddGuide",
       "pos": [
-        2460,
-        1420
+        4890,
+        40
       ],
       "size": [
         310,
-        190
+        262
       ],
       "flags": {},
       "order": 38,
@@ -3254,12 +3256,12 @@
       "id": 47,
       "type": "FallingTSH3AddGuide",
       "pos": [
-        2460,
-        1650
+        5280,
+        40
       ],
       "size": [
         310,
-        190
+        262
       ],
       "flags": {},
       "order": 39,
@@ -3348,12 +3350,12 @@
       "id": 48,
       "type": "FallingTSH3AddGuide",
       "pos": [
-        2460,
-        1880
+        5670,
+        40
       ],
       "size": [
         310,
-        190
+        262
       ],
       "flags": {},
       "order": 40,
@@ -3440,104 +3442,127 @@
     },
     {
       "id": 908,
-      "type": "FallingTSSwitch",
+      "type": "FallingTSSelector",
       "pos": [
-        1510,
-        1030
+        2940,
+        362
       ],
       "size": [
         300,
-        340
+        442
       ],
       "flags": {},
       "order": 32,
       "mode": 0,
       "inputs": [
         {
-          "localized_name": "为假时 1",
-          "name": "false_1",
-          "shape": 7,
+          "name": "items",
+          "type": "STRING",
+          "link": null
+        },
+        {
+          "name": "total",
+          "type": "INT",
+          "link": null
+        },
+        {
+          "name": "selection",
+          "type": "COMBO",
+          "link": null
+        },
+        {
+          "name": "input1",
           "type": "*",
           "link": 255
         },
         {
-          "localized_name": "为真时 1",
-          "name": "true_1",
-          "shape": 7,
+          "name": "input2",
+          "type": "*",
+          "link": 279
+        },
+        {
+          "name": "input3",
           "type": "*",
           "link": 256
         },
         {
-          "localized_name": "为假时 2",
-          "name": "false_2",
-          "shape": 7,
+          "name": "input4",
           "type": "*",
           "link": 257
         },
         {
-          "localized_name": "为真时 2",
-          "name": "true_2",
-          "shape": 7,
+          "name": "input5",
+          "type": "*",
+          "link": 281
+        },
+        {
+          "name": "input6",
           "type": "*",
           "link": 258
         },
         {
-          "localized_name": "为假时 3",
-          "name": "false_3",
-          "shape": 7,
+          "name": "input7",
           "type": "*",
           "link": 259
         },
         {
-          "localized_name": "为真时 3",
-          "name": "true_3",
-          "shape": 7,
+          "name": "input8",
+          "type": "*",
+          "link": 282
+        },
+        {
+          "name": "input9",
           "type": "*",
           "link": 260
         }
       ],
       "outputs": [
         {
-          "localized_name": "输出 1",
-          "name": "output_1",
+          "name": "selected",
+          "type": "STRING",
+          "links": [],
+          "slot_index": 0
+        },
+        {
+          "name": "index",
+          "type": "INT",
+          "links": null,
+          "slot_index": 1
+        },
+        {
+          "name": "selected_value_1",
           "type": "*",
-          "slot_index": 0,
           "links": [
             261,
             262
-          ]
+          ],
+          "slot_index": 2
         },
         {
-          "localized_name": "输出 2",
-          "name": "output_2",
+          "name": "selected_value_2",
           "type": "*",
-          "slot_index": 1,
           "links": [
             263
-          ]
+          ],
+          "slot_index": 3
         },
         {
-          "localized_name": "输出 3",
-          "name": "output_3",
+          "name": "selected_value_3",
           "type": "*",
-          "slot_index": 2,
           "links": [
             264
-          ]
+          ],
+          "slot_index": 4
         }
       ],
       "title": "4步/20步 切换",
       "properties": {
-        "Node name for S&R": "FallingTSSwitch",
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "version": "7.8",
-          "input_ue_unconnectable": {}
-        }
+        "Node name for S&R": "FallingTSSelector"
       },
       "widgets_values": [
-        true,
-        3
+        "默认,8步,4步",
+        3,
+        "4步"
       ],
       "widgets_values_named": {
         "switch": true,
@@ -3548,12 +3573,12 @@
       "id": 909,
       "type": "KSamplerSelect",
       "pos": [
-        2820,
-        630
+        1200,
+        1362
       ],
       "size": [
         270,
-        90
+        118
       ],
       "flags": {},
       "order": 8,
@@ -3600,12 +3625,12 @@
       "id": 910,
       "type": "PrimitiveInt",
       "pos": [
-        2820,
-        770
+        1200,
+        1718
       ],
       "size": [
-        240,
-        90
+        250,
+        148
       ],
       "flags": {},
       "order": 9,
@@ -3654,12 +3679,12 @@
       "id": 911,
       "type": "PrimitiveInt",
       "pos": [
-        2820,
-        900
+        1200,
+        2134
       ],
       "size": [
-        240,
-        90
+        250,
+        148
       ],
       "flags": {},
       "order": 10,
@@ -3708,12 +3733,12 @@
       "id": 912,
       "type": "PrimitiveInt",
       "pos": [
-        1190,
-        2300
+        1200,
+        2342
       ],
       "size": [
         270,
-        90
+        148
       ],
       "flags": {},
       "order": 11,
@@ -3761,12 +3786,12 @@
       "id": 913,
       "type": "PrimitiveInt",
       "pos": [
-        1190,
-        2160
+        1200,
+        2550
       ],
       "size": [
         270,
-        90
+        148
       ],
       "flags": {},
       "order": 12,
@@ -3814,12 +3839,12 @@
       "id": 914,
       "type": "PrimitiveInt",
       "pos": [
-        1190,
-        2020
+        1200,
+        2758
       ],
       "size": [
         270,
-        90
+        148
       ],
       "flags": {},
       "order": 13,
@@ -3867,12 +3892,12 @@
       "id": 915,
       "type": "PrimitiveInt",
       "pos": [
-        1190,
-        1880
+        1200,
+        2966
       ],
       "size": [
         270,
-        90
+        148
       ],
       "flags": {},
       "order": 14,
@@ -3920,12 +3945,12 @@
       "id": 916,
       "type": "FallingTSSelector",
       "pos": [
-        1650,
-        1960
+        1600,
+        2120
       ],
       "size": [
         270,
-        286
+        466
       ],
       "flags": {},
       "order": 16,
@@ -4067,6 +4092,117 @@
         "total": 2,
         "selection": "横480"
       }
+    },
+    {
+      "id": 917,
+      "type": "LoraLoaderModelOnly",
+      "pos": [
+        2010,
+        660
+      ],
+      "size": [
+        270,
+        148
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 277
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            278
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoraLoaderModelOnly"
+      },
+      "widgets_values": [
+        "minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
+        1
+      ]
+    },
+    {
+      "id": 918,
+      "type": "MiniMaxH3SigmaShift",
+      "pos": [
+        2550,
+        362
+      ],
+      "size": [
+        270,
+        148
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 278
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            279
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "MiniMaxH3SigmaShift"
+      },
+      "widgets_values": [
+        12,
+        3
+      ]
+    },
+    {
+      "id": 919,
+      "type": "PrimitiveInt",
+      "pos": [
+        1200,
+        1926
+      ],
+      "size": [
+        250,
+        148
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "INT",
+          "type": "INT",
+          "links": [
+            282
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "PrimitiveInt"
+      },
+      "widgets_values": [
+        8,
+        "fixed"
+      ]
     }
   ],
   "links": [
@@ -4921,7 +5057,7 @@
     [
       261,
       908,
-      0,
+      2,
       11,
       0,
       "MODEL"
@@ -4929,7 +5065,7 @@
     [
       262,
       908,
-      0,
+      2,
       13,
       0,
       "MODEL"
@@ -4937,7 +5073,7 @@
     [
       263,
       908,
-      1,
+      3,
       14,
       2,
       "SAMPLER"
@@ -4945,7 +5081,7 @@
     [
       264,
       908,
-      2,
+      4,
       11,
       2,
       "INT"
@@ -5044,6 +5180,46 @@
       3,
       20,
       17,
+      "INT"
+    ],
+    [
+      277,
+      6,
+      0,
+      917,
+      0,
+      "MODEL"
+    ],
+    [
+      278,
+      917,
+      0,
+      918,
+      0,
+      "MODEL"
+    ],
+    [
+      279,
+      918,
+      0,
+      908,
+      4,
+      "MODEL"
+    ],
+    [
+      281,
+      10,
+      0,
+      908,
+      7,
+      "SAMPLER"
+    ],
+    [
+      282,
+      919,
+      0,
+      908,
+      10,
       "INT"
     ]
   ],
