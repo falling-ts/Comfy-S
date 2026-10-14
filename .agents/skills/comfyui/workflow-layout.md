@@ -48,3 +48,15 @@
 ## 工具
 
 本技能根目录的 `workflow_layout.py` 提供 `auto_layout(wf)`(按依赖深度左右排布、并行分支堆叠、零重叠)、`inspect(wf)`(报告重叠/交叉/越界)、`fit_group(wf, title)`(为功能组包一层完整覆盖的 backdrop)。**永远用代码读坐标判断布局, 不要看截图。**
+
+## 仓内可复跑脚本(`scripts/`, 已入 git)
+
+脚本自动定位仓库根(不依赖工作目录), 幂等(重复运行结果不变), 改前记得备份到 `backups/`。
+
+| 脚本 | 作用 |
+|------|------|
+| `scripts/wf_layout_all.py` | **全量布局重排**: 按六条规范重排 `workflows/` 下所有(或按关键字筛选)工作流——深度分层列 + note/MD 双独占列(列序 note\|MD\|功能列…) + 列内按下游端口序拓扑排 + est_size 回写; 已合规的自动跳过, `--force` 强制统一坐标口径; 校验指标 `ov`(重叠)/`lr`(左右)/`md_inv`/`note_left`/`gap_bad`(间距) 全零才算合规; 用法 `python scripts/wf_layout_all.py [关键字...] [--force]` |
+| `scripts/wf_selector3_upgrade.py` | H3 工作流「默认/8步/4步」三选升级: 把 FallingTSSwitch 双选改成 FallingTSSelector 三选(模型链/采样器/步数三组共 9 端口), 并新建 8 步链(LoRA+SigmaShift+步数)接入 Selector |
+| `scripts/wf_fix_8step_upstream.py` | 修正三选升级后 8 步链的模型链上游: 8 步 LoRA 必须接在 4 步 LoRA 同源上游(LowVRAMAttention 输出), 不得串在 4 步 LoRA 之后(避免双 LoRA 叠加) |
+| `scripts/wf_fix_input5.py` | 补回 Selector input5(8 步采样器 euler)端口的 `link` 回填(links 数组已有连线、仅端口字段缺失的隐性断连) |
+| `scripts/wf_fix_8step_shift.py` | 8 步链 SigmaShift 统一为官方推荐 12/3(LightX2V discussion#51); 判据: SigmaShift 上游 LoRA 文件名含 `8step`; 4 步链不动(fl2v 768p 为 6/3, ref2v v0.1 为 12/3) |

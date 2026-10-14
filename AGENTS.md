@@ -28,6 +28,7 @@ ComfyUI 及自定义节点的本地开发工作区。下文路径均相对项目
 | `docs` | 本地参考文档(44 篇专题 md) |
 | `refs` | 参考资料聚合(7 个子模块 + `Qwen-Image-Edit-Skills` 本地目录) |
 | `templates` | 官方模板库缓存(833 个 JSON)/ `webs` 三方调研 / `backups` 修改前备份(本地暂存) |
+| `scripts` | 可复跑工具链脚本(自动定位仓根、幂等): `wf_layout_all.py` 全量布局重排等,见 `comfyui` 技能 |
 | `.agents` | 技能聚合目录(`.claude` 软链指向它) |
 
 目录逐条说明、8 条软链接映射(A~D)、工作流编号体系、Qwen-Image 2.1 工作流 → **`comfyui-workspace` 技能**。
