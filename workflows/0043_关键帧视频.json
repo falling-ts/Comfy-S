@@ -1,8 +1,8 @@
 {
   "id": "16cfed05-b6aa-4a9d-8b4c-1f7597a07bc2",
   "revision": 0,
-  "last_node_id": 916,
-  "last_link_id": 276,
+  "last_node_id": 921,
+  "last_link_id": 286,
   "nodes": [
     {
       "id": 1,
@@ -1507,11 +1507,11 @@
         }
       },
       "widgets_values": [
-        6,
+        12,
         3
       ],
       "widgets_values_named": {
-        "shift_video": 6,
+        "shift_video": 12,
         "shift_audio": 3
       }
     },
@@ -4002,44 +4002,68 @@
           "link": 266
         },
         {
-          "localized_name": "横480",
+          "localized_name": "横544",
           "name": "input4",
+          "type": "*",
+          "link": 283
+        },
+        {
+          "localized_name": "竖544",
+          "name": "input5",
+          "type": "*",
+          "link": 284
+        },
+        {
+          "localized_name": "横480",
+          "name": "input6",
           "type": "*",
           "link": 267
         },
         {
           "localized_name": "竖480",
-          "name": "input5",
+          "name": "input7",
           "type": "*",
           "link": 268
         },
         {
           "localized_name": "默认",
-          "name": "input6",
+          "name": "input8",
           "type": "*",
           "link": 274
         },
         {
           "localized_name": "横768",
-          "name": "input7",
+          "name": "input9",
           "type": "*",
           "link": 269
         },
         {
           "localized_name": "竖768",
-          "name": "input8",
+          "name": "input10",
           "type": "*",
           "link": 270
         },
         {
+          "localized_name": "横544",
+          "name": "input11",
+          "type": "*",
+          "link": 285
+        },
+        {
+          "localized_name": "竖544",
+          "name": "input12",
+          "type": "*",
+          "link": 286
+        },
+        {
           "localized_name": "横480",
-          "name": "input9",
+          "name": "input13",
           "type": "*",
           "link": 271
         },
         {
           "localized_name": "竖480",
-          "name": "input10",
+          "name": "input14",
           "type": "*",
           "link": 272
         }
@@ -4083,12 +4107,12 @@
         "Node name for S&R": "FallingTSSelector"
       },
       "widgets_values": [
-        "默认,横768,竖768,横480,竖480",
+        "默认,横768,竖768,横544,竖544,横480,竖480",
         2,
         "横480"
       ],
       "widgets_values_named": {
-        "items": "默认,横768,竖768,横480,竖480",
+        "items": "默认,横768,竖768,横544,竖544,横480,竖480",
         "total": 2,
         "selection": "横480"
       }
@@ -4203,6 +4227,112 @@
         8,
         "fixed"
       ]
+    },
+    {
+      "id": 920,
+      "type": "PrimitiveInt",
+      "pos": [
+        1200,
+        3174
+      ],
+      "size": [
+        270,
+        148
+      ],
+      "flags": {},
+      "order": 47,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "数值",
+          "name": "value",
+          "type": "INT",
+          "widget": {
+            "name": "value"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "整数",
+          "name": "INT",
+          "type": "INT",
+          "links": [
+            283,
+            286
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "PrimitiveInt",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        960,
+        "fixed"
+      ],
+      "widgets_values_named": {
+        "value": 960,
+        "fixed": "fixed"
+      }
+    },
+    {
+      "id": 921,
+      "type": "PrimitiveInt",
+      "pos": [
+        1200,
+        3382
+      ],
+      "size": [
+        270,
+        148
+      ],
+      "flags": {},
+      "order": 48,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "数值",
+          "name": "value",
+          "type": "INT",
+          "widget": {
+            "name": "value"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "整数",
+          "name": "INT",
+          "type": "INT",
+          "links": [
+            284,
+            285
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "PrimitiveInt",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        544,
+        "fixed"
+      ],
+      "widgets_values_named": {
+        "value": 544,
+        "fixed": "fixed"
+      }
     }
   ],
   "links": [
@@ -5107,7 +5237,7 @@
       913,
       0,
       916,
-      6,
+      8,
       "INT"
     ],
     [
@@ -5115,7 +5245,7 @@
       912,
       0,
       916,
-      7,
+      9,
       "INT"
     ],
     [
@@ -5123,7 +5253,7 @@
       914,
       0,
       916,
-      9,
+      11,
       "INT"
     ],
     [
@@ -5131,7 +5261,7 @@
       915,
       0,
       916,
-      10,
+      12,
       "INT"
     ],
     [
@@ -5139,7 +5269,7 @@
       912,
       0,
       916,
-      11,
+      15,
       "INT"
     ],
     [
@@ -5147,7 +5277,7 @@
       913,
       0,
       916,
-      12,
+      16,
       "INT"
     ],
     [
@@ -5163,7 +5293,7 @@
       1,
       20,
       916,
-      8,
+      10,
       "INT"
     ],
     [
@@ -5220,6 +5350,38 @@
       0,
       908,
       10,
+      "INT"
+    ],
+    [
+      283,
+      920,
+      0,
+      916,
+      6,
+      "INT"
+    ],
+    [
+      284,
+      921,
+      0,
+      916,
+      7,
+      "INT"
+    ],
+    [
+      285,
+      921,
+      0,
+      916,
+      13,
+      "INT"
+    ],
+    [
+      286,
+      920,
+      0,
+      916,
+      14,
       "INT"
     ]
   ],

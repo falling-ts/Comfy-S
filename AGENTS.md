@@ -33,6 +33,106 @@ ComfyUI 及自定义节点的本地开发工作区。下文路径均相对项目
 
 目录逐条说明、8 条软链接映射(A~D)、工作流编号体系、Qwen-Image 2.1 工作流 → **`comfyui-workspace` 技能**。
 
+## MiniMax H3 加速 LoRA ↔ shift 配对表(改 H3 工作流前必查)
+
+**铁律:shift 是 LoRA 自带的训练配方,不是口味偏好。** 蒸馏 LoRA 只对它训练时那条 sigma 网格成立;
+配错 shift = 换了采样计划,**不会有任何报错**,只会画面/音频结构性崩坏。换 LoRA 必须同步改
+`MiniMaxH3SigmaShift.shift_video` / `shift_audio`。
+
+### 权威配对表
+
+| LoRA 文件(comfyui_bf16) | 任务 | 训练分辨率档 | **shift (video/audio)** | 蒸馏 NFE | 推荐步数 | width/height |
+|---|---|---|---|---|---|---|
+| `minimax_h3_fl2v_turbo_4step_v0.1_comfyui_bf16` | FL2VA | **544p 档**(≈0.5 MP,混合宽高比) | **12 / 3** | 4 | 4 | 任意合法 canvas |
+| `minimax_h3_fl2v_turbo_4step_v1.0_768p_comfyui_bf16` | FL2VA | **768p 档**(1344×768) | **6 / 3** | 4 | 4 | 1344×768 |
+| `minimax_h3_fl2v_turbo_4step_v1.1_768p_comfyui_bf16` | FL2VA | **768p 档**(1344×768) | **6 / 3** | 4 | 4 | 1344×768 |
+| `minimax_h3_fl2v_turbo_4step_v1.2_768p_comfyui_bf16` | FL2VA | **768p 档**(1344×768) | **6 / 3** | 4 | 4 | 1344×768 |
+| `minimax_h3_fl2v_turbo_8step_v1.0_comfyui_bf16` | FL2VA | **544p 档**(≈0.5 MP,混合宽高比) | **12 / 3** | 8 | 8 或 4 | 任意合法 canvas |
+| `minimax_h3_fl2v_turbo_8step_v1.0_768p_comfyui_bf16` | FL2VA | **768p 档**(1344×768) | **6 / 3** | 8 | 8 | 1344×768 |
+| `minimax_h3_ref2v_turbo_4step_v0.1_comfyui_bf16` | **Ref2VA** | **544p 档**(≈0.5 MP,混合宽高比) | **12 / 3** | 4 | 4(实需 6–8) | 任意合法 canvas |
+| `minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16` | **Ref2VA** | **768p 档**(1344×768) | **12 / 3** ⚠️ | 8 | 8 | 1344×768 |
+
+### 「544p」到底是什么(≠ 832×480)
+
+⚠️ **`544p` 是官方 README 表格的原文训练档标签,指「短边 544、混合宽高比」,不是一个固定尺寸。**
+不要把本机的 `832×480` 当成「544p」——**那是两个不同档位**:
+
+| 叫法 | 短边 | 代表尺寸 | 面积 | 官方示例用途 |
+|---|---|---|---|---|
+| **0.4 MP 档**(480p) | 480 | **832×480** / 864×480 | 0.40 MP | I2VA 示例(`864×480`) |
+| **544p 档**(0.5 MP) | 544 | **960×544** / 864×544 | 0.52 MP | T2VA 与 Ref2VA 示例(`960×544`) |
+| **768p 档** | 768 | **1344×768** | 1.03 MP | 768p 系 LoRA 训练分辨率 |
+
+- 官方三个 example workflow 的实际默认是 **960×544(T2VA、Ref2VA)** 与 **864×480(I2VA)**
+  —— 也就是 **0.5 MP 与 0.4 MP**,**不是** 1344×768。
+- 所以「544p 系 LoRA」跑 `832×480` 是**可以的**(它在合法 canvas 内,且属于同量级低分档),
+  两者并不冲突;但要知道**它们不是同一个数字**,别把 480 当成 544。
+- 本机 `stories` 技能里「H3 视频只支持 480p 与 768p 两档」是**本机资源表的收窄约定**
+  (为速度与显存只取两档),并非 ComfyUI 的硬限制 —— 硬限制只有下面三条。
+
+**canvas 硬约束(ComfyUI `nodes_minimax_h3.py` 实测)**:
+
+- `MAX_PIXELS = 768 × 1344 = 1 032 192` = **1.0322 MP**(⚠️ 不是 0.98 MP;这是本机硬上限)
+- 短边 ≤ 768;每轴必须是 **32 的倍数**(VAE 16× 空间步长 × DiT 2× patch)
+- 超限**不会被自动纠正**(与官方 `adapt_canvas` 只在 `width`/`height` 走 `Resolution Selector` 时生效不同)
+- 例:`1344×768` ✓、`960×544` ✓、`832×480` ✓;`1664×960` ❌(1.60 MP 超限)、
+  `1376×768` ❌(1.057 MP 超限)
+
+### ⚠️ 两个最容易搞错的点
+
+1. **Ref2VA 不随分辨率改 shift。** Ref2VA 的两个 LoRA —— 4step v0.1(544p)与 8step v1.0 **768p** ——
+   官方推荐**都是 12/3**。768p 文件名只说明训练分辨率,**不蕴含** shift 6。
+   官方 HF 公告原话:「Steps: 8 · **Video shift: 12** · Audio shift: 3 · Sampler: Euler · Resolution: Up to 768p」
+   (<https://huggingface.co/lightx2v/Minimax-h3-Turbo/discussions/51>)。评论区亦印证:Ref2VA 推荐值 12/3
+   **正是 ComfyUI 默认值**,故默认工作流不给 shift 节点。
+2. **`6/3` 只属于 FL2VA 的 768p 系。** 根源是 FL2VA 768p 蒸馏换过 sigma 网格。
+   **不要用「文件名带 768p ⇒ 6/3」这条通则去推 Ref2VA。** 官方 README 的 `Model specs` 表
+   **根本没有 Ref2VA 8-step 这一行**(表格最后更新 2026-08-27,而该 LoRA 发布于 09-04),
+   这也正是第三方资料(comfyui-wiki、vpipe 等)把它误记为 6/3 的原因 —— vpipe 已自承是
+   「从 768p 谱系继承推断」,而非实测。
+
+### 采样器与步数经验
+
+- **采样器**:turbo LoRA 一律 **euler**(官方 8 处公告/回复口径一致);scheduler `simple`。
+  非蒸馏档(20 步)走 `res_multistep`。
+- **步数**:4 步是**下限**;6–8 步锐度与细节明显更好,超过 8 步反而出现过锐伪影。
+  社区普遍反映「4 步档在实际使用中需要 6–8 步」。两段式 hires 二遍可用 4 步档 +
+  低 `denoise`(≈0.25–0.35)少步(<https://huggingface.co/lightx2v/Minimax-h3-Turbo/discussions/52>)。
+- **分辨率**:每轴必须是 **32 的倍数**;768p LoRA 训练于 1344×768;硬上限
+  `MAX_PIXELS = 768×1344 = 1.0322 MP`(短边 ≤ 768)。低分档另配(官方示例:t2v 960×544、
+  i2v 864×480、ref2v 960×544)。**注意 `832×480` 属 0.4 MP 档,与官方 544p 档(960×544)
+  不是同一个数字**(见上文「544p 到底是什么」)。
+- **LoRA 强度**:多数情况保持 `1.0`;v1.1 768p 有用户实测 1.20–1.30 更锐。
+- **参考图 resize**:官方蒸馏用 `match` 策略(`MiniMaxH3ReferenceToVideo` 的 `ref_image_size_mode`),
+  与训练一致,官方明确推荐。
+
+### 已知质量事实(调参时别重复踩)
+
+- **768p 系整体不如 544p 稳**,社区实测反馈「过饱和塑料感、音频差、提示词跟随弱、动作幅度小」
+  (<https://huggingface.co/lightx2v/Minimax-h3-Turbo/discussions/27>,该帖已 closed)。
+  官方 Roadmap 亦将「提升 Ref2VA / FL2VA 的质量与一致性」列为待办。
+- **Ref2VA 普遍弱于 FL2VA**:达到同等音视频质量,Ref2VA 常需 8–10 步(FL2V 仅 4 步)。
+- **8-step 768p 与低分辨率不兼容**:官方回复明确「Does not work well with other Loras,
+  and at lower screen resolutions (lower than 768p)」。**分辨率必须与档位绑定**。
+
+### 元数据现实
+
+`models/loras/` 下这些 LoRA 的 safetensors `__metadata__` **不含 shift**
+(只有 `base_model`/`training_rank`(128)/`training_alpha`/`training_scale`/`qkv_fusion`/
+`swi_glu_mapping`/`source_format`/`target_format`)。**唯一权威依据是上游官方公告与规格表**,
+不能指望从权重文件里读出来。
+
+### 权威来源(按可信度排序)
+
+1. <https://github.com/ModelTC/Minimax-H3-Turbo> 的 `README.md` §1 `Model specs` 表(FL2VA 全部)
+2. <https://huggingface.co/lightx2v/Minimax-h3-Turbo/discussions/51> Ref2VA 8-step v1.0 768p 公告(**12/3**)
+3. <https://huggingface.co/lightx2v/Minimax-h3-Turbo/discussions/48> FL2VA 8-step v1.0 768p 公告(6/3)
+4. <https://huggingface.co/lightx2v/Minimax-h3-Turbo/discussions/42> FL2VA 4-step v1.1 768p 公告(6/3, euler)
+5. 官方示例工作流 <https://github.com/ModelTC/MiniMax-H3-Turbo/tree/main/example_workflows>
+   (`ref2v` 图实测 `MiniMaxH3SigmaShift` = `[12, 3]`)
+6. ⚠️ **第三方(comfyui-wiki、vpipe 等)不可作为 shift 依据** —— 它们对 Ref2VA 8-step 768p 记的是
+   错误的 6/3。
+
 ## 数据流约定(工作流 ↔ md 表 ↔ 产物目录)
 
 - `FallingTSMarkDownTable` 节点按 `md_path` 读 `stories\<故事库>\<表名>.md`,按行 ID 取参数
