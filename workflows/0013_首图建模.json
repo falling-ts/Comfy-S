@@ -217,10 +217,10 @@
         }
       },
       "widgets_values": [
-        "minimax_h3_video_vae_int8_convrot.safetensors"
+        "minimax_h3_video_vae_fp16.safetensors"
       ],
       "widgets_values_named": {
-        "vae_name": "minimax_h3_video_vae_int8_convrot.safetensors"
+        "vae_name": "minimax_h3_video_vae_fp16.safetensors"
       }
     },
     {
@@ -277,11 +277,11 @@
         }
       },
       "widgets_values": [
-        "minimax_h3_fl2va_pruned_int8_convrot.safetensors",
+        "minimax_h3_fl2va_pruned_bf16.safetensors",
         "default"
       ],
       "widgets_values_named": {
-        "unet_name": "minimax_h3_fl2va_pruned_int8_convrot.safetensors",
+        "unet_name": "minimax_h3_fl2va_pruned_bf16.safetensors",
         "weight_dtype": "default"
       }
     },
@@ -349,12 +349,12 @@
         }
       },
       "widgets_values": [
-        "qwen3vl_32b_minimax_h3_int8_convrot.safetensors",
+        "qwen3vl_32b_minimax_h3_bf16.safetensors",
         "minimax",
         "default"
       ],
       "widgets_values_named": {
-        "clip_name": "qwen3vl_32b_minimax_h3_int8_convrot.safetensors",
+        "clip_name": "qwen3vl_32b_minimax_h3_bf16.safetensors",
         "type": "minimax",
         "device": "default"
       }
