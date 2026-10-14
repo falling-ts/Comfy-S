@@ -510,11 +510,11 @@
         }
       },
       "widgets_values": [
-        "qwen_image_edit_2511_bf16.safetensors",
+        "qwen_image_edit_2511_fp8mixed.safetensors",
         "default"
       ],
       "widgets_values_named": {
-        "unet_name": "qwen_image_edit_2511_bf16.safetensors",
+        "unet_name": "qwen_image_edit_2511_fp8mixed.safetensors",
         "weight_dtype": "default"
       }
     },

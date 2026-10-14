@@ -425,11 +425,11 @@
         }
       },
       "widgets_values": [
-        "qwen_image_bf16.safetensors",
+        "qwen_image_fp8_e4m3fn.safetensors",
         "default"
       ],
       "widgets_values_named": {
-        "unet_name": "qwen_image_bf16.safetensors",
+        "unet_name": "qwen_image_fp8_e4m3fn.safetensors",
         "weight_dtype": "default"
       }
     },
@@ -567,11 +567,11 @@
         }
       },
       "widgets_values": [
-        "Qwen-Image-Lightning-4steps-V1.0.safetensors",
+        "Qwen-Image-Lightning-4steps-V1.0-bf16.safetensors",
         1
       ],
       "widgets_values_named": {
-        "lora_name": "Qwen-Image-Lightning-4steps-V1.0.safetensors",
+        "lora_name": "Qwen-Image-Lightning-4steps-V1.0-bf16.safetensors",
         "strength_model": 1
       }
     },
@@ -1427,11 +1427,11 @@
         }
       },
       "widgets_values": [
-        "qwen_image_edit_2511_bf16.safetensors",
+        "qwen_image_edit_2511_fp8mixed.safetensors",
         "default"
       ],
       "widgets_values_named": {
-        "unet_name": "qwen_image_edit_2511_bf16.safetensors",
+        "unet_name": "qwen_image_edit_2511_fp8mixed.safetensors",
         "weight_dtype": "default"
       }
     },

@@ -16,7 +16,7 @@
 #     参数 --enable-manager --disable-pinned-memory(本地 RTX 4060 8GB)
 #   - Linux: 解释器默认 .venv/bin/python, 缺失时回退 conda 环境 comfy
 #     (/root/miniconda3/envs/comfy/bin/python, ai-server 实例),
-#     参数 --enable-manager --reserve-vram $RESERVE_VRAM(默认 22,
+#     参数 --enable-manager --fast-disk --reserve-vram $RESERVE_VRAM(默认 22,
 #     ai-server 上 llama.cpp 占 ~22GB 显存, 留给 ComfyUI 余量; RESERVE_VRAM=0 则不带该参数),
 #     有 setsid 时 detach 会话(SSH 断开后存活)
 #   - 日志默认写**调用时所在目录** comfy-server-<port>.log(两平台一致, 同 harness-server.sh)
@@ -44,7 +44,7 @@ else
   PY_BIN="${PY_BIN:-$ROOT/.venv/bin/python}"
   [ -x "$PY_BIN" ] || PY_BIN="/root/miniconda3/envs/comfy/bin/python"
   RESERVE_VRAM="${RESERVE_VRAM:-22}"
-  ARGS=(--enable-manager --port "$PORT")
+  ARGS=(--enable-manager --fast-disk --port "$PORT")
   [ "$RESERVE_VRAM" = "0" ] || ARGS+=(--reserve-vram "$RESERVE_VRAM")
 fi
 
