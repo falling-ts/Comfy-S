@@ -1,8 +1,8 @@
 {
   "id": "c5920cda-0170-4ea0-884f-e20febd145a3",
   "revision": 0,
-  "last_node_id": 1039,
-  "last_link_id": 41,
+  "last_node_id": 1200,
+  "last_link_id": 45,
   "nodes": [
     {
       "id": 1,
@@ -63,7 +63,7 @@
           "name": "IMAGE",
           "type": "IMAGE",
           "links": [
-            1
+            42
           ]
         },
         {
@@ -116,7 +116,7 @@
       "id": 10,
       "type": "easy imageSplitGrid",
       "pos": [
-        830,
+        1180,
         40
       ],
       "size": [
@@ -128,10 +128,10 @@
       "mode": 0,
       "inputs": [
         {
-          "localized_name": "图像",
-          "name": "images",
-          "type": "IMAGE",
-          "link": 1
+          "localized_name": "any",
+          "name": "any",
+          "type": "*",
+          "link": 43
         },
         {
           "localized_name": "行",
@@ -187,7 +187,7 @@
       "id": 11,
       "type": "ImageFromBatch",
       "pos": [
-        1210,
+        1560,
         40
       ],
       "size": [
@@ -255,7 +255,7 @@
       "id": 1011,
       "type": "AutoSaveImage",
       "pos": [
-        1570,
+        1920,
         40
       ],
       "size": [
@@ -356,7 +356,7 @@
       "id": 12,
       "type": "ImageFromBatch",
       "pos": [
-        1210,
+        1560,
         296
       ],
       "size": [
@@ -424,7 +424,7 @@
       "id": 1012,
       "type": "AutoSaveImage",
       "pos": [
-        1570,
+        1920,
         550
       ],
       "size": [
@@ -525,7 +525,7 @@
       "id": 13,
       "type": "ImageFromBatch",
       "pos": [
-        1210,
+        1560,
         552
       ],
       "size": [
@@ -593,7 +593,7 @@
       "id": 1013,
       "type": "AutoSaveImage",
       "pos": [
-        1570,
+        1920,
         1060
       ],
       "size": [
@@ -694,7 +694,7 @@
       "id": 14,
       "type": "ImageFromBatch",
       "pos": [
-        1210,
+        1560,
         808
       ],
       "size": [
@@ -762,7 +762,7 @@
       "id": 1014,
       "type": "AutoSaveImage",
       "pos": [
-        1570,
+        1920,
         1570
       ],
       "size": [
@@ -918,7 +918,7 @@
           "name": "IMAGE",
           "type": "IMAGE",
           "links": [
-            14
+            44
           ]
         },
         {
@@ -976,7 +976,7 @@
       "id": 30,
       "type": "easy imageSplitGrid",
       "pos": [
-        830,
+        1180,
         296
       ],
       "size": [
@@ -988,10 +988,10 @@
       "mode": 0,
       "inputs": [
         {
-          "localized_name": "图像",
-          "name": "images",
-          "type": "IMAGE",
-          "link": 14
+          "localized_name": "any",
+          "name": "any",
+          "type": "*",
+          "link": 44
         },
         {
           "localized_name": "行",
@@ -1052,7 +1052,7 @@
       "id": 31,
       "type": "ImageFromBatch",
       "pos": [
-        1210,
+        1560,
         1064
       ],
       "size": [
@@ -1120,7 +1120,7 @@
       "id": 1031,
       "type": "AutoSaveImage",
       "pos": [
-        1570,
+        1920,
         2080
       ],
       "size": [
@@ -1221,7 +1221,7 @@
       "id": 32,
       "type": "ImageFromBatch",
       "pos": [
-        1210,
+        1560,
         1320
       ],
       "size": [
@@ -1289,7 +1289,7 @@
       "id": 1032,
       "type": "AutoSaveImage",
       "pos": [
-        1570,
+        1920,
         2590
       ],
       "size": [
@@ -1390,7 +1390,7 @@
       "id": 33,
       "type": "ImageFromBatch",
       "pos": [
-        1210,
+        1560,
         1576
       ],
       "size": [
@@ -1458,7 +1458,7 @@
       "id": 1033,
       "type": "AutoSaveImage",
       "pos": [
-        1570,
+        1920,
         3100
       ],
       "size": [
@@ -1559,7 +1559,7 @@
       "id": 34,
       "type": "ImageFromBatch",
       "pos": [
-        1210,
+        1560,
         1832
       ],
       "size": [
@@ -1627,7 +1627,7 @@
       "id": 1034,
       "type": "AutoSaveImage",
       "pos": [
-        1570,
+        1920,
         3610
       ],
       "size": [
@@ -1728,7 +1728,7 @@
       "id": 35,
       "type": "ImageFromBatch",
       "pos": [
-        1210,
+        1560,
         2088
       ],
       "size": [
@@ -1796,7 +1796,7 @@
       "id": 1035,
       "type": "AutoSaveImage",
       "pos": [
-        1570,
+        1920,
         4120
       ],
       "size": [
@@ -1897,7 +1897,7 @@
       "id": 36,
       "type": "ImageFromBatch",
       "pos": [
-        1210,
+        1560,
         2344
       ],
       "size": [
@@ -1965,7 +1965,7 @@
       "id": 1036,
       "type": "AutoSaveImage",
       "pos": [
-        1570,
+        1920,
         4630
       ],
       "size": [
@@ -2066,7 +2066,7 @@
       "id": 37,
       "type": "ImageFromBatch",
       "pos": [
-        1210,
+        1560,
         2600
       ],
       "size": [
@@ -2134,7 +2134,7 @@
       "id": 1037,
       "type": "AutoSaveImage",
       "pos": [
-        1570,
+        1920,
         5140
       ],
       "size": [
@@ -2235,7 +2235,7 @@
       "id": 38,
       "type": "ImageFromBatch",
       "pos": [
-        1210,
+        1560,
         2856
       ],
       "size": [
@@ -2303,7 +2303,7 @@
       "id": 1038,
       "type": "AutoSaveImage",
       "pos": [
-        1570,
+        1920,
         5650
       ],
       "size": [
@@ -2404,7 +2404,7 @@
       "id": 39,
       "type": "ImageFromBatch",
       "pos": [
-        1210,
+        1560,
         3112
       ],
       "size": [
@@ -2472,7 +2472,7 @@
       "id": 1039,
       "type": "AutoSaveImage",
       "pos": [
-        1570,
+        1920,
         6160
       ],
       "size": [
@@ -2568,6 +2568,84 @@
         "input_color_space": "sRGB",
         "image_fallback": ""
       }
+    },
+    {
+      "id": 1100,
+      "type": "FallingTSContinue",
+      "pos": [
+        830,
+        40
+      ],
+      "size": [
+        270,
+        88
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "any",
+          "name": "any",
+          "type": "*",
+          "link": 42
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "any",
+          "name": "any",
+          "type": "*",
+          "links": [
+            43
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "FallingTSContinue"
+      },
+      "widgets_values": [],
+      "widgets_values_named": {},
+      "title": "闸门 · 四宫流(点继续=只保存四宫)"
+    },
+    {
+      "id": 1200,
+      "type": "FallingTSContinue",
+      "pos": [
+        830,
+        188
+      ],
+      "size": [
+        270,
+        88
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "any",
+          "name": "any",
+          "type": "*",
+          "link": 44
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "any",
+          "name": "any",
+          "type": "*",
+          "links": [
+            45
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "FallingTSContinue"
+      },
+      "widgets_values": [],
+      "widgets_values_named": {},
+      "title": "闸门 · 九宫流(点继续=只保存九宫)"
     }
   ],
   "links": [
@@ -2898,6 +2976,38 @@
       1039,
       1,
       "STRING"
+    ],
+    [
+      42,
+      1,
+      0,
+      1100,
+      0,
+      "IMAGE"
+    ],
+    [
+      43,
+      1100,
+      0,
+      10,
+      0,
+      "IMAGE"
+    ],
+    [
+      44,
+      2,
+      0,
+      1200,
+      0,
+      "IMAGE"
+    ],
+    [
+      45,
+      1200,
+      0,
+      30,
+      0,
+      "IMAGE"
     ]
   ],
   "groups": [],
