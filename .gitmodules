@@ -176,3 +176,7 @@
 	path = custom_nodes/ComfyUI-HYWM2
 	url = https://github.com/PozzettiAndrea/ComfyUI-HYWM2.git
 	branch = main
+[submodule "refs/MiniMax-H3-Turbo"]
+	path = refs/MiniMax-H3-Turbo
+	url = https://github.com/ModelTC/Minimax-H3-Turbo.git
+	branch = main
