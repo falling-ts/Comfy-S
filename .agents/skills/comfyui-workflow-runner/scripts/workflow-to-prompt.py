@@ -9,8 +9,16 @@
   - widget 名按 /object_info 的 required+optional 顺序映射, 已被转为输入的 widget 跳过;
   - mode=4(bypass) 的节点按"透传"处理: 其下游引用解析到它的同名输入源。
 
+分辨率覆盖(--resolution):
+  md 的「宽度/高度」列喂给 FallingTSSelector 后, **只有 selection='默认' 那一档才真正采用它**;
+  实测多数工作流的该选择器停在「横480」, 会**完全忽略 md 宽高**。本参数在提交前把选择器
+  切回「默认」, 并按 UNETLoader 谱系(fl2va/ref2va)与短边档位**重配两个 LoRA 与 shift**
+  —— 换 LoRA 不改 shift 不会有任何报错, 只会画面/音频结构性崩坏。
+  ⚠️ 只改本次 API 载荷, **不写回磁盘上的工作流 JSON**(与 --refresh-md 同理)。
+
 用法:
-  .venv\\Scripts\\python.exe scripts\\workflow-to-prompt.py "0032-*.json" [--refresh-md] [--submit] [--dump out.json]
+  python scripts/workflow-to-prompt.py "0044_参考视频.json" \
+      [--refresh-md] [--resolution 960*544] [--submit] [--dump out.json]
 """
 
 import pathlib as _pathlib
@@ -19,6 +27,7 @@ _COMFY = _pathlib.Path(__file__).resolve().parents[4]   # 项目根
 import glob
 import json
 import pathlib
+import re
 import sys
 import time
 import urllib.parse
@@ -288,6 +297,117 @@ def build(wf_path: str, refresh_md: bool):
     return prompt, notes
 
 
+# H3 LoRA 谱系 ↔ 分辨率档位 配对表。
+# 铁律: shift 是 LoRA 自带的训练配方, 不是口味偏好 —— 换了 LoRA 必须同步改 shift,
+# 且**不会报错**, 只会画面/音频结构性崩坏。档位按**短边**判定: ≥768 归 768p,
+# 否则归 544p(含 480p —— 官方说 544p 系 LoRA 跑 832x480 可以, 两者同量级低分档)。
+_H3_LORA = {
+    "fl2va": {
+        "544p": {"4": ("minimax_h3_fl2v_lightx2v_turbo_4step_v0.1_comfy.safetensors", 12),
+                 "8": ("minimax_h3_fl2v_turbo_8step_v1.0_comfyui_bf16.safetensors", 12)},
+        "768p": {"4": ("minimax_h3_fl2v_turbo_4step_v1.0_768p_comfyui_bf16.safetensors", 6),
+                 "8": ("minimax_h3_fl2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors", 6)},
+    },
+    "ref2va": {
+        # Ref2VA **不随分辨率改 shift**: 两个 LoRA 官方推荐都是 12/3
+        # (768p 只说明训练分辨率, 不蕴含 shift 6 —— 第三方资料常在此记错)。
+        "544p": {"4": ("minimax_h3_ref2v_turbo_4step_v0.1_comfyui_bf16.safetensors", 12),
+                 "8": ("minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors", 12)},
+        "768p": {"4": ("minimax_h3_ref2v_turbo_4step_v0.1_comfyui_bf16.safetensors", 12),
+                 "8": ("minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors", 12)},
+    },
+}
+
+# ComfyUI 的 canvas 硬约束(见根 AGENTS.md)。
+RES_MAX_SHORT = 768
+RES_MAX_PIXELS = 768 * 1344
+
+
+def parse_resolution(token: str) -> tuple[int, int]:
+    """把分辨率写法解析成 (宽, 高)。
+
+    接受 `960*544` / `960x544` / `960×544` / `960 544`, 也接受单档位名
+    `480p` / `544p` / `768p`(映射到本机三档代表尺寸)。
+    """
+    text = str(token).strip().lower()
+    nums = re.findall(r"\d+", text)
+    if len(nums) >= 2:
+        return int(nums[0]), int(nums[1])
+    if len(nums) == 1:
+        table = {480: (832, 480), 544: (960, 544), 768: (1344, 768)}
+        hit = table.get(int(nums[0]))
+        if hit:
+            return hit
+    raise ValueError(f"分辨率无法解析: {token!r} (应为 960*544, 或档位名 544p)")
+
+
+def check_resolution(width: int, height: int) -> None:
+    """校验 canvas 硬约束, 越界直接报错(绝不静默截断)。"""
+    if min(width, height) > RES_MAX_SHORT:
+        raise ValueError(f"短边 {min(width, height)} 超过上限 {RES_MAX_SHORT}")
+    if width * height > RES_MAX_PIXELS:
+        raise ValueError(f"面积 {width * height} 超过上限 {RES_MAX_PIXELS}")
+    if width % 32 or height % 32:
+        raise ValueError(f"每轴必须是 32 的倍数(收到 {width}x{height})")
+
+
+def apply_resolution(prompt: dict, width: int, height: int) -> list:
+    """按目标分辨率统一 prompt: 宽高选择器切到 md 默认档, H3 LoRA 与 shift 重新配对。
+
+    为什么必须在提交前做: md 的「宽度/高度」列喂给 `FallingTSSelector` 后, 只有
+    `selection='默认'` 那一档才真正采用它; 实测 `0013`/`0014`/`0030`/`0033`/`0040`/`0041`/`0042`/`0043`
+    都停在「横480」档, **会完全忽略 md 宽高列** —— 只改 md 而不覆盖它, 分辨率会**静默失效**。
+    """
+    tier = "768p" if min(width, height) >= 768 else "544p"
+    fam = None
+    for v in prompt.values():
+        if v.get("class_type") == "UNETLoader":
+            name = str(v["inputs"].get("unet_name", ""))
+            if "ref2va" in name:
+                fam = "ref2va"
+            elif "fl2va" in name:
+                fam = "fl2va"
+    table = (_H3_LORA.get(fam) or {}).get(tier) or {}
+    changed = []
+
+    # 第一趟: 宽高选择器 + LoRA。
+    for nid, node in prompt.items():
+        t = node.get("class_type")
+        inp = node.get("inputs") or {}
+        if t == "FallingTSSelector" and "横768" in str(inp.get("items", "")):
+            if inp.get("selection") != "默认":
+                changed.append(f"节点 {nid} 宽高选择器 {inp.get('selection')!r} -> '默认' (改用 md 宽高列)")
+                inp["selection"] = "默认"
+        elif t == "LoraLoaderModelOnly":
+            cur = str(inp.get("lora_name", ""))
+            if not ("fl2v" in cur or "ref2v" in cur):
+                continue
+            steps = "4" if "4step" in cur else ("8" if "8step" in cur else None)
+            slot = table.get(steps) if steps else None
+            if slot and cur != slot[0]:
+                changed.append(f"节点 {nid} LoRA[{steps}步] {cur} -> {slot[0]} (档位 {tier})")
+                inp["lora_name"] = slot[0]
+
+    # 第二趟: shift(必须晚于 LoRA —— 步数从**已替换后**的 LoRA 名读, 才配得上新档位)。
+    for nid, node in prompt.items():
+        if node.get("class_type") != "MiniMaxH3SigmaShift":
+            continue
+        inp = node.get("inputs") or {}
+        src = inp.get("model")
+        src_id = str(src[0]) if isinstance(src, list) and src else ""
+        cur_lora = str(((prompt.get(src_id) or {}).get("inputs") or {}).get("lora_name", ""))
+        steps = "4" if "4step" in cur_lora else ("8" if "8step" in cur_lora else None)
+        slot = table.get(steps) if steps else None
+        if not slot:
+            continue
+        want = (slot[1], 3)
+        got = (inp.get("shift_video"), inp.get("shift_audio"))
+        if got != want:
+            changed.append(f"节点 {nid} shift {list(got)} -> {list(want)}")
+            inp["shift_video"], inp["shift_audio"] = want
+    return changed
+
+
 def main() -> int:
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     pat = args[0] if args else "*.json"
@@ -296,6 +416,9 @@ def main() -> int:
     dump = None
     if "--dump" in sys.argv:
         dump = sys.argv[sys.argv.index("--dump") + 1]
+    resolution = None
+    if "--resolution" in sys.argv:
+        resolution = parse_resolution(sys.argv[sys.argv.index("--resolution") + 1])
 
     files = sorted(glob.glob(str(pathlib.Path(_COMFY / "workflows") / pat)))
     if not files:
@@ -308,6 +431,18 @@ def main() -> int:
     print(f"转换完成: {len(prompt)} 个节点进入 API prompt")
     for x in notes:
         print("  .", x)
+
+    if resolution:
+        w, h = resolution
+        try:
+            check_resolution(w, h)
+        except ValueError as e:
+            # 越界必须挡住: md 已经按该分辨率写过宽高列, 放过去等于用非法 canvas 空跑一轮。
+            print(f"\n分辨率非法: {e}")
+            return 1
+        print(f"\n应用分辨率 {w}x{h} (短边 {min(w, h)} => {'768p' if min(w, h) >= 768 else '544p'} 档):")
+        for x in apply_resolution(prompt, w, h):
+            print("  *", x)
 
     if dump:
         pathlib.Path(dump).write_text(json.dumps(prompt, ensure_ascii=False, indent=1), encoding="utf-8")

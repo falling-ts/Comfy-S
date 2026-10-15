@@ -1,0 +1,65 @@
+display-name-zh: 正文转视频全自动编排
+version: 0.2.0
+tag-en: Automation
+tag-cn: 自动化
+complete-tags-en:
+- Automation / Narrative-to-Video Pipeline
+- Automation / Resource Table Derivation
+- Automation / Resolution & LoRA Pairing
+- Automation / End-to-end Orchestration
+- Story Library / Novel-to-Shot Planning
+complete-tags-cn:
+- 自动化 / 正文转视频流水线
+- 自动化 / 资源表推导
+- 自动化 / 分辨率与 LoRA 配对
+- 自动化 / 端到端编排
+- 故事库 / 小说转分镜规划
+summary-en: >-
+  Turn a novel passage into a finished video end to end — take a story library, a line range,
+  and an optional resolution; derive every resource table, unify all width/height columns to
+  that resolution, then headlessly drive the local ComfyUI workflows with automatically paired
+  LoRA and shift tiers to render and verify the film.
+summary-cn: >-
+  把小说正文自动做成视频：输入故事库名、正文行号区间与可选分辨率，推导并写入全部资源表，
+  把表内所有宽度/高度列统一为该分辨率，再自动配对 LoRA 与 shift 档位、无头驱动本地
+  ComfyUI 跑完工作流并验证产物。
+desc-en: >-
+  Designed for turning a slice of novel prose into a finished video with no manual table
+  writing and no browser. The caller supplies three things — a story library name, a line range
+  inside that library's 0000_正文.md, and an optional target resolution such as 960*544 — and the
+  Skill reads that passage, extracts the narrative (timeline, location, characters present,
+  props, events, dialogue), then derives and writes every resource table the pipeline needs,
+  covering character and object modeling, scene first frames, asset expansion, and the final
+  shot table. When a resolution is given, it rewrites the width and height columns of every table
+  that has them so the whole chain shares one canvas, and it overrides the resolution selector
+  and re-pairs the H3 LoRA and sigma-shift tiers at submit time, because a resolution written
+  into the tables is silently ignored while that selector rests on a fixed tier and a LoRA paired
+  with the wrong shift produces structural picture and audio corruption without any error. It
+  distinguishes first appearances from reusable existing IDs, so a passage that reuses known
+  characters does not duplicate rows. After writing the tables it drives the local ComfyUI
+  workflows headlessly in dependency order, refreshing each Markdown data table state so the
+  edits actually take effect, submitting to the API, then operating the FallingTS buttons a
+  browser would otherwise click — saving, frame extraction, and releasing the continue gates —
+  and finally verifying that each artifact landed on disk with a PyAV probe and frame extraction,
+  checking that the measured resolution matches the target. It enforces the prompt rules the
+  downstream tables depend on, including affirmative-only phrasing and the H3 size constraints.
+  It tracks line-range drift by recording anchors and a file hash, so a repeat run on a shifted
+  file stops instead of silently rendering the wrong passage. Not for writing a single table by
+  hand, not for running one workflow in isolation, and not for developing nodes.
+desc-cn: >-
+  面向“把一段小说正文做成成片、不手工写表也不开浏览器”的场景。调用方给三样东西：故事库名、
+  该库 0000_正文.md 里的行号区间、以及可选的目标分辨率（如 960*544）。技能读取该区间正文，
+  抽取叙事要素（时间线、地点、在场人物、器物、事件、对白），据此推导并写入流水线所需的全部资源表：
+  人物与器物建模、场景首帧、资产展开、以及最终的镜头表。给了分辨率时，技能会改写所有含宽高列的表，
+  让整条链共用同一个画布；并在提交时覆盖分辨率选择器、重新配对 H3 的 LoRA 与 sigma shift 档位——
+  因为选择器停在固定档位时，写进表里的分辨率会被静默忽略；而 LoRA 与 shift 配对错误不会报任何错，
+  只会导致画面与音频结构性崩坏。技能会区分“首次出现”与“复用既有 ID”，正文里出现的已知角色不会
+  重复建行。表格写好后，技能按依赖顺序无头驱动本地 ComfyUI 工作流：逐个刷新 Markdown 数据表状态让
+  改动真正生效、提交到 API，然后代行原本要在浏览器里点的 FallingTS 按钮（保存、截帧、放行继续闸门），
+  最后用 PyAV 探针与抽帧校验每个产物确实落盘，并核对实测分辨率是否等于目标值。它强制执行下游表格
+  依赖的提示词规则，包括全程肯定句式，以及 H3 的尺寸约束。行号漂移通过记录锚点与文件哈希来防范：
+  文件变化后二次作业对不上锚点会停下报告，而不是静默渲染错段落。不适用于手工撰写单张表、
+  单独跑一个工作流、或开发节点。
+author-en: Local workspace
+author-cn: 本地工作区
+source: local
