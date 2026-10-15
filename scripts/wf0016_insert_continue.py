@@ -2,6 +2,13 @@
 # -*- coding: utf-8 -*-
 """0016_建模拆图: 每条流(四宫/九宫)在 加载器IMAGE→切图 之间插入一个 FallingTSContinue 继续闸门。
 
+⚠️ 已被取代, 请勿再运行(2026-10-15): 用户明确要求 0016 **不要用「继续」按钮**, 改为在每条流末尾
+放一个「分组运行」节点(`FallingTSRunGroup`)汇聚该流全部 AutoSaveImage, 点它的「▶ 运行本组」
+只跑本组。新方案见 `custom_nodes/ComfyUI-FallingTS/dev/_build-0016-modeling-split.py`(幂等生成整图),
+本脚本仅作旧方案回溯保留。脚本已内置护栏: 图里存在 FallingTSRunGroup 时直接拒绝执行 ——
+否则它会把 Continue 闸门重新插回去, 静默推翻新设计。
+
+
 效果: Run 全图时两条流都只跑到各自 Continue(加载完成、缓存+阻塞, 不切图不保存);
 点四宫 Continue 的「▶ 继续」→ partial 执行目标 = 其下游全部输出节点 = 四宫 4 个 AutoSave;
 点九宫 Continue → 九宫 9 个 AutoSave。一条流一次点击, 互不影响。
@@ -31,6 +38,13 @@ d = json.load(open(WF, encoding="utf-8"))
 nodes = {n["id"]: n for n in d["nodes"]}
 links = {l[0]: l for l in d["links"]}
 existing = {n["type"] for n in d["nodes"]}
+
+# 护栏: 图已改用「分组运行」节点则拒绝执行, 避免把 Continue 闸门重新插回去推翻新设计
+if "FallingTSRunGroup" in existing:
+    raise SystemExit(
+        "[拒绝] 0016 已改用 FallingTSRunGroup 分组运行节点, 本脚本(Continue 闸门方案)已废弃。\n"
+        "       如需重建整图请跑 custom_nodes/ComfyUI-FallingTS/dev/_build-0016-modeling-split.py"
+    )
 
 for nid, loader_id, split_id, x, title, y in SPECS:
     if nid in nodes:
