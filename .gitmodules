@@ -38,10 +38,6 @@
 	path = refs/minimax-h3-guide
 	url = https://github.com/juemin4-source/minimax-h3-guide.git
 	branch = main
-[submodule "ComfyUI-Qwen3-TTS"]
-	path = custom_nodes/ComfyUI-Qwen3-TTS
-	url = https://github.com/wanaigc/ComfyUI-Qwen3-TTS.git
-	branch = main
 [submodule "MiniMax-H3"]
 	path = refs/MiniMax-H3
 	url = https://github.com/MiniMax-AI/MiniMax-H3.git
