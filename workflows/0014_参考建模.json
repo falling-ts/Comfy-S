@@ -2,7 +2,7 @@
   "id": "gen-0014_参考建模",
   "revision": 0,
   "last_node_id": 145,
-  "last_link_id": 346,
+  "last_link_id": 350,
   "nodes": [
     {
       "id": 1,
@@ -596,7 +596,7 @@
       "type": "MiniMaxH3MemoryEfficientSageAttentionPatch",
       "pos": [
         1550,
-        566
+        646
       ],
       "size": [
         330,
@@ -2528,7 +2528,7 @@
       ],
       "size": [
         270,
-        466
+        546
       ],
       "flags": {},
       "order": 19,
@@ -2568,80 +2568,104 @@
           "link": 332
         },
         {
-          "localized_name": "横768",
+          "localized_name": "横1088",
           "name": "input2",
+          "type": "*",
+          "link": 347
+        },
+        {
+          "localized_name": "竖1088",
+          "name": "input3",
+          "type": "*",
+          "link": 349
+        },
+        {
+          "localized_name": "横768",
+          "name": "input4",
           "type": "*",
           "link": 322
         },
         {
           "localized_name": "竖768",
-          "name": "input3",
+          "name": "input5",
           "type": "*",
           "link": 323
         },
         {
           "localized_name": "横544",
-          "name": "input4",
+          "name": "input6",
           "type": "*",
           "link": 343
         },
         {
           "localized_name": "竖544",
-          "name": "input5",
+          "name": "input7",
           "type": "*",
           "link": 344
         },
         {
           "localized_name": "横480",
-          "name": "input6",
+          "name": "input8",
           "type": "*",
           "link": 324
         },
         {
           "localized_name": "竖480",
-          "name": "input7",
+          "name": "input9",
           "type": "*",
           "link": 325
         },
         {
           "localized_name": "默认",
-          "name": "input8",
+          "name": "input10",
           "type": "*",
           "link": 333
         },
         {
+          "localized_name": "横1088",
+          "name": "input11",
+          "type": "*",
+          "link": 348
+        },
+        {
+          "localized_name": "竖1088",
+          "name": "input12",
+          "type": "*",
+          "link": 350
+        },
+        {
           "localized_name": "横768",
-          "name": "input9",
+          "name": "input13",
           "type": "*",
           "link": 326
         },
         {
           "localized_name": "竖768",
-          "name": "input10",
+          "name": "input14",
           "type": "*",
           "link": 327
         },
         {
           "localized_name": "横544",
-          "name": "input11",
+          "name": "input15",
           "type": "*",
           "link": 345
         },
         {
           "localized_name": "竖544",
-          "name": "input12",
+          "name": "input16",
           "type": "*",
           "link": 346
         },
         {
           "localized_name": "横480",
-          "name": "input13",
+          "name": "input17",
           "type": "*",
           "link": 328
         },
         {
           "localized_name": "竖480",
-          "name": "input14",
+          "name": "input18",
           "type": "*",
           "link": 329
         }
@@ -2685,12 +2709,12 @@
         }
       },
       "widgets_values": [
-        "默认,横768,竖768,横544,竖544,横480,竖480",
+        "默认,横1088,竖1088,横768,竖768,横544,竖544,横480,竖480",
         2,
         "横480"
       ],
       "widgets_values_named": {
-        "items": "默认,横768,竖768,横544,竖544,横480,竖480",
+        "items": "默认,横1088,竖1088,横768,竖768,横544,竖544,横480,竖480",
         "total": 2,
         "selection": "横480"
       }
@@ -3042,7 +3066,9 @@
           "type": "INT",
           "links": [
             343,
-            346
+            346,
+            347,
+            350
           ]
         }
       ],
@@ -3095,7 +3121,9 @@
           "type": "INT",
           "links": [
             344,
-            345
+            345,
+            348,
+            349
           ]
         }
       ],
@@ -3483,7 +3511,7 @@
       137,
       0,
       138,
-      4,
+      6,
       "INT"
     ],
     [
@@ -3491,7 +3519,7 @@
       136,
       0,
       138,
-      5,
+      7,
       "INT"
     ],
     [
@@ -3499,7 +3527,7 @@
       144,
       0,
       138,
-      6,
+      8,
       "INT"
     ],
     [
@@ -3507,7 +3535,7 @@
       145,
       0,
       138,
-      7,
+      9,
       "INT"
     ],
     [
@@ -3515,7 +3543,7 @@
       135,
       0,
       138,
-      8,
+      10,
       "INT"
     ],
     [
@@ -3523,7 +3551,7 @@
       134,
       0,
       138,
-      9,
+      11,
       "INT"
     ],
     [
@@ -3531,7 +3559,7 @@
       136,
       0,
       138,
-      11,
+      15,
       "INT"
     ],
     [
@@ -3539,7 +3567,7 @@
       137,
       0,
       138,
-      12,
+      16,
       "INT"
     ],
     [
@@ -3547,7 +3575,7 @@
       145,
       0,
       138,
-      13,
+      17,
       "INT"
     ],
     [
@@ -3555,7 +3583,7 @@
       144,
       0,
       138,
-      14,
+      18,
       "INT"
     ],
     [
@@ -3563,7 +3591,7 @@
       134,
       0,
       138,
-      15,
+      19,
       "INT"
     ],
     [
@@ -3571,7 +3599,7 @@
       135,
       0,
       138,
-      16,
+      20,
       "INT"
     ],
     [
@@ -3603,7 +3631,7 @@
       1,
       18,
       138,
-      10,
+      12,
       "INT"
     ],
     [
@@ -3668,6 +3696,38 @@
       0,
       130,
       10,
+      "INT"
+    ],
+    [
+      347,
+      144,
+      0,
+      138,
+      4,
+      "INT"
+    ],
+    [
+      348,
+      145,
+      0,
+      138,
+      13,
+      "INT"
+    ],
+    [
+      349,
+      145,
+      0,
+      138,
+      5,
+      "INT"
+    ],
+    [
+      350,
+      144,
+      0,
+      138,
+      14,
       "INT"
     ]
   ],
