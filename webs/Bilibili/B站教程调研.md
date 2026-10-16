@@ -103,3 +103,35 @@ H3 于 2026-08-02/03 开源,当前"节点优化/加速"生态刚起步:最硬核
 > 验证状态(2026-08-06,7890 代理已恢复,HuggingFace 在线确认):仓库 `larryvrh/MiniMax-H3-Turbo-Lora` 存在,Apache-2.0,base_model=`Comfy-Org/MiniMax-H3`,41 likes,2026-08-05 创建。README 明确这是**早期预览(demo/preview,欠训练,EMA 未成熟)**,4 步采样约为常规 20 步的 **5 倍提速**(设计点 4 步,预算充足建议 8 步);**原版暂不支持 ComfyUI(README 原文:No comfyui support yet, will add later)**,ComfyUI 使用需 B 站 UP 的夸克转换版;权重为 bf16 标准 LoRA(应用方式 `W_eff = W + lora_B @ lora_A`,alpha=rank)。
 
 其他加速方案线索:Sol-Attn MiniMax H3 Patcher(BV1z6MC6VEmB,注意力加速补丁);GitHub 全栈加速指南 [juemin4-source/minimax-h3-guide](https://github.com/juemin4-source/minimax-h3-guide)(CUDA13 升级,RTX 4070 Ti 12G 实测 6-8 倍提速,附工作流与 H3RefLoader 插件)。
+
+
+---
+
+## 更新(2026-10-16):MiniMax H3 **高阶使用技巧**专题 → 见 `MiniMax-H3-高阶使用技巧-教程调研-2026-10-16.md`
+
+本文件前面几期(H3 加速、节点优化)已完成其阶段使命:**H3 生态的重心已从「能不能跑 / 跑多快」转向「怎么跑好」**。本期改换选题口径,专做**高阶使用技巧**——长视频上下文续接、二采/三采放大与去塑料感、视频编辑与角色替换、提示词工程(口型/字幕/画外音/时序)、运镜控制、一致性资产(RefMod/四视图)、加速与显存方案、高动态动作迁移、工作流编排。
+
+**检索规模**:48 个关键词,去重后命中 1376 个视频,过滤同名非 H3 条目(耳机/PLC/玩具枪/背包等)后约 600 个 H3 相关,按播放量逐条抓取前 460 个的详情 + 评论 + UP 主粉丝数(API 实时)。
+
+**最值得看的十期(全部无邀请码/无三连门槛)**:
+
+| 主题 | 视频 | 看点 |
+|------|------|------|
+| 长视频 · 原理 | [BV1Wsgg6AEeR](https://www.bilibili.com/video/BV1Wsgg6AEeR) | Motion Context 完整数据流:缓存上段末尾 1s 音画 latent → 与新 latent 并联 → 裁重叠拼接 |
+| 长视频 · 抗劣化 | [BV12i8Q6vEFP](https://www.bilibili.com/video/BV12i8Q6vEFP) | **官方原生 Add Guide 节点 + 参考帧注噪**,免第三方插件实现真正无限续接 |
+| 长视频 · 无色差 | [BV11kHs6NEef](https://www.bilibili.com/video/BV11kHs6NEef) | 新 latent 放大模型 + VAE 提速;评论区有「参考视频质量决定续段质量」等实测 |
+| 二采 · 原理 | [BV1whbN6bEtt](https://www.bilibili.com/video/BV1whbN6bEtt) | 一采定框架 / 二采修细节;点破「文系武系只是不同动态 LoRA」;附 sigma 分段方案对照 |
+| 二采 · 取舍 | [BV1hupu6qEUX](https://www.bilibili.com/video/BV1hupu6qEUX) | 评论区关键结论:**SelfLift 这类分离 sigma 的二采反而降质**,完整两次采样才更好 |
+| 放大 · 显存 | [BV1CybV6DEiA](https://www.bilibili.com/video/BV1CybV6DEiA) | 分块放大 2K/4K;**评论区比视频更值钱**(分离模型省 10G 显存、Sage+Sol 稀疏注意力组合) |
+| 编辑 | [BV1v24f6FEuH](https://www.bilibili.com/video/BV1v24f6FEuH) | Ref2VA 整段重构 + **官方六段式提示词公式**拆解 + 参考视频帧率尺寸对齐痛点 |
+| 一致性 | [BV1NjWw6CEvD](https://www.bilibili.com/video/BV1NjWw6CEvD) | **RefMod 零训练演员库**:8 张照片封装成 LoRA 式资产,含 tokens 与节点配置 |
+| 提示词 | [BV1Lre16rEM1](https://www.bilibili.com/video/BV1Lre16rEM1) | 乱说话(鸟语)/ 画外音 / 内心独白的正确写法 |
+| 运镜 | [BV1uuHy6hEfe](https://www.bilibili.com/video/BV1uuHy6hEfe) | **114 条运镜对照测试**(收藏率 0.166 为本专题最高),回答「还需要运镜 LoRA 吗」 |
+
+**三条影响本机工作流的结论**:
+1. B 站主流「加速」走的是 Spark-H3 / BlockCache / SelfLift / TaoMate-H3 / DMAD 蒸馏等**非 lightx2v Turbo LoRA** 路线 ⇒ 与本机 `AGENTS.md` 的 shift 配对表无关,换用不需改 `MiniMaxH3SigmaShift`,但要独立复验质量。
+2. 「H3 原生运镜够强,未必需要运镜 LoRA」与「SelfLift 式分离 sigma 二采反降质」直接影响本机 H3 的**采样结构选型**。
+3. 语义桥(Semantic Bridge)是官方六段式提示词的上游增强,可作为本机 `h3-prompt-writing` 技能的补充手段。
+
+完整清单(含分组表格、逐条引流标注、22 条配套开源项目索引、观看顺序建议)见
+[`MiniMax-H3-高阶使用技巧-教程调研-2026-10-16.md`](MiniMax-H3-高阶使用技巧-教程调研-2026-10-16.md)。
