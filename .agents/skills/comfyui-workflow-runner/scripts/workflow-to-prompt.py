@@ -137,15 +137,19 @@ def widget_names(spec: dict, class_type: str = "", values: list | None = None) -
     return names
 
 
-def refresh_state(state: dict) -> dict:
-    """按 md 文件刷新 mdtable 控件状态(等价于前端点「刷新」)。"""
+def refresh_state(state: dict, row_id: str | None = None) -> dict:
+    """按 md 文件刷新 mdtable 控件状态(等价于前端点「刷新」)。
+
+    `row_id` 给了就换成该行(等价于前端在下拉里选另一行), 没给则沿用快照里选中的行。
+    这让批量出片可以在**不改磁盘工作流 JSON** 的前提下逐行提交(与 --resolution 同理)。
+    """
     path = state.get("md_path")
     if not path:
         return state
     r = api_get("/fallingts_mdtable/read?path=" + urllib.parse.quote(str(path)))
     if not r.get("ok"):
         raise RuntimeError(f"读取 md 失败: {r.get('error')}")
-    sid = (state.get("selected") or {}).get("id")
+    sid = row_id or (state.get("selected") or {}).get("id")
     row = next((x for x in r["rows"] if x.get("id") == sid), None)
     if row is None:
         raise RuntimeError(f"md 中找不到行: {sid}")
@@ -155,7 +159,7 @@ def refresh_state(state: dict) -> dict:
     return new
 
 
-def build(wf_path: str, refresh_md: bool):
+def build(wf_path: str, refresh_md: bool, row_id: str | None = None):
     wf = json.loads(pathlib.Path(wf_path).read_text(encoding="utf-8"))
     nodes = {n["id"]: n for n in wf["nodes"]}
     links = {l[0]: l for l in wf.get("links", [])}
@@ -224,7 +228,7 @@ def build(wf_path: str, refresh_md: bool):
 
             before = longest_field(state)
             if refresh_md:
-                state = refresh_state(state)
+                state = refresh_state(state, row_id)
             after = longest_field(state)
             notes.append(f"mdtable: 最长字段 {before} -> {after} 字符" + (" (已按 md 刷新)" if refresh_md else ""))
             inputs["data"] = state
@@ -408,6 +412,32 @@ def apply_resolution(prompt: dict, width: int, height: int) -> list:
     return changed
 
 
+def apply_overrides(prompt: dict, overrides: list[str]) -> list[str]:
+    """在 API 载荷层面覆盖任意节点输入(不改磁盘工作流 JSON)。
+
+    格式 `节点id.输入名=值`, 可重复。用于驱动**没有 md 表**的工作流
+    (如 `0035_场景截帧`: 源视频写在 `FallingTSLoadVideo` 的 `video`/`name`/`sequence`
+    控件里, 只能靠载荷覆盖换片源)。值按 JSON 解析, 解析失败则当字符串。
+    """
+    changed = []
+    for item in overrides:
+        if "=" not in item or "." not in item.split("=", 1)[0]:
+            raise RuntimeError(f"--set 格式应为 节点id.输入名=值, 收到 {item!r}")
+        lhs, raw = item.split("=", 1)
+        nid, name = lhs.split(".", 1)
+        node = prompt.get(str(nid))
+        if node is None:
+            raise RuntimeError(f"--set 指向的节点 {nid} 不在 API prompt 里")
+        try:
+            val = json.loads(raw)
+        except ValueError:
+            val = raw
+        old = node["inputs"].get(name, "<未设置>")
+        node["inputs"][name] = val
+        changed.append(f"节点 {nid} {name}: {old!r} -> {val!r}")
+    return changed
+
+
 def main() -> int:
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     pat = args[0] if args else "*.json"
@@ -419,6 +449,13 @@ def main() -> int:
     resolution = None
     if "--resolution" in sys.argv:
         resolution = parse_resolution(sys.argv[sys.argv.index("--resolution") + 1])
+    row_id = None
+    if "--row" in sys.argv:
+        row_id = sys.argv[sys.argv.index("--row") + 1]
+    sets = [sys.argv[i + 1] for i, a in enumerate(sys.argv) if a == "--set"]
+    workflow_name = None
+    if "--workflow-name" in sys.argv:
+        workflow_name = sys.argv[sys.argv.index("--workflow-name") + 1]
 
     files = sorted(glob.glob(str(pathlib.Path(_COMFY / "workflows") / pat)))
     if not files:
@@ -426,8 +463,10 @@ def main() -> int:
         return 1
     wf = files[0]
     print(f"工作流: {pathlib.Path(wf).name}")
+    if row_id:
+        print(f"选中行(--row): {row_id}")
 
-    prompt, notes = build(wf, refresh_md)
+    prompt, notes = build(wf, refresh_md, row_id)
     print(f"转换完成: {len(prompt)} 个节点进入 API prompt")
     for x in notes:
         print("  .", x)
@@ -444,18 +483,33 @@ def main() -> int:
         for x in apply_resolution(prompt, w, h):
             print("  *", x)
 
+    if sets:
+        print("\n应用载荷覆盖(--set):")
+        for x in apply_overrides(prompt, sets):
+            print("  *", x)
+
     if dump:
         pathlib.Path(dump).write_text(json.dumps(prompt, ensure_ascii=False, indent=1), encoding="utf-8")
         print(f"已导出 -> {dump}")
-
     if not submit:
         print("\n(dry-run; 加 --submit 真正提交)")
         return 0
 
     print("\n提交中...")
     t0 = time.time()
+    payload = {"prompt": prompt, "client_id": "dsh-auto"}
+    if workflow_name:
+        # AutoSaveImage 靠 extra_pnginfo 里的工作流名决定产物子目录(它没有 md 表节点可依据);
+        # 缺了它, 产物会写进 output 根而不是 <工作流名>/ 子目录。
+        # ⚠️ 必须嵌在 `extra_data.extra_pnginfo` 里: 服务端只认 `extra_data` 下的键
+        # (server.py 读 json_data["extra_data"]), execution.py 再由
+        # `extra_data.get('extra_pnginfo')` 把它交给节点的同名隐藏输入 —— 直接写在顶层
+        # `extra_pnginfo` 会被服务端整份丢弃, 节点拿到 None, 产物静默落回 output 根。
+        payload["extra_data"] = {
+            "extra_pnginfo": {"workflow_name": workflow_name}
+        }
     try:
-        resp = api_post("/prompt", {"prompt": prompt, "client_id": "dsh-auto"})
+        resp = api_post("/prompt", payload)
     except urllib.error.HTTPError as e:
         body = e.read().decode()
         print("提交失败:", body[:2000])

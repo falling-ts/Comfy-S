@@ -180,3 +180,7 @@
 	path = refs/MiniMax-H3-Turbo
 	url = https://github.com/ModelTC/Minimax-H3-Turbo.git
 	branch = main
+[submodule "custom_nodes/ComfyUI-LTXVideo"]
+	path = custom_nodes/ComfyUI-LTXVideo
+	url = https://github.com/Lightricks/ComfyUI-LTXVideo.git
+	branch = master
