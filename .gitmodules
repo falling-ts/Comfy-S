@@ -180,3 +180,9 @@
 	path = custom_nodes/ComfyUI-LTXVideo
 	url = https://github.com/Lightricks/ComfyUI-LTXVideo.git
 	branch = master
+[submodule "custom_nodes/ComfyUI-HunyuanVideo-Foley"]
+	path = custom_nodes/ComfyUI-HunyuanVideo-Foley
+	url = https://github.com/phazei/ComfyUI-HunyuanVideo-Foley.git
+[submodule "custom_nodes/TTS-Audio-Suite"]
+	path = custom_nodes/TTS-Audio-Suite
+	url = https://github.com/diodiogod/TTS-Audio-Suite.git
