@@ -544,9 +544,26 @@ def layout(wf, keep_size=True):
                      if n["type"] in _SAMPLER_TYPES]
         _bus = {nid for nid, n in nodes.items()
                 if n["type"] in _BUS_TYPES or n["type"] in _PARAM_TYPES}
-        _LAST = n_stage - 1
-        _s2 = [s for s in _samp_all if stage_of.get(s) == _LAST]
-        _s1 = [s for s in _samp_all if stage_of.get(s) != _LAST]
+        # ⚠️ 「二段」不是「末段」! 三段/多段流水线里(实测 0030 有 3 段:
+        # stage0 一段 → stage1 二段 → stage2 三段), 末段采样器是 213,
+        # 但继续节点闸门之后真正的**二段**是 stage1 的 204。
+        # 若按末段 213 往上溯源, 会越过 204 继续往前, 把 204 的专用加载器
+        # (UNETLoader 187 / VAELoader 188 / CLIPLoader 189 / LoRA 197)
+        # 误判成「一段也在用」而留在左侧 —— 实测 9 个节点错位。
+        #
+        # 正确定义(以继续节点为界):
+        #   · 一段采样器 = 继续节点**左侧**的全部采样器;
+        #   · 二段起采样器 = 继续节点**右侧**的全部采样器。
+        # 不管后面还有几段, 都只关心「有没有被一段用过」。
+        if cont_ids:
+            _cx = min(nodes[c]["pos"][0] for c in cont_ids)
+            _s1 = [s for s in _samp_all if nodes[s]["pos"][0] <= _cx]
+            _s2 = [s for s in _samp_all if nodes[s]["pos"][0] > _cx]
+        else:
+            _s1, _s2 = [], []
+        # 二段的阶段号 = 继续节点右侧最小阶段号(用于「一段结果节点不动」判据)
+        _ST2 = min((stage_of.get(s, 0) for s in _s2),
+                   default=n_stage - 1)
 
         # 严格口径的「纯二段」集合
         _pure2: set = set()
@@ -598,9 +615,10 @@ def layout(wf, keep_size=True):
                     continue
                 if (_prep(x) & _prep1):
                     continue
-                # 非末段的结果/预览节点不动(一段产物常被二段引用)
+                # 一段(二段之前的阶段)的结果/预览节点不动
+                # —— 一段产物常被二段引用, 拉走会把一段拆散
                 if (any(t in nodes[x]["type"] for t in _RESULT_TYPES)
-                        and stage_of.get(x, 0) < _LAST):
+                        and stage_of.get(x, 0) < _ST2):
                     continue
                 _pure2.add(x)
             # ⚠️ 不做下游补全 —— 用户口径是「从二采核心**往前**溯源」,
@@ -1261,9 +1279,11 @@ def check(wf):
         _bus = {nid for nid, n in nodes.items()
                 if n["type"] in _BUS_TYPES or n["type"] in _PARAM_TYPES}
         if n_st >= 2 and _samp_all:
-            _LAST = n_st - 1
-            _s2 = [s for s in _samp_all if st_of.get(s) == _LAST]
-            _s1 = [s for s in _samp_all if st_of.get(s) != _LAST]
+            # ⚠️ 与 layout() 一致: 以**继续节点**为界划分一段/二段采样器,
+            # 不取「末段」—— 三段工作流(实测 0030)的末段是第三段,
+            # 往上溯源会越过真正的二段, 把二段的专用加载器误判成共用。
+            _s1 = [s for s in _samp_all if nodes[s]["pos"][0] <= cx]
+            _s2 = [s for s in _samp_all if nodes[s]["pos"][0] > cx]
             if _s2 and _s1:
                 _anc2 = set(_s2)
                 for s in _s2:
@@ -1272,38 +1292,39 @@ def check(wf):
                 _cont_up = set(cont_ids)
                 for c in cont_ids:
                     _cont_up |= _ancx(c)
+                # 与 layout() 一致: 准备链遇采样器即停
+                def _prepc(nid):
+                    _s: set = set()
+                    _q = list(_upd.get(nid, []))
+                    while _q:
+                        _x = _q.pop()
+                        if _x in _s or _x not in nodes:
+                            continue
+                        _s.add(_x)
+                        if nodes[_x]["type"] in _SAMPLER_TYPES:
+                            continue
+                        _q.extend(_upd.get(_x, []))
+                    return _s
+
+                _prep1 = set()
+                for s in _s1:
+                    _prep1 |= _prepc(s)
                 _pure2c: set = set()
                 for n in wf["nodes"]:
                     nid = n["id"]
                     if nid not in _anc2 or nid in _bus or nid in _cont_up:
                         continue
-                    if _ancx(nid) & _samp1:
+                    if nid in _prep1:
                         continue
-                    if (any(t in n["type"] for t in _RESULT_TYPES)
-                            and st_of.get(nid, 0) < _LAST):
+                    if (_prepc(nid) & _prep1):
+                        continue
+                    if any(t in n["type"] for t in _RESULT_TYPES):
                         continue
                     _pure2c.add(nid)
-                # 与 layout() 同一收缩规则: 下游还连着「与一段有关」的节点时,
-                # 该节点不能算纯二段(否则右移会制造 lr)
-                _dn_check = defaultdict(list)
-                for l in links:
-                    if len(l) >= 5 and l[1] in nodes and l[3] in nodes:
-                        _dn_check[l[1]].append(l[3])
-                _chgc = True
-                while _chgc:
-                    _chgc = False
-                    for x in list(_pure2c):
-                        for d in _dn_check.get(x, []):
-                            if d not in nodes or d in _pure2c:
-                                continue
-                            if d in _bus or d in _cont_up:
-                                continue
-                            if (any(t in nodes[d]["type"] for t in _RESULT_TYPES)
-                                    and st_of.get(d, 0) < _LAST):
-                                continue
-                            _pure2c.discard(x)
-                            _chgc = True
-                            break
+                # ⚠️ 不要在这里写「下游收缩」之类的额外剪枝 ——
+                # 必须与 layout() 的 _pure2 判据**逐字一致**, 否则
+                # check() 与布局会得出不同结论(check 报 0、实际 69 个错位,
+                # 导致 --force 也不会重排)。
                 for n in wf["nodes"]:
                     if n["id"] in _pure2c and n["pos"][0] < cx:
                         cont_left += 1
