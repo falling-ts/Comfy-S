@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""全量工作流布局重排 (八条布局规范: 方向 / 端口序 / 净距 / 短线优先 / 功能区块)。
+"""全量工作流布局重排(八条布局规范: 方向 / 端口序 / 净距 / 短线优先 / 功能区块 / 阶梯)。
 
 用法:
     python scripts/wf_layout_all.py [关键字...] [--force]
@@ -8,30 +8,39 @@
 
 自动定位本仓根目录, 不依赖工作目录。幂等: 对已合规的布局再跑一次坐标不变。
 
-本轮新增 —— 第 5.1/5.2/5.3 条「功能区块, 按连线关系归区」:
-    旧: 全图按「全局依赖深度」整列硬塞 —— 同一深度但互不相干的东西会堆进同一列
-        (实测 0032 的 x=1200 一列里塞了 UNETLoader / RandomNoise / KSamplerSelect
-         / ComfyMathExpression / FallingTSVideoComponents, 也就是「整个混乱放在一起」)
-    新: 先在「主数据图」上做社区发现划出功能区块, 再让**区块带号成为列内排序的主键**,
-        使同一区块的节点在所有列里都连续相邻, 视觉上呈一条斜向条带。
+════ 核心算法(真正生效的三层结构, 按执行顺序) ════
 
-区块怎么划(第 5.1 条):
-    - 只在主数据图上做(剔除参数节点与 MD/note, 它们是广播总线, 参与划区会把
-      不相干的区块粘成一块);
-    - 贪心模块度优化(_louvain), 边权 = 两端连线数;
-    - < 3 个节点的碎块并入连边权重最大的邻居;
-    - 参数节点不划区, 按「消费者最多的那个区块」并入宿主区块(_assign_blocks)。
-区块怎么摆(第 5.2 条):
-    - 列归属不变(仍按全局依赖深度), 所以第 1 条「输出在左、输入在右」恒成立;
-    - 区块只决定**列内纵向顺序**: 排序键 = (区块带号, 期望 y, id);
-    - 区块带号优先于短线对齐 —— 宁可某条线长一点, 也不能把同一区块拆散。
-      (曾经试过「区块整体平移成水平横带」, 但长链区块如 VAE 主链深度 0→18 横跨
-       全图, 横带会被拉到 5000px 以上, 反而更难辨认, 故弃用。)
+一、列归属 = 【采样段 + 段内局部深度】(第 1 条: 输出在左输入在右)
+    旧实现用「全局依赖深度」分列, 而全局深度只数数据上游, 于是二段采样用的
+    UNETLoader/VAELoader/CLIPLoader 深度也是 0, 被推到整张图最左边, 与它
+    服务的二段采样隔了大半张图(实测 11 个工作流、上百个节点越界)。
+    _stages() 按采样器的上游闭包把节点分堆, 每段的列区间从上一段末尾之后
+    开始, 于是「二段所有节点(含加载器/参数)都在一段结果节点右侧」恒成立。
+    ⚠️ KSamplerSelect 不是采样器(它只是选采样器类型的参数节点), 误当采样器
+    会把段号彻底搅乱。
 
-短线优先(第 4.1/4.2 条, 上一轮加入)仍由「前向扫描 + 列内避让」实现:
-    1) 只有一条入线  -> 对齐那个唯一上游(第 4.1 条)
-    2) 多入线        -> 对齐「我位于它 outputs[0]」的那一个(第 4.2 条: 第一条最短)
-    3) 都不满足      -> 取所有上游中线均值
+二、区块 = 社区发现划区 + 区块段跟随上游(第 5.1/5.2/5.3 条)
+    在主数据图(剔除参数节点/MD/note 这些广播总线)上做贪心模块度优化,
+    得到功能区块; 参数节点按「消费者最多的区块」并入宿主块。
+    列内: 同一区块必须连续成段(否则 blk_split > 0, 功能块被打散);
+    区块段在列内的上下位置不看全局固定带号, 而看「该块在本列上游列里的
+    平均 y」—— 段跟着上游走, 于是「同区块聚在一起」与「逐条对齐」同时成立。
+
+三、列内 = 紧凑堆叠 + 上游 y 排序(第 3 条净距 / 第 4.1·4.2 条短线)
+    每列从顶部开始紧凑堆叠, 净距恒为 VGAP(60px), 排序先按区块段、
+    段内再按「上游中心 y」。绝不能把单个节点放到它「想对齐」的理想位置
+    再推挤 —— 那样同一列各节点想对齐不同上游, 推挤会让净距雪崩到
+    4000~7000px(实测 0032 最大 7075px), 画布高度轻松过万。
+
+四、列间阶梯(第 7 条)
+    从左往右每列抬高「左邻列首节点高度」的 30%, 避免相邻列顶端等高
+    导致多条连线完全水平重叠、人眼分不清谁连谁; 抬高累积超过本列自身
+    高度时回绕归零, 形成锯齿台阶而不是一路升到天上。
+
+════ 校验指标(check) ════
+ov(重叠) / lr(方向) / md_inv(MD 独占列) / note_left(note 在左) /
+gap_bad(列内过挤) / blk_split(区块被切断) 这六项必须全为 0;
+short_bad(短线偏差) 与 flat(顶端齐平的跨列对数) 是观测值, 不作为失败判据。
 """
 import json
 import math
@@ -105,6 +114,111 @@ _PARAM_TYPES = {
 }
 # MD 表与 note 各自独占一列, 同样不参与划区
 _BUS_TYPES = {"FallingTSMarkDownTable", "MarkdownNote"}
+# 结果/预览类节点(一段的这类节点不得被继续节点屏障推走)
+_RESULT_TYPES = (
+    "PreviewVideo", "PreviewAudio", "PreviewImageSave", "PreviewAudioSave",
+    "PreviewImage", "PreviewAny", "SaveImage", "SaveVideo", "SaveAudio",
+    "AutoSaveImage", "VHS_VideoCombine",
+)
+
+# 采样器节点类型(用于切分「段」)
+# ⚠️ 注意: KSamplerSelect **不是**采样器 —— 它是一个「选哪个采样器」的参数节点
+# (类型也在 _PARAM_TYPES 里)。若把它当采样器, 每段的 RandomNoise/KSamplerSelect
+# 会被拆成单独的段, 段号彻底乱掉(实测段0里全是 KSamplerSelect, 而真正的
+# 采样器反而落到段1~3)。
+_SAMPLER_TYPES = {
+    "KSampler", "KSamplerAdvanced", "SamplerCustom", "SamplerCustomAdvanced",
+}
+
+
+def _stages(wf, nodes, links):
+    """按「采样阶段」给节点分堆(二段采样/多段流水线)。
+
+    背景(用户要求): 二段采样所需的所有节点(包括它自己的 UNETLoader/VAELoader/
+    CLIPLoader/参数节点)必须放在**一段的结果节点(PreviewVideo/PreviewImage 等)
+    的右侧**。而旧实现用「全局依赖深度」分列, 全局深度只数数据上游, 于是二段
+    采样用的加载器深度也是 0, 被推到整张图最左边 —— 与它服务的二段采样隔了
+    大半张图(实测 11 个工作流、上百个节点越界)。
+
+    做法:
+      1. 找出所有采样器, 算每个采样器的「上游闭包」;
+      2. 采样器分层: 依赖其他采样器的层级 = 1 + 那些采样器的最大层级(拓扑);
+      3. 每个节点归属于「需要它的采样器的最小层级」—— 一段采样器不用的
+         加载器/参数自然归到二段。
+    返回 (stage_of, n_stages): stage_of = {节点id: 段号}。
+    无采样器的图返回 (全部 0, 1)。
+    """
+    ups = defaultdict(list)
+    for l in links:
+        if len(l) >= 5 and l[1] in nodes and l[3] in nodes:
+            ups[l[3]].append(l[1])
+    samp = [nid for nid, n in nodes.items() if n["type"] in _SAMPLER_TYPES]
+    if not samp:
+        return {nid: 0 for nid in nodes}, 1
+
+    def anc(nid):
+        seen: set = set()
+        st = [nid]
+        while st:
+            x = st.pop()
+            for u in ups.get(x, []):
+                if u not in seen:
+                    seen.add(u)
+                    st.append(u)
+        return seen
+
+    closures = {s: anc(s) | {s} for s in samp}
+    lvl = {}
+
+    def _lvl(s, guard=0):
+        if s in lvl:
+            return lvl[s]
+        if guard > 60:
+            return 0
+        deps = [t for t in samp if t != s and t in closures[s]]
+        lvl[s] = 1 + max((_lvl(t, guard + 1) for t in deps), default=-1)
+        return lvl[s]
+
+    for s in samp:
+        _lvl(s)
+    stage_of = {}
+    for nid in nodes:
+        cand = [lvl[s] for s in samp if nid in closures[s]]
+        stage_of[nid] = min(cand) if cand else None
+
+    # ⚠️ 采样器**之后**的下游节点(VAEDecode/CreateVideo/PreviewVideo 等)不在
+    # 任何采样器的上游闭包里, 上面会得到 None。若不处理, 它们会被当成「段0」
+    # 推回最左边 —— 实测 0030 出现 6 条「上游在右、下游在左」的方向违规。
+    # 故按拓扑顺序让无归属节点继承「上游里最大的段号」: 下游永远在下游段的
+    # 右侧, 也符合「二段处理后仍属二段」的直觉。
+    indeg = {nid: 0 for nid in nodes}
+    for l in links:
+        if len(l) >= 5 and l[1] in nodes and l[3] in nodes:
+            indeg[l[3]] = indeg.get(l[3], 0) + 1
+    down = defaultdict(list)
+    for l in links:
+        if len(l) >= 5 and l[1] in nodes and l[3] in nodes:
+            down[l[1]].append(l[3])
+    queue = [nid for nid in nodes if indeg.get(nid, 0) == 0]
+    while queue:
+        nid = queue.pop()
+        cur = stage_of.get(nid)
+        for d in down.get(nid, []):
+            cands = [x for x in (cur,) if x is not None]
+            if stage_of.get(d) is None:
+                if cands:
+                    stage_of[d] = max(cands)
+            else:
+                # 已有归属(在某采样器的上游闭包里): 取较大值, 保证下游不倒退
+                if cands and cur is not None:
+                    stage_of[d] = max(stage_of[d], cur)
+            indeg[d] -= 1
+            if indeg[d] <= 0:
+                queue.append(d)
+    for nid in nodes:
+        if stage_of.get(nid) is None:
+            stage_of[nid] = 0
+    return stage_of, (max(stage_of.values()) + 1 if stage_of else 1)
 
 
 def _louvain(nodes, adj, rounds=50):
@@ -214,12 +328,33 @@ def _assign_blocks(wf, nodes, links):
             block_of[nid] = hb
             blocks[hb].append(nid)
 
-    # 仍无归属的(无消费者的纯孤立节点)单独成块
+    # 仍无归属的(无消费者的纯孤立节点): 优先当成参数节点并入最近邻区块,
+    # 否则单独成块。
+    # ⚠️ 旧实现一律放进 `blocks[-1]`, 结果这些孤块(实测 0032 的 RandomNoise)
+    # 按区块带号排位后会插在主区块中间, 造成「同一区块在同一列被切断」
+    # (`blk_split` > 0), 视觉上就是把功能块打散了 —— 正是第 5.1/5.2 条要禁止的。
+    # 修法: 有入边/出边邻居的孤块直接并入「与它连边权重最大」的邻居区块。
     stray = [nid for nid in nodes
              if nid not in block_of and nodes[nid]["type"] not in _BUS_TYPES]
-    if stray:
-        blocks[-1] = stray
-        for nid in stray:
+    leftover = []
+    for nid in stray:
+        w = defaultdict(int)
+        for l in links:
+            if len(l) < 5:
+                continue
+            if l[1] == nid and l[3] in block_of:
+                w[block_of[l[3]]] += 1
+            elif l[3] == nid and l[1] in block_of:
+                w[block_of[l[1]]] += 1
+        if w:
+            hb = max(w, key=w.get)
+            block_of[nid] = hb
+            blocks[hb].append(nid)
+        else:
+            leftover.append(nid)
+    if leftover:
+        blocks[-1] = leftover
+        for nid in leftover:
             block_of[nid] = -1
     return blocks, block_of
 
@@ -279,6 +414,23 @@ def layout(wf, keep_size=True):
     for nid in others:
         dep2(nid)
 
+    # 列归属: 按【段内局部深度】而非全局深度 —— 这是让「二段采样所需的所有节点
+    # 都在一段结果节点右侧」真正成立的关键。
+    # 旧实现分三步都失败过, 记录如下以免重蹈:
+    #   ① 全局深度分列: 只数数据上游, 二段用的加载器/参数深度也是 0,
+    #      被推到最左 —— 实测 11 个工作流、上百个节点越界;
+    #   ② 参数节点贴消费者: 只修了参数节点, 二段的 UNETLoader/VAELoader/
+    #      CLIPLoader 依旧在最左, 依然越界;
+    #   ③ 正确做法(本版): 先用 _stages 算出「每个节点属于第几段」, 然后
+    #      **列号从小段到大段递增排布**: 第 k 段的列区间 = [该段起点, ...),
+    #      而段起点 = 上一段已用的最大列号 + 1。于是无论某节点是加载器、
+    #      参数还是后处理, 只要它属于二段, 它的列就一定在一段全部节点
+    #      (含 PreviewVideo/PreviewImage 等结果节点)的右边。
+    _consumers = defaultdict(list)
+    for l in links:
+        if len(l) >= 5 and l[1] in nodes and l[3] in nodes:
+            _consumers[l[1]].append(l[3])
+
     has_note = bool(note_ids)
     off = 1 if has_note else 0
     cols = defaultdict(list)
@@ -286,11 +438,180 @@ def layout(wf, keep_size=True):
         cols[0].append(nid)
     for nid in md_ids:
         cols[off].append(nid)
-    # 功能列仍按「全局依赖深度」分列 —— 保证第 1 条(输出在左、输入在右)恒成立。
-    # 区块不改变列归属, 只决定「纵向条带」(见下方 y 分配), 因为某些区块的
-    # 深度跨度极大(VAE 链从深度 0 一直到 18), 按 x 分块必然与其他块交错。
+    first_fn_col = 1 + off
+
+    stage_of, n_stage = _stages(wf, nodes, links)
+    # 每段内再按局部深度分层(只在本段节点上算深度)
+    stage_members = defaultdict(list)
     for nid in others:
-        cols[depth2[nid] + 1 + off].append(nid)
+        stage_members[stage_of.get(nid, 0)].append(nid)
+    # 段起点累加: 第 k 段从上一个段的末尾之后开始
+    stage_base = {}
+    base = first_fn_col
+    for st in range(n_stage):
+        mem = stage_members.get(st, [])
+        if not mem:
+            continue
+        # 本段内部的局部深度(上游只在本段内算)
+        loc = {}
+        mem_set = set(mem)
+
+        def _loc(nid, seen=()):
+            if nid in loc:
+                return loc[nid]
+            if nid in seen:
+                return 0
+            ds = [_loc(s, seen + (nid,)) + 1 for s in deps2.get(nid, []) if s in mem_set]
+            loc[nid] = max(ds) if ds else 0
+            return loc[nid]
+
+        span = 0
+        for nid in mem:
+            _loc(nid)
+            span = max(span, loc[nid])
+        stage_base[st] = (base, loc)
+        base += span + 1
+
+    for nid in others:
+        st = stage_of.get(nid, 0)
+        if st in stage_base:
+            b, loc = stage_base[st]
+            col = b + loc.get(nid, 0)
+        else:
+            col = first_fn_col + depth2[nid]
+        # 参数节点: 再往前贴一列(它无上游, 局深度恒 0, 不贴就会与消费者同列)
+        if nodes[nid]["type"] in _PARAM_TYPES:
+            cons = [d for d in _consumers.get(nid, []) if d in nodes]
+            if cons:
+                cons_cols = []
+                for d in cons:
+                    ds = stage_of.get(d, 0)
+                    if ds in stage_base:
+                        db, dloc = stage_base[ds]
+                        cons_cols.append(db + dloc.get(d, 0))
+                if cons_cols:
+                    # 不得回遇到本段起点之前 —— 否则二段的参数会被拉回一段里,
+                    # 造成「上游落在下游右侧」的方向违规(lr>0)。
+                    col = max(stage_base[st][0] if st in stage_base else first_fn_col,
+                              min(cons_cols) - 1)
+        cols[col].append(nid)
+
+    # ---- 「继续节点」屏障: 纯二段节点必须落在继续节点右侧 ----
+    # 用户要求: 有二段的工作流里, 如果存在 FallingTSContinue(分段闸门),
+    # 那么**仅属于二段的节点(包括它们自己专用的 UNETLoader/VAELoader/
+    # LTXICLoRALoaderModelOnly/LTXVConditioning 等)一律不得出现在继续节点
+    # 的左侧**。闸门的语义就是「先看一段结果, 再放行二段」—— 二段的准备
+    # 工作在视觉上也应该在闸门之后, 而不是散在闸门左边让人以为已执行。
+    #
+    # 判据(为何不用段号): 段号只说明「归属第几段」, 但二段专用的加载器
+    # 可能被一段的采样器间接共用而仍标成段 1; 真正要管的是「消费者全部
+    # 落在继续节点下游闭包内」的那些节点 —— 它们纯属二段。
+    cont_ids = [nid for nid, n in nodes.items() if "Continue" in n["type"]]
+    if cont_ids:
+        _dn = defaultdict(list)
+        for l in links:
+            if len(l) >= 5 and l[1] in nodes and l[3] in nodes:
+                _dn[l[1]].append(l[3])
+
+        def _down(nid):
+            seen: set = set()
+            st_k = [nid]
+            while st_k:
+                x = st_k.pop()
+                for d in _dn.get(x, []):
+                    if d not in seen:
+                        seen.add(d)
+                        st_k.append(d)
+            return seen
+
+        # 所有继续节点下游闭包的并集 = 「二段侧」
+        _seg2 = set()
+        for cid in cont_ids:
+            _seg2 |= _down(cid)
+        if _seg2:
+            # 继续节点及其上游闭包 = 「一段侧」(一段共用节点不得被推走)
+            _up = defaultdict(list)
+            for l in links:
+                if len(l) >= 5 and l[1] in nodes and l[3] in nodes:
+                    _up[l[3]].append(l[1])
+
+            def _anc(nid):
+                seen: set = set()
+                st_k = [nid]
+                while st_k:
+                    x = st_k.pop()
+                    for u in _up.get(x, []):
+                        if u not in seen:
+                            seen.add(u)
+                            st_k.append(u)
+                return seen
+
+            _seg1_side = set(cont_ids)
+            for cid in cont_ids:
+                _seg1_side |= _anc(cid)
+            # 继续节点所在列: 从 cols 反查(此刻 col_of() 尚未定义), 右限 = 该列 +1
+            _col_of_now = {}
+            for _c, _mem in cols.items():
+                for _nid in _mem:
+                    _col_of_now[_nid] = _c
+            cont_cols = [_col_of_now[nid] for nid in cont_ids if nid in _col_of_now]
+            if cont_cols:
+                barrier = max(cont_cols) + 1
+                moved = 0
+                for nid in list(others):
+                    if nid in _seg1_side or nid in _seg2:
+                        continue
+                    cons = _down(nid)
+                    if not cons or not (cons <= _seg2):
+                        continue        # 不是「纯二段」节点
+                    # ⚠️ 「消费者全在二段侧」还不够 —— 一段自己的结果节点
+                    # (如 0030 的段1 PreviewVideo)也常被二段的 AutoSaveImage
+                    # 当作素材源拉走, 它消费者全在二段侧但**它本身属于一段**,
+                    # 不能被屏障推走(否则它会越过二段结果节点, 违反
+                    # 「二段节点在一段结果右侧」)。故加一道: 属于非末段的
+                    # 结果节点/预览节点一律不动。
+                    _n = nodes[nid]
+                    _is_prior_result = (
+                        any(_t in _n["type"] for _t in _RESULT_TYPES)
+                        and stage_of.get(nid, 0) < n_stage - 1
+                    )
+                    if _is_prior_result:
+                        continue
+                    cur = _col_of_now.get(nid)
+                    if cur is None or cur >= barrier:
+                        continue
+                    # ⚠️ 不能直接放到 barrier 列 —— 若该节点的消费者恰好也在
+                    # barrier 列, 它与消费者就同列了, 产生「上游在右/同列」的
+                    # 方向违规(实测 00110/00200 各 5 条 lr)。
+                    # 故新列 = min(消费者最小列 - 1, ...) 且不早于屏障列:
+                    # 先满足「严格在消费者左侧」再满足「不早于屏障」;
+                    # 若两者矛盾(消费者就在屏障列), 则连同消费者一起往右推。
+                    cons_cols = [_col_of_now[d] for d in cons if d in _col_of_now]
+                    target = barrier
+                    if cons_cols:
+                        need = min(cons_cols) - 1
+                        if need < barrier:
+                            # 消费者太靠左: 把它们整体右移, 给上游腾出屏障位
+                            delta = barrier - need
+                            for d in cons:
+                                if d not in _col_of_now:
+                                    continue
+                                dc = _col_of_now[d]
+                                if dc < barrier + delta:
+                                    cols[dc].remove(d)
+                                    cols[dc + delta].append(d)
+                                    _col_of_now[d] = dc + delta
+                            cons_cols = [_col_of_now[d] for d in cons if d in _col_of_now]
+                            need = (min(cons_cols) - 1) if cons_cols else barrier
+                        target = max(barrier, need)
+                    if target == cur:
+                        continue
+                    cols[cur].remove(nid)
+                    cols[target].append(nid)
+                    _col_of_now[nid] = target
+                    moved += 1
+                if moved:
+                    print(f"      ↳ 继续节点屏障: {moved} 个纯二段节点移至继续节点右侧")
     max_c = max(cols) if cols else 0
 
     # ---- 列内约束图(第 2 条: 端口上下序) ----
@@ -395,14 +716,28 @@ def layout(wf, keep_size=True):
         else:
             sub[c] = 1
 
-    # ---- x 坐标 ----
-    col_x = {}
-    x = X0
+    # ---- x 坐标: 逐(子)列顺序推进, 横向净距恒为 XGAP -------
+    # 旧版用 (列最大宽 + XGAP) * sub 一次性跳过整列, 但子列里节点的实际宽度
+    # 往往小于该列最大宽, 于是子列之间净距被拉大到 140~200px, 列与列之间还
+    # 出现 9000px 量级的空白(实测 0032 横距达 9600px)。改为按每个子列的
+    # 实际最大宽度逐个推进, 使相邻(子)列净距严格等于 XGAP(落在规范 (50,100) 区间)。
+    col_per = {}
+    for c in col_order:
+        n_sub = sub.get(c, 1)
+        col_per[c] = math.ceil(len(col_order[c]) / n_sub) if col_order[c] else 1
+
+    col_x = {}          # (列号, 子列号) -> x
+    cursor = X0
     for c in range(0, max_c + 1):
         if c not in cols:
             continue
-        col_x[c] = x
-        x += (max(size[i][0] for i in cols[c]) + XGAP) * sub.get(c, 1)
+        per = col_per[c]
+        for k in range(sub.get(c, 1)):
+            chunk = col_order[c][k * per:(k + 1) * per]
+            if not chunk:
+                continue
+            col_x[(c, k)] = cursor
+            cursor += max(size[i][0] for i in chunk) + XGAP
 
     # ================= 第 4.1 / 4.2 条: 短线优先的 y 分配 =================
     first_target, out_slot = _first_slot_targets(wf)
@@ -416,11 +751,17 @@ def layout(wf, keep_size=True):
             y += size[nid][1] + VGAP
 
     def resolve_col(c, desired):
-        """按 desired 摆放一列, 再用「保序最小位移」消重叠。
+        """按 desired 摆一列: 紧凑堆叠 + 整列锚点平移。
 
-        关键: 不能用「堆叠后整体平移」——那会让所有节点回到等距堆叠,
-        对齐量被抵消。这里先把每个节点放到它想要的 y, 然后只在重叠处
-        沿排序方向把它推开(保序), 使位移总量最小。
+        历史教训(务必保留): 旧版把每个节点先放到“它自己想要的 y”(对齐上游的
+        理想位置), 再在重叠处来回推挤。同一列里各节点想对齐不同上游, 理想位置
+        互相重叠后推挤会把它们一路推开, 净距雪崩到 4000~7000px
+        (实测 0032 纵距最大 7075px、0031 6602px), 画布高度轻松过万。
+        故本函数把第 3 条(净距)当硬约束:
+          1) 整列紧凑堆叠, 净距恒为 VGAP;
+          2) 对齐只在「整列平移」这 1 个自由度上取舍 —— 永远不可能局部位移出空隙。
+        注: 本函数写下的 y 会被后面的「第 4.1 条收口」以更优的区块分段方式重算,
+        但它决定了「列内顺序」与拆列切分, 所以不能删(实测去掉调用有 2/35 图变化)。
         """
         members = list(col_order[c])
         if not members:
@@ -428,36 +769,26 @@ def layout(wf, keep_size=True):
         # 排序键 = (区块带号, 期望 y)。
         # 区块带号是**主键**: 第 5.2 条(分区块) 优先于第 4.1/4.2 条(短线最短)——
         # 宁可让某条线长一点, 也不能把同一区块的节点拆散到别的区块中间去。
-        # 只有落在同一区块内的节点之间, 才按期望 y(短线优先)排序。
         order = sorted(members, key=lambda n: (blk_pos.get(block_of.get(n), 1 << 20),
                                                desired.get(n, ypos.get(n, 0)), n))
-        # 初始 y = 期望中心 - 自身高的一半
-        y = {}
+        # 1) 相对堆叠(净距严格 VGAP)
+        rel = {}
+        acc = 0.0
         for nid in order:
-            if nid in desired:
-                y[nid] = desired[nid] - size[nid][1] / 2.0
-            else:
-                y[nid] = ypos.get(nid, 0)
-        # 保序消重叠: 双向推挤, 使总位移最小。
-        # 只往下推会让整列越推越远(每轮再加一截), 必须能往上拉。
-        for _ in range(40):
-            moved = False
-            # 向下: 后面的不能压前面的
-            for a, b in zip(order, order[1:]):
-                need = y[a] + size[a][1] + VGAP
-                if y[b] < need - 1e-6:
-                    y[b] = need
-                    moved = True
-            # 向上: 前面的不能被后面压
-            for b, a in zip(order[1:], order):
-                need = y[b] - VGAP - size[a][1]
-                if y[a] > need + 1e-6:
-                    y[a] = need
-                    moved = True
-            if not moved:
-                break
+            rel[nid] = acc
+            acc += size[nid][1] + VGAP
+        # 2) 列锚点: 让整列平移量最小化对齐残差
+        deltas = [desired[nid] - size[nid][1] / 2.0 - rel[nid]
+                  for nid in order if nid in desired]
+        anchor = rel[order[0]] + ypos.get(order[0], Y0)     # 先验: 保持原位置
+        if deltas:
+            # 最小二乘平移量; 与旧位置各占一半, 避免长链整体飘走
+            best = sum(deltas) / len(deltas)
+            best = 0.5 * best + 0.5 * anchor
+        else:
+            best = anchor
         for nid in order:
-            ypos[nid] = y[nid]
+            ypos[nid] = rel[nid] + best
         return order
 
     cols_sorted = sorted(col_order)
@@ -520,14 +851,138 @@ def layout(wf, keep_size=True):
         for nid in ypos:
             ypos[nid] += shift
 
-    # 写回
+    # ---- x 落位: 把节点分配到最终列 x ----
+    final_x = {}
     for c in col_order:
         n_sub = sub.get(c, 1)
-        w = max(size[i][0] for i in cols[c])
-        per = math.ceil(len(col_order[c]) / n_sub) if col_order[c] else 1
+        per = col_per[c]
+        seq = sorted(col_order[c], key=lambda n: (ypos.get(n, 0), n))
         for k in range(n_sub):
-            for nid in col_order[c][k * per:(k + 1) * per]:
-                nodes[nid]["pos"] = [col_x[c] + k * (w + XGAP), round(ypos[nid])]
+            cx = col_x.get((c, k))
+            if cx is None:
+                continue
+            for nid in seq[k * per:(k + 1) * per]:
+                final_x[nid] = cx
+    by_x = defaultdict(list)
+    for nid, x in final_x.items():
+        by_x[x].append(nid)
+
+    # ---- 第 4.1 条收口: 各列按「上游中心 y」重排 + 紧凑堆叠 ----
+    # ⚠️ 这是本轮修的第 4.1 条失效病根。旧版列内排序的主键是**区块带号**,
+    # 同一区块内的节点被按区块顺序硬堆在一起, 完全遮住了「每个节点想对齐哪个
+    # 上游」—— 于是大量单出线无法对齐(实测 0032 单出线偏差均 517px、最大
+    # 1304px), 人眼看到的就是「没分区块、连线乱」, 即用户反馈的问题。
+    # 也不能反过来完全无视区块(那就回到第 5 条之前「整个混乱堆一列」的老毛病),
+    # 且不能按节点 id 堆叠。
+    # 正确做法: 反复「按上游中心 y 排序 → 紧凑堆叠」若干轮, 让每列的上下顺序
+    # 向「上游的上下顺序」收敛。这样单出线自然水平(第 4.1), 多出线/多入线
+    # 也自然不交叉(第 2 条), 同时因为仍是紧凑堆叠, 净距恒为 VGAP(第 3 条)。
+    # 区块只当 tie-break, 兼顾第 5.1/5.2 条的「同区块聚在一起」。
+    ups_map = defaultdict(list)
+    for l in links:
+        if len(l) >= 5 and l[1] in nodes and l[3] in nodes:
+            ups_map[l[3]].append(l[1])
+    xs_all = sorted(by_x)
+    # 区块在每列里要排成连续段(第 5.1/5.2), 但**段的上下位置不能再按全局固定的
+    # 区块带号(blk_pos)** —— 那样跨列时区块段与它的上游完全脱钉, 单出线没法对齐
+    # (实测 0032 均偏差 517px)。正确做法: 逐列从左往右扫, 每列的区块段按
+    # 「该区块在已确定列里的上游平均 y」排序 —— 区块段跟着它的上游走, 于是
+    # 同区块连续(blk_split=0) 与逐条对齐(第 4.1) 同时成立。
+    for x in xs_all:
+        ids = by_x[x]
+        if not ids:
+            continue
+        # 1) 按区块分组
+        groups = defaultdict(list)
+        for nid in ids:
+            groups[blk_pos.get(block_of.get(nid), 1 << 20)].append(nid)
+        # 2) 区块段排序键: 上游平均 y(取自已确定列); 没有可用上游时退回全局带号
+        def _blk_key(b):
+            ups_y = []
+            for nid in groups[b]:
+                for s in ups_map.get(nid, []):
+                    if s in ypos:
+                        ups_y.append(ypos[s] + size[s][1] / 2.0)
+            if ups_y:
+                return (0, sum(ups_y) / len(ups_y), b)
+            return (1, 0.0, b)
+        # 3) 段内按上游平均 y 排序, 使单出线尽量水平
+        order = []
+        for b in sorted(groups, key=_blk_key):
+            seg = groups[b]
+
+            def _key(nid):
+                ss = [s for s in ups_map.get(nid, []) if s in ypos]
+                if ss:
+                    return (sum(ypos[s] + size[s][1] / 2.0 for s in ss) / len(ss), nid)
+                return (1e18, nid)
+
+            order.extend(sorted(seg, key=_key))
+        # 4) 紧凑堆叠(净距恒为 VGAP, 第 3 条不受影响)
+        y = Y0
+        for nid in order:
+            ypos[nid] = y
+            y += size[nid][1] + VGAP
+        by_x[x] = order
+    # 重排后各列顺序变了, 列内高度也要跟着更新(供台阶回绕判定用)
+    for x in xs_all:
+        by_x[x] = sorted(by_x[x], key=lambda n: (ypos.get(n, 0), n))
+
+    # ---- 第 7 条台阶(只作用于功能列) ----
+    # 用户明确要求: **台阶仅对功能节点生效; note 节点与左侧第一个功能节点
+    # 保持完美横向并行**(同一 y), 不被台阶抬高。
+    # 理由: note/MD 是说明文档与数据表, 它们是参照物而不是数据流的一环,
+    # 跟着台阶上下浮动只会让人更难对照阅读。
+    #
+    # 实测台阶与「单出线对齐」天然矛盾:
+    #   · 台阶幅度 100%: 对齐均偏差升到 237~558px;
+    #   · 不做台阶: 对齐最优(均 121~144px)但相邻列顶端等高, 多条连线完全
+    #     水平重叠, 人眼分不清谁连谁。
+    # 故台阶只取「一个节点高度」的 30%: 既能错开列首(>20px), 又把对齐恶化压到最小。
+    STEP_RATIO = 0.3
+    # 先算各功能列的堆叠高度(不含 note/MD 列)
+    col_ids = {}
+    col_h = {}
+    for x in sorted(by_x):
+        ids = sorted(by_x[x], key=lambda n: (ypos.get(n, 0), n))
+        # note/MD 独占列不参与台阶
+        if all(nodes[i]["type"] in _BUS_TYPES for i in ids):
+            continue
+        col_ids[x] = ids
+        col_h[x] = sum(size[i][1] for i in ids) + VGAP * (len(ids) - 1)
+    # 台阶偏移: 向右逐级抬高(offset 递减); 低于 -本列高度 时回绕归零。
+    # 第一个功能列固定 offset=0, 后面的列才开始叠台阶。
+    offset = 0.0
+    prev_first = None
+    for x in sorted(col_ids):
+        ids = col_ids[x]
+        if prev_first is not None:
+            offset -= size[prev_first][1] * STEP_RATIO   # 左邻列首节点高度的 30%
+            if offset < -col_h[x]:                        # 回绕: 不累积成无底深渊
+                offset = 0.0
+        y = Y0 + offset
+        for nid in ids:
+            ypos[nid] = y
+            y += size[nid][1] + VGAP
+        prev_first = ids[0]
+    # note/MD: 与左侧第一个功能列完美横向并行(同 y = Y0 + 0)
+    for x in sorted(by_x):
+        ids = by_x[x]
+        if not ids or not all(nodes[i]["type"] in _BUS_TYPES for i in ids):
+            continue
+        y = Y0
+        for nid in sorted(ids, key=lambda n: (ypos.get(n, 0), n)):
+            ypos[nid] = y
+            y += size[nid][1] + VGAP
+    # 若整体出现了负 y(向上冲出画布), 统一平移回 Y0
+    if ypos:
+        shift = Y0 - min(ypos.values())
+        for nid in ypos:
+            ypos[nid] += shift
+
+    # 写回
+    for nid, x in final_x.items():
+        nodes[nid]["pos"] = [x, round(ypos[nid])]
     return wf
 
 
@@ -627,6 +1082,83 @@ def check(wf):
         runs = [b for i, b in enumerate(seq) if i == 0 or b != seq[i - 1]]
         blk_split += len(runs) - len(set(runs))
 
+    # 第 7 条: 斜向瀑布 —— 相邻列首节点必须错开(否则多条连线挤成水平带)
+    # 判据: 相邻两列中存在上下游连线的列对, 其列首 y 不应相等(误差>20px 算有错位),
+    # 但允许瀑布回绕(offset 归零), 故不追求每对都错位, 只要多数列对有错位即可。
+    x_col = defaultdict(list)
+    for n in wf["nodes"]:
+        x_col[n["pos"][0]].append(n)
+    xs = sorted(x_col)
+    first_y = {x: min(n["pos"][1] for n in x_col[x]) for x in xs}
+    linked = set()
+    for l in links:
+        if len(l) >= 5 and l[1] in nodes and l[3] in nodes:
+            ax, bx = nodes[l[1]]["pos"][0], nodes[l[3]]["pos"][0]
+            if ax != bx:
+                linked.add((min(ax, bx), max(ax, bx)))
+    cascade_pairs = 0
+    cascade_ok = 0
+    for a, b in zip(xs, xs[1:]):
+        if (a, b) not in linked:
+            continue
+        cascade_pairs += 1
+        if abs(first_y[b] - first_y[a]) > 20:
+            cascade_ok += 1
+
+    # 第 7 条补充: note/MD 的**列首节点**必须与「左侧第一个功能列」的列首 y 相等。
+    # 注意两件事:
+    #   1. 不能拿 Y0 硬套 —— 收官的全图归位会把首功能列一起推走;
+    #   2. 只看**列首那个** —— 同列若有多个 note/MD, 它们内部按紧凑堆叠依次向下,
+    #      不可能都等于同一个 y(那样会重叠), 所以只校验最上方那个。
+    bus_cols = [x for x in xs
+                if all(n["type"] in _BUS_TYPES for n in x_col[x])]
+    fn_cols = [x for x in xs if x not in bus_cols]
+    note_par = 0
+    if bus_cols and fn_cols:
+        fn_y = min(n["pos"][1] for n in x_col[fn_cols[0]])
+        for x in bus_cols:
+            head_y = min(n["pos"][1] for n in x_col[x])   # 只取列首
+            if head_y != fn_y:
+                note_par += 1
+
+    # 第 9.1 条: 「纯二段」节点不得落在继续节点左侧。
+    # 判据与 layout 一致: 消费者全部落在继续节点下游闭包内, 且自身不是非末段结果节点。
+    _dn = defaultdict(list)
+    for l in links:
+        if len(l) >= 5 and l[1] in nodes and l[3] in nodes:
+            _dn[l[1]].append(l[3])
+
+    def _closure(start, adj):
+        seen: set = set()
+        stack = [start]
+        while stack:
+            cur = stack.pop()
+            for nxt in adj.get(cur, []):
+                if nxt not in seen:
+                    seen.add(nxt)
+                    stack.append(nxt)
+        return seen
+
+    cont_ids = [nid for nid, n in nodes.items() if "Continue" in n["type"]]
+    cont_left = 0
+    if cont_ids:
+        seg2: set = set()
+        for cid in cont_ids:
+            seg2 |= _closure(cid, _dn)
+        cx = min(nodes[cid]["pos"][0] for cid in cont_ids)
+        st_of, n_st = _stages(wf, nodes, links)
+        for n in wf["nodes"]:
+            nid = n["id"]
+            if nid in cont_ids or nid in seg2 or n["pos"][0] >= cx:
+                continue
+            cons = _closure(nid, _dn)
+            if not cons or not (cons <= seg2):
+                continue
+            if (any(t in n["type"] for t in _RESULT_TYPES)
+                    and st_of.get(nid, 0) < n_st - 1):
+                continue
+            cont_left += 1
+
     return {
         "ov": len(r.get("overlaps") or []),
         "lr": len(bad_lr),
@@ -635,7 +1167,22 @@ def check(wf):
         "gap_bad": len(gaps),
         "short_bad": short_bad,
         "blk_split": blk_split,
+        "note_par": note_par,        # 第 7 条: note/MD 未与首功能列并行
+        "cont_left": cont_left,      # 第 9.1 条: 纯二段节点留在继续节点左侧
+        "flat": cascade_pairs - cascade_ok,      # 相邻列顶平的列对数(越少越好)
     }
+
+
+# 必须归零的硬指标(与 workflow-layout.md 的「验收总表」一一对应):
+#   ov/lr/md_inv/note_left/gap_bad/blk_split  —— 第 1、3、5.2 条
+#   note_par                                  —— 第 7 条 note/MD 与首功能列并行
+#   cont_left                                 —— 第 9.1 条 继续节点屏障
+# 观测指标(不作为失败判据):
+#   short_bad: 第 4.1 条要求单出线居中, 但一列里多个节点各想对齐不同上游时
+#     物理上无解(节点高度与 60px 节距是刚性约束), 只能尽量小;
+#   flat:      第 7 条台阶回绕时必然产生少量顶端齐平, 是预期行为。
+_HARD_KEYS = ("ov", "lr", "md_inv", "note_left", "gap_bad", "blk_split",
+              "note_par", "cont_left")
 
 
 def main():
@@ -653,7 +1200,8 @@ def main():
             continue
         before = check(wf)
         force = "--force" in sys.argv
-        need = any(before[k] for k in before) or force
+        # 是否需要重排: 任一硬指标不过就需要重排(观测指标不作为触发条件)
+        need = any(before[k] for k in _HARD_KEYS) or force
         if not need:
             print(f"= 跳过 {f}: 已合规 {before}")
             continue
@@ -662,7 +1210,7 @@ def main():
         with open(p, "w", encoding="utf-8") as fh:
             json.dump(wf, fh, ensure_ascii=False, separators=(",", ":"))
         changed += 1
-        clean = all(after[k] == 0 for k in ("ov", "lr", "md_inv", "gap_bad"))
+        clean = all(after[k] == 0 for k in _HARD_KEYS)
         flag = "✅" if clean else "⚠️"
         print(f"{flag} {f}\n    前 {before}\n    后 {after}")
     print(f"\n共重排 {changed} 个工作流")

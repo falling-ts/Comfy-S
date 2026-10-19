@@ -195,6 +195,27 @@ POST(f"/proceed/continue/{continue_id}")        # 未跑到该节点 => 400 "没
 | `POST /preview-video/save/952` | **200** `已保存: <dir>/probe.mp4`,盘上确认 |
 | `POST /preview-video/done/952` | **200** `{done:true}`,state 随之变 `done:true` |
 | `POST /proceed/reset` | **200** `{status:"ok"}` |
+| `GET /proceed/state` | **200** `{released:[...], data_cache:{id:类型名}, generation:N}`(只读诊断, 2026-10-18 加) |
 | `POST /proceed/continue/43`(无缓存) | **400** `没有上游数据, 请先运行到该节点` |
+
+### ⚠️ 「继续」恒 400 的真根因: 下游 `PreviewVideo` 处于完成态(2026-10-18 定位并修复)
+
+`FallingTSContinue` 的 `any` 是 lazy, 引擎构建执行列表时**不沿这条边向上游遍历**; 继续节点能否
+被执行, 完全取决于下游有没有一条非 lazy 的路把它拉进列表。当下游 `PreviewVideo` 已点过「完成」
+且有选中帧时, 它的 `check_lazy_status` 返回 `[]`、不拉自己的 `video` 上游 ⇒ **整条上游(含继续
+节点)都不在执行列表里** ⇒ 继续节点从不执行 ⇒ `_data_cache` 永远为空 ⇒ 点「继续」恒 400。
+
+- **实测 0031_首帧场景**: `#186`(二采预览) 完成后全量 Run **只跑 10 秒**(未完成时要 170 秒),
+  可达节点从 68 个掉到 **14** 个; `GET /proceed/state` 显示 `data_cache` 为空, 点 `#192` 恒 400。
+- **「先 Run 一次再点继续」救不回来**: `_done` 跨 Run 持久(前端 Run 只调 `/proceed/reset`,
+  **不调** `/preview-video/reset`), 所以每次 Run 都重现同一死角。
+- **修复**(两处, 互补):
+  1. `preview-video/nodes.py` 的 `check_lazy_status`: 完成态下若 `_upstream_continue_pending()`
+     发现上游还有缓存为空的继续节点, **仍拉一次上游**(把上游跑到继续节点, 它自己缓存并阻塞);
+     没有待跑的继续节点才真正跳过上游, 保住「点完成只跑下游」原语义。
+  2. `proceed/nodes.py` 的 `check_lazy_status`: 「已放行」不再单独等于「不拉上游」, 还要
+     `id in _data_cache`; 缓存空就拉上游**自愈**, 避免 reset 清空后永久卡死到重启进程。
+- **诊断口径**: 排查此类问题先 `GET /proceed/state` 看 `data_cache` 是否真有该节点键;
+  键在而仍 400 才是前端 node_id 不匹配, 键不在就是本节的执行列表死角。
 
 复现脚本范式(先跑一个便宜工作流把媒体缓存进节点,再打按钮端点):用一次性脚本经 stdin 就地执行(`.venv\Scripts\python.exe - <<'PY' ... PY`),不落盘。
