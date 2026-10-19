@@ -472,6 +472,7 @@ def layout(wf, keep_size=True):
         stage_base[st] = (base, loc)
         base += span + 1
 
+    _param_pending: dict = {}
     for nid in others:
         st = stage_of.get(nid, 0)
         if st in stage_base:
@@ -479,33 +480,32 @@ def layout(wf, keep_size=True):
             col = b + loc.get(nid, 0)
         else:
             col = first_fn_col + depth2[nid]
-        # 参数节点: 再往前贴一列(它无上游, 局深度恒 0, 不贴就会与消费者同列)
+        # 参数节点的贴列延到屏障之后 —— 屏障会把纯二段节点整体右移,
+        # 参数原本按旧列贴会在右移后落到消费者右侧。
         if nodes[nid]["type"] in _PARAM_TYPES:
-            cons = [d for d in _consumers.get(nid, []) if d in nodes]
-            if cons:
-                cons_cols = []
-                for d in cons:
-                    ds = stage_of.get(d, 0)
-                    if ds in stage_base:
-                        db, dloc = stage_base[ds]
-                        cons_cols.append(db + dloc.get(d, 0))
-                if cons_cols:
-                    # 不得回遇到本段起点之前 —— 否则二段的参数会被拉回一段里,
-                    # 造成「上游落在下游右侧」的方向违规(lr>0)。
-                    col = max(stage_base[st][0] if st in stage_base else first_fn_col,
-                              min(cons_cols) - 1)
+            _param_pending[nid] = col
+            continue
         cols[col].append(nid)
 
     # ---- 「继续节点」屏障: 纯二段节点必须落在继续节点右侧 ----
-    # 用户要求: 有二段的工作流里, 如果存在 FallingTSContinue(分段闸门),
-    # 那么**仅属于二段的节点(包括它们自己专用的 UNETLoader/VAELoader/
-    # LTXICLoRALoaderModelOnly/LTXVConditioning 等)一律不得出现在继续节点
-    # 的左侧**。闸门的语义就是「先看一段结果, 再放行二段」—— 二段的准备
-    # 工作在视觉上也应该在闸门之后, 而不是散在闸门左边让人以为已执行。
     #
-    # 判据(为何不用段号): 段号只说明「归属第几段」, 但二段专用的加载器
-    # 可能被一段的采样器间接共用而仍标成段 1; 真正要管的是「消费者全部
-    # 落在继续节点下游闭包内」的那些节点 —— 它们纯属二段。
+    # 用户指定的权威口径(严格版):
+    #   ① 以**二段采样核心节点**(末段采样器)为起点, **往前(往左)溯源**,
+    #      取它的上游闭包 —— 沿途所有节点都是候选;
+    #   ② 若候选节点与**一段采样节点毫无关系**, 就必须在继续节点右侧。
+    #
+    # 「与一段采样毫无关系」的严格定义: 该节点的**上游闭包**里不含任何一段
+    # 采样器。这比「它自身不在一段闭包里」严得多 ——
+    # 一个节点可能自己不被一段用到, 但它的上游是某个一段采样器的下游
+    # (典型的跨段汇流节点, 如 0030 的 LTXVCropGuides(199): 它上游同时有
+    # 一段采样器 204 和纯二段链)。把这类节点右移, 它的一段侧上游仍在左,
+    # 立即产生 lr(上游在右、下游在左)。
+    #
+    # 一段侧排除集(三者都不动):
+    #   · 一段采样器自身及其上游闭包
+    #   · 继续节点自身及其上游闭包(闸门左侧属一段展示区)
+    #   · 广播总线(MD/note)与参数节点(无上游、恒贴消费者, 不参与数据流)
+    #   · 非末段的结果/预览节点(常被二段采样器当作素材源引用)
     cont_ids = [nid for nid, n in nodes.items() if "Continue" in n["type"]]
     if cont_ids:
         _dn = defaultdict(list)
@@ -524,94 +524,187 @@ def layout(wf, keep_size=True):
                         st_k.append(d)
             return seen
 
-        # 所有继续节点下游闭包的并集 = 「二段侧」
-        _seg2 = set()
-        for cid in cont_ids:
-            _seg2 |= _down(cid)
-        if _seg2:
-            # 继续节点及其上游闭包 = 「一段侧」(一段共用节点不得被推走)
-            _up = defaultdict(list)
-            for l in links:
-                if len(l) >= 5 and l[1] in nodes and l[3] in nodes:
-                    _up[l[3]].append(l[1])
+        _up = defaultdict(list)
+        for l in links:
+            if len(l) >= 5 and l[1] in nodes and l[3] in nodes:
+                _up[l[3]].append(l[1])
 
-            def _anc(nid):
-                seen: set = set()
-                st_k = [nid]
-                while st_k:
-                    x = st_k.pop()
-                    for u in _up.get(x, []):
-                        if u not in seen:
-                            seen.add(u)
-                            st_k.append(u)
-                return seen
+        def _anc(nid):
+            seen: set = set()
+            st_k = [nid]
+            while st_k:
+                x = st_k.pop()
+                for u in _up.get(x, []):
+                    if u not in seen:
+                        seen.add(u)
+                        st_k.append(u)
+            return seen
 
-            _seg1_side = set(cont_ids)
-            for cid in cont_ids:
-                _seg1_side |= _anc(cid)
-            # 继续节点所在列: 从 cols 反查(此刻 col_of() 尚未定义), 右限 = 该列 +1
-            _col_of_now = {}
-            for _c, _mem in cols.items():
-                for _nid in _mem:
-                    _col_of_now[_nid] = _c
-            cont_cols = [_col_of_now[nid] for nid in cont_ids if nid in _col_of_now]
-            if cont_cols:
+        _samp_all = [nid for nid, n in nodes.items()
+                     if n["type"] in _SAMPLER_TYPES]
+        _bus = {nid for nid, n in nodes.items()
+                if n["type"] in _BUS_TYPES or n["type"] in _PARAM_TYPES}
+        _LAST = n_stage - 1
+        _s2 = [s for s in _samp_all if stage_of.get(s) == _LAST]
+        _s1 = [s for s in _samp_all if stage_of.get(s) != _LAST]
+
+        # 严格口径的「纯二段」集合
+        _pure2: set = set()
+        if _s2 and _s1 and n_stage >= 2:
+            _samp1 = set(_s1)
+            _cont_up = set(cont_ids)
+            for c in cont_ids:
+                _cont_up |= _anc(c)
+
+            # 「与一段采样无关」的正确判据: 从该节点往外溯源, 遇到**任何
+            # 采样器就停**(不越过它)。只要这段「准备链路」不共用一段采样器
+            # 的上游产出, 它就是二段专用。
+            #
+            # 为何不能直接取完整上游闭包: 二段采样器**必然**消费一段采样器
+            # 的结果(这是分段流程的定义!), 其完整上游闭包必然含一段采样器。
+            # 若按完整闭包判, 纯二段集永远是空集 —— 实测确实如此。
+            # 我们要判的是「它的**准备节点**(加载器/编码器/参数等)有没有跟
+            # 一段共用」, 这才是用户在说「与一段采样没有关系」时的意思。
+            def _prep(nid):
+                """往上游找准备节点, 遇采样器即停。"""
+                _s: set = set()
+                _q = list(_up.get(nid, []))
+                while _q:
+                    _x = _q.pop()
+                    if _x in _s or _x not in nodes:
+                        continue
+                    _s.add(_x)
+                    if nodes[_x]["type"] in _SAMPLER_TYPES:
+                        continue        # 采样器不越过
+                    _q.extend(_up.get(_x, []))
+                return _s
+
+            _prep1 = set()
+            for s in _s1:
+                _prep1 |= _prep(s)
+            _anc2 = set(_s2)
+            for s in _s2:
+                _anc2 |= _anc(s)
+            for x in _anc2:
+                if x in _bus or x in _cont_up:
+                    continue
+                # ⚠️ 判据必须两次都查:
+                #   ① x **自身**是否已在一段的准备链里 —— 共享加载器实测
+                #      0030 的 CLIPLoader(189) 同时喂一段与二段; 但它无上游,
+                #      所以只看 _prep(x) 会把它当成「纯二段」而拉走,
+                #      而它的下游 CLIPTextEncode(190/191) 留在左边 ⇒ lr;
+                #   ② x 的上游里是否有一段准备节点。
+                if x in _prep1:
+                    continue
+                if (_prep(x) & _prep1):
+                    continue
+                # 非末段的结果/预览节点不动(一段产物常被二段引用)
+                if (any(t in nodes[x]["type"] for t in _RESULT_TYPES)
+                        and stage_of.get(x, 0) < _LAST):
+                    continue
+                _pure2.add(x)
+            # ⚠️ 不做下游补全 —— 用户口径是「从二采核心**往前**溯源」,
+            # 纯二段集只包含上游准备链。下游节点(VAEDecode/PreviewImageSave)
+            # 由段系统自然排在采样器之后, 不需要、也不应该被拎到这里。
+            # 实测 00110: 下游补全把 VAEDecode(103) 拉进纯二段集, 而纯二段
+            # 集的定位是「屏障基准 + 块内深度」, 于是 103 被放到列 13;
+            # 而二段采样器 102 在 x=8860 —— 下游跑到上游左侧, 1 条 lr。
+            # ⚠️ 不要再做「反向剪枝(看上游)」—— 该规则本身是错的。
+            # 第 1 条只要求 `A.x+A.宽 ≤ B.x`, 即上游在左、下游在右。
+            # 若某节点右移而它的上游留在左边, 这**完全合法**;
+            # 只有当它的**下游**留在左边时才是 lr。
+            # 实测 00110: VAEDecode(103) 的上游是共享的 VAELoader(106),
+            # 按得上游剪枝就会把 103 剔出去, 而它是二段采样器 102 的
+            # 直接下游 —— 102 右移到 8860、103 留在 5940, 立即 1 条 lr。
+            # 纯二段集只由「二采核心采样器的上游闭包」构成，**不做上下游补全**。
+            # 用户口径就是「往前溯源」: 候选集 = 二采核心的上游闭包减去一方
+            # 准备链。补全上下游会引入两个 bug(均已实测):
+            #   · 补下游把 VAEDecode(103) 拉进来, 它被按块内深度放到列 13,
+            #     而二段采样器 102 在 x=8860 —— 下游跑到上游左侧;
+            #   · 补上游把 CLIPLoader(189) 拉进来, 它的下游 CLIPTextEncode
+            #     与一段共用准备链不能动 ⇒ 上游越过下游。
+            # 下游节点(VAEDecode/PreviewImageSave 等)由段系统自然排在
+            # 采样器之后, 不需要被拎进纯二段集。
+
+        # 继续节点所在列: 从 cols 反查, 右限 = 该列 +1
+        _col_of_now = {}
+        for _c, _mem in cols.items():
+            for _nid in _mem:
+                _col_of_now[_nid] = _c
+        cont_cols = [_col_of_now[nid] for nid in cont_ids if nid in _col_of_now]
+        if cont_cols:
+            barrier = max(cont_cols) + 1
+            # ══ 整体右移障法(正确解法) ══
+            # 关键认识: 纯二段准备链的目标位置(继续节点右侧)**通常已被占满**。
+            # 实测 0011: 链 5503→5504→5507→5601→5708→5710→5602→6024 中
+            # 前四个在继续节点左侧, 后四个已在右侧。直接把前四个「塞到"]
+            # barrier 右侧会撞上后四个, 无论怎么逐个搬都会出 lr。
+            #
+            # 故做法: ①先把右侧【整体】右移 W 列腾出空位; ②再把纯二段块
+            # 放进刚腾出的位置。右移是整体平移 —— 右侧各节点的相对顺序
+            # 完全不变, 因此不会产生任何新的 lr。
+            if _pure2 and cont_cols:
                 barrier = max(cont_cols) + 1
-                moved = 0
-                for nid in list(others):
-                    if nid in _seg1_side or nid in _seg2:
-                        continue
-                    cons = _down(nid)
-                    if not cons or not (cons <= _seg2):
-                        continue        # 不是「纯二段」节点
-                    # ⚠️ 「消费者全在二段侧」还不够 —— 一段自己的结果节点
-                    # (如 0030 的段1 PreviewVideo)也常被二段的 AutoSaveImage
-                    # 当作素材源拉走, 它消费者全在二段侧但**它本身属于一段**,
-                    # 不能被屏障推走(否则它会越过二段结果节点, 违反
-                    # 「二段节点在一段结果右侧」)。故加一道: 属于非末段的
-                    # 结果节点/预览节点一律不动。
-                    _n = nodes[nid]
-                    _is_prior_result = (
-                        any(_t in _n["type"] for _t in _RESULT_TYPES)
-                        and stage_of.get(nid, 0) < n_stage - 1
-                    )
-                    if _is_prior_result:
-                        continue
-                    cur = _col_of_now.get(nid)
-                    if cur is None or cur >= barrier:
-                        continue
-                    # ⚠️ 不能直接放到 barrier 列 —— 若该节点的消费者恰好也在
-                    # barrier 列, 它与消费者就同列了, 产生「上游在右/同列」的
-                    # 方向违规(实测 00110/00200 各 5 条 lr)。
-                    # 故新列 = min(消费者最小列 - 1, ...) 且不早于屏障列:
-                    # 先满足「严格在消费者左侧」再满足「不早于屏障」;
-                    # 若两者矛盾(消费者就在屏障列), 则连同消费者一起往右推。
-                    cons_cols = [_col_of_now[d] for d in cons if d in _col_of_now]
-                    target = barrier
-                    if cons_cols:
-                        need = min(cons_cols) - 1
-                        if need < barrier:
-                            # 消费者太靠左: 把它们整体右移, 给上游腾出屏障位
-                            delta = barrier - need
-                            for d in cons:
-                                if d not in _col_of_now:
-                                    continue
-                                dc = _col_of_now[d]
-                                if dc < barrier + delta:
-                                    cols[dc].remove(d)
-                                    cols[dc + delta].append(d)
-                                    _col_of_now[d] = dc + delta
-                            cons_cols = [_col_of_now[d] for d in cons if d in _col_of_now]
-                            need = (min(cons_cols) - 1) if cons_cols else barrier
-                        target = max(barrier, need)
-                    if target == cur:
-                        continue
-                    cols[cur].remove(nid)
-                    cols[target].append(nid)
-                    _col_of_now[nid] = target
-                    moved += 1
-                if moved:
-                    print(f"      ↳ 继续节点屏障: {moved} 个纯二段节点移至继续节点右侧")
+                # 块内拓扑深度(只算块内上游)
+                _p2dep: dict = {}
+
+                def _pd(nid, guard=0):
+                    if nid in _p2dep:
+                        return _p2dep[nid]
+                    if guard > 80:
+                        return 0
+                    _u = [u for u in _up.get(nid, []) if u in _pure2]
+                    _p2dep[nid] = 1 + max((_pd(u, guard + 1) for u in _u),
+                                          default=-1)
+                    return _p2dep[nid]
+
+                for x in _pure2:
+                    _pd(x)
+                _w = max(_p2dep.values()) + 1        # 块所需列宽
+                # 只处理「确实需要右移」的: 块内有节点在屏障左侧
+                if any(_col_of_now.get(x) is not None
+                       and _col_of_now[x] < barrier for x in _pure2):
+                    # ① 把 cols 中 >= barrier 的列整体右移 _w
+                    _shifted = {}
+                    for _c in sorted(cols):
+                        if _c >= barrier and cols[_c]:
+                            _shifted[_c] = cols.pop(_c)
+                    for _c, _mem in _shifted.items():
+                        cols[_c + _w] = _mem
+                        for _x in _mem:
+                            _col_of_now[_x] = _c + _w
+                    # ② 从原位置摧除纯二段块, 再放进腾出的区间
+                    for x in _pure2:
+                        _c0 = _col_of_now.get(x)
+                        if _c0 is not None and x in cols.get(_c0, []):
+                            cols[_c0].remove(x)
+                    for x in _pure2:
+                        _nc = barrier + _p2dep[x]
+                        cols[_nc].append(x)
+                        _col_of_now[x] = _nc
+                    print(f"      ↳ 继续节点屏障: {len(_pure2)} 个纯二段节点"
+                          f"移至继续节点右侧(右侧让位 {_w} 列)")
+    # ---- 参数节点贴列(屏障之后) ----
+    # 参数节点无上游、局深度恒 0, 不贴就会与消费者同列(违反第 1 条)。
+    # 必须在屏障之后算 —— 屏障会把纯二段节点整体右移, 参数若按旧列贴, 就会
+    # 落到消费者右侧(实测 0021/00200: FallingTSSwitch 右移后, 它的
+    # PrimitiveInt/PrimitiveFloat 参数留在原列, 产生 6 条 lr)。
+    _col_after = {}
+    for _c, _mem in cols.items():
+        for _x in _mem:
+            _col_after[_x] = _c
+    for nid, col in _param_pending.items():
+        st = stage_of.get(nid, 0)
+        cons = [d for d in _consumers.get(nid, []) if d in nodes]
+        if cons:
+            _cc = [_col_after.get(d) for d in cons if _col_after.get(d) is not None]
+            if _cc:
+                # 不得回遇到本段起点之前 —— 否则二段的参数会被拉回一段里,
+                # 造成「上游落在下游右侧」的方向违规(lr>0)。
+                col = max(stage_base[st][0] if st in stage_base else first_fn_col,
+                          min(_cc) - 1)
+        cols[col].append(nid)
+
     max_c = max(cols) if cols else 0
 
     # ---- 列内约束图(第 2 条: 端口上下序) ----
@@ -1142,22 +1235,78 @@ def check(wf):
     cont_ids = [nid for nid, n in nodes.items() if "Continue" in n["type"]]
     cont_left = 0
     if cont_ids:
-        seg2: set = set()
-        for cid in cont_ids:
-            seg2 |= _closure(cid, _dn)
+        # 与 layout() 完全一致的严格口径: 以末段采样器为起点往上游溯源,
+        # 凡上游闭包不碰一段采样器、也不属总线/继续上游/非末段结果的节点,
+        # 都必须在继续节点右侧。
         cx = min(nodes[cid]["pos"][0] for cid in cont_ids)
         st_of, n_st = _stages(wf, nodes, links)
-        for n in wf["nodes"]:
-            nid = n["id"]
-            if nid in cont_ids or nid in seg2 or n["pos"][0] >= cx:
-                continue
-            cons = _closure(nid, _dn)
-            if not cons or not (cons <= seg2):
-                continue
-            if (any(t in n["type"] for t in _RESULT_TYPES)
-                    and st_of.get(nid, 0) < n_st - 1):
-                continue
-            cont_left += 1
+        _upd = defaultdict(list)
+        for l in links:
+            if len(l) >= 5 and l[1] in nodes and l[3] in nodes:
+                _upd[l[3]].append(l[1])
+
+        def _ancx(x):
+            s: set = set()
+            q = [x]
+            while q:
+                v = q.pop()
+                for u in _upd.get(v, []):
+                    if u not in s:
+                        s.add(u)
+                        q.append(u)
+            return s
+
+        _samp_all = [nid for nid, n in nodes.items()
+                     if n["type"] in _SAMPLER_TYPES]
+        _bus = {nid for nid, n in nodes.items()
+                if n["type"] in _BUS_TYPES or n["type"] in _PARAM_TYPES}
+        if n_st >= 2 and _samp_all:
+            _LAST = n_st - 1
+            _s2 = [s for s in _samp_all if st_of.get(s) == _LAST]
+            _s1 = [s for s in _samp_all if st_of.get(s) != _LAST]
+            if _s2 and _s1:
+                _anc2 = set(_s2)
+                for s in _s2:
+                    _anc2 |= _ancx(s)
+                _samp1 = set(_s1)
+                _cont_up = set(cont_ids)
+                for c in cont_ids:
+                    _cont_up |= _ancx(c)
+                _pure2c: set = set()
+                for n in wf["nodes"]:
+                    nid = n["id"]
+                    if nid not in _anc2 or nid in _bus or nid in _cont_up:
+                        continue
+                    if _ancx(nid) & _samp1:
+                        continue
+                    if (any(t in n["type"] for t in _RESULT_TYPES)
+                            and st_of.get(nid, 0) < _LAST):
+                        continue
+                    _pure2c.add(nid)
+                # 与 layout() 同一收缩规则: 下游还连着「与一段有关」的节点时,
+                # 该节点不能算纯二段(否则右移会制造 lr)
+                _dn_check = defaultdict(list)
+                for l in links:
+                    if len(l) >= 5 and l[1] in nodes and l[3] in nodes:
+                        _dn_check[l[1]].append(l[3])
+                _chgc = True
+                while _chgc:
+                    _chgc = False
+                    for x in list(_pure2c):
+                        for d in _dn_check.get(x, []):
+                            if d not in nodes or d in _pure2c:
+                                continue
+                            if d in _bus or d in _cont_up:
+                                continue
+                            if (any(t in nodes[d]["type"] for t in _RESULT_TYPES)
+                                    and st_of.get(d, 0) < _LAST):
+                                continue
+                            _pure2c.discard(x)
+                            _chgc = True
+                            break
+                for n in wf["nodes"]:
+                    if n["id"] in _pure2c and n["pos"][0] < cx:
+                        cont_left += 1
 
     return {
         "ov": len(r.get("overlaps") or []),
