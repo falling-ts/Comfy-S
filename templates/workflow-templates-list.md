@@ -26,7 +26,6 @@
   - ComfyUI-KJNodes(1 个)
   - ComfyUI-LNL(1 个)
   - ComfyUI-MultiGPU(18 个)
-  - ComfyUI-OrbitSheets(2 个)
   - ComfyUI-Qwen3-TTS(6 个)
   - ComfyUI-RMBG(12 个)
   - ComfyUI-SUPIR(1 个)

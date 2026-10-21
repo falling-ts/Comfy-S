@@ -151,9 +151,6 @@
 [submodule "custom_nodes/ComfyUI-qwenmultiangle"]
 	path = custom_nodes/ComfyUI-qwenmultiangle
 	url = https://github.com/jtydhr88/ComfyUI-qwenmultiangle.git
-[submodule "custom_nodes/ComfyUI-OrbitSheets"]
-	path = custom_nodes/ComfyUI-OrbitSheets
-	url = https://github.com/lumosai8/ComfyUI-OrbitSheets.git
 [submodule "custom_nodes/ComfyUI-LNL"]
 	path = custom_nodes/ComfyUI-LNL
 	url = https://github.com/latenightlabs/ComfyUI-LNL.git

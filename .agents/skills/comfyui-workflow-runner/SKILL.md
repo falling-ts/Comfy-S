@@ -1,7 +1,7 @@
 ---
 name: comfyui-workflow-runner
 description: >-
-  Run local ComfyUI workflows headlessly through the HTTP API without a browser: convert a saved workflow JSON into API prompt format, refresh a FallingTS Markdown data table from its md file (equivalent to clicking that node’s refresh button), submit to /prompt, poll /history to completion, and verify the artifact by probing it and extracting frames. Use whenever a workflow must be executed or re-run autonomously, when a prompt or model edited in an md table has to actually take effect, or when a render needs objective inspection (duration, fps, audio presence, motion, continuity). Also carries measured findings on H3 scene video (which reference/prompt variants win, rotation speed ceilings, the OrbitSheets recipe) and on H3 shot order/timing (why prose cannot pin a shot’s position in ref2video mode, and the frame-anchoring recipe that can, plus its node-wiring and layout caveats). Not for authoring prompt text or developing custom nodes.
+  Run local ComfyUI workflows headlessly through the HTTP API without a browser: convert a saved workflow JSON into API prompt format, refresh a FallingTS Markdown data table from its md file (equivalent to clicking that node’s refresh button), submit to /prompt, poll /history to completion, and verify the artifact by probing it and extracting frames. Use whenever a workflow must be executed or re-run autonomously, when a prompt or model edited in an md table has to actually take effect, or when a render needs objective inspection (duration, fps, audio presence, motion, continuity). Also carries measured findings on H3 scene video (which reference/prompt variants win, rotation speed ceilings) and on H3 shot order/timing (why prose cannot pin a shot’s position in ref2video mode, and the frame-anchoring recipe that can, plus its node-wiring and layout caveats). Not for authoring prompt text or developing custom nodes.
 ---
 
 # ComfyUI Workflow Runner
@@ -95,7 +95,6 @@ therefore equivalent — and needs no browser at all.
 - `scripts/motion-frame-profile.py` — per-frame profile of one window (global + each ROI + a static control
   region): use it to find the shot cut, pick a window that neither take has cut inside, and compare
   `ROI ÷ control` across reruns instead of raw values.
-- `scripts/verify-anchor-snapping.py` — OrbitSheets reference-board "anchor snapping" hypothesis test.
 - `scripts/set-md-selected-id.py` / `scripts/show-md-cell.py` — align a workflow's selected row with the md
   and print one row's cells.
 - `references/workflow-to-prompt.md` — conversion rules and the full pitfall list.
@@ -110,7 +109,7 @@ therefore equivalent — and needs no browser at all.
   table, why a single anchor image beats multi-image references, five prompt rules (positive phrasing,
   fixed camera, one action per shot, never describe the reference's own layout, and unambiguous object
   nouns — `notebook` gets rendered as a second laptop), rotation speed ceilings,
-  the OrbitSheets parameter recipe and its limits, plus the parameter-editing and frame-extraction traps.
+  plus the parameter-editing and frame-extraction traps.
 - `references/h3-shot-order-anchoring.md` — **measured findings for H3 shot order and timing**: four
   prose-only rounds that all moved the shot to the wrong place, why Ref2VA reference images carry no time
   position, the `FallingTSH3AddGuide` wiring recipe (frame indices, equal-image double anchors) **kept as an

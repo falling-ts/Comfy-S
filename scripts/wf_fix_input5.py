@@ -9,7 +9,7 @@ _REPO = os.path.dirname(_HERE)
 WF_DIR = os.path.join(_REPO, "workflows")
 TARGETS = {
     "0013_首图建模": None, "0014_参考建模": None, "0030_文生场景": None, "0032_参考场景": None,
-    "0033_OrbitSheets场景": None, "0040_文生视频": None, "0041_首帧视频": None, "0042_首尾视频": None,
+    "0040_文生视频": None, "0041_首帧视频": None, "0042_首尾视频": None,
     "0043_关键帧视频": None, "0044_参考视频": None,
 }
 

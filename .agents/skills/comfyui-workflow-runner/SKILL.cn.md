@@ -5,7 +5,7 @@ description: |
   按 md 文件刷新 FallingTS 数据表状态（等价于点击该节点的刷新按钮）、提交 /prompt、轮询 /history 至完成，
   并对产出做探测与抽帧校验。适用于需要自主执行或重跑工作流、md 数据表里改过的提示词必须真正生效、
   或需要对成片做客观检查（时长、帧率、有无音轨、运动与连贯性）的场合。另附 H3 的两组多轮实测结论：
-  场景视频（各方案性能对比、单图锚点为何反超多图参考、提示词四条硬经验、旋转速率上限、OrbitSheets 配方）
+  场景视频（各方案性能对比、单图锚点为何反超多图参考、提示词四条硬经验、旋转速率上限）
   与镜头顺序／时长（散文为何定不住 ref2video 的镜头位置、硬锚点接线配方及其布局例外；另记：非必要不加硬锚点，效果更好）。
   不适用于撰写提示词文本或开发自定义节点。
 ---
@@ -79,7 +79,6 @@ description: |
   判断"被摄体到底动没动"的可靠口径。
 - `scripts/motion-frame-profile.py` —— 某一时间窗的**逐帧**剖面（全幅 + 各 ROI + 静态控制区）：
   用来定位切点、挑出"两片都还没切"的窗口，并把跨 take 的比较换成 `ROI ÷ 控制区` 而不是裸值。
-- `scripts/verify-anchor-snapping.py` —— OrbitSheets 参考板"视角吸附"假设的验证脚本。
 - `scripts/set-md-selected-id.py` / `scripts/show-md-cell.py` —— 对齐工作流的选中行、打印某一行的单元格。
 - `references/workflow-to-prompt.md` —— 转换规则与完整陷阱清单。
 - `references/mdtable-refresh.md` —— FallingTS mdtable 的状态结构、接口与刷新机制。
@@ -88,7 +87,7 @@ description: |
 - `references/h3-scene-generation.md` —— **H3 场景视频的多轮实测结论**：各方案性能对比表、
   为什么单图锚点反超多图参考、五条提示词硬经验（正面陈述／固定机位／一镜一事／不描述参考图自身版式／
   物件名词不得有歧义 —— `notebook` 会被画成第二台笔记本）、
-  旋转速率上限、OrbitSheets 的参数配方与其局限，以及改参数与抽帧的陷阱清单。
+  旋转速率上限，以及改参数与抽帧的陷阱清单。
 - `references/h3-shot-order-anchoring.md` —— **H3 镜头顺序与时长的多轮实测结论**：4 轮只改提示词
   全部把镜头挪错位置、为什么 Ref2VA 的参考图没有时间位置、硬锚点接线配方（帧号换算、同图双锚点定义区间），
   以及坑（`vae` 必需、否定式仍不可靠、一条无法满足的布局规则、帧号写死、快照不被 `--refresh-md` 回写）。

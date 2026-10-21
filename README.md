@@ -1,6 +1,6 @@
 # Comfy — AI-driven ComfyUI all-modal workspace
 
-> This repository is a **ready-to-use ComfyUI all-modal workspace**: the ComfyUI main program, MiniMax H3 video + Qwen-series image + Stable Audio/Qwen3-TTS audio generation, 45 custom node packs (GGUF/KJNodes/upscaling/speedup, etc.), 35 image/video/audio workflows, and a model catalog plan.
+> This repository is a **ready-to-use ComfyUI all-modal workspace**: the ComfyUI main program, MiniMax H3 video + Qwen-series image + Stable Audio/Qwen3-TTS audio generation, 44 custom node packs (GGUF/KJNodes/upscaling/speedup, etc.), 34 image/video/audio workflows, and a model catalog plan.
 >
 > **Core idea: all installing, configuring, running, generating, and workflow training is delegated to the AI (OpenCode).** You only need to: install Git → clone this repository → install OpenCode → let it work.
 
@@ -27,12 +27,12 @@
 ## What is this
 
 - **ComfyUI main program** (`ComfyUI\` submodule, detached HEAD following upstream release tags, currently v0.39.2) — a local node-based AI image/video/audio generation engine
-- **Custom nodes** (45, centralized in the root `custom_nodes\`, loaded via a **directory-level** symlink at `ComfyUI\custom_nodes\`; the full list is in `AGENTS.md`):
+- **Custom nodes** (44, centralized in the root `custom_nodes\`, loaded via a **directory-level** symlink at `ComfyUI\custom_nodes\`; the full list is in `AGENTS.md`):
   - `ComfyUI-FallingTS` — our own general-purpose utility node pack (22 nodes: Continue/Route/Fanout/Selector/Table/Switch/MarkDownTable/FrameRateConvert/ImageComposite/LoadImage/LoadVideo/LoadAudio/VideoComponents/H3AddGuide + the 3 world-model nodes WorldSurroundPanorama/WorldPanoramaViews/WorldRefinePLY, plus PreviewVideo/PreviewImageSave/AutoSaveImage/PreviewAudioSave/AudioTrim and 27 frontend enhancements)
   - `ComfyUI-GGUF` / `ComfyUI-KJNodes` — GGUF quantized loading / large utility node pack
   - `ComfyUI-SeedVR2_VideoUpscaler` / `ComfyUI-SUPIR` / `ComfyUI_UltimateSDUpscale` — super-resolution upscaling/restoration
-  - The 6 H3-ecosystem plugins (Spectrum / SolAttn / ReservedVRAM / Qwen3-TTS / latent-upscaler / OrbitSheets scene reference boards) + the other 39
-- **Workflow suite**: 35, grouped by number (001x Everything / 002x Scene camera / 003x Scene generation + world model / 004x Video generation / 005x Decomposition / 006x Audio generation / 007x Audio extraction; see [Appendix B](#appendix-b--workflow-catalog))
+  - The 5 H3-ecosystem plugins (Spectrum / SolAttn / ReservedVRAM / Qwen3-TTS / latent-upscaler) + the other 39
+- **Workflow suite**: 34, grouped by number (001x Everything / 002x Scene camera / 003x Scene generation + world model / 004x Video generation / 005x Decomposition / 006x Audio generation / 007x Audio extraction; see [Appendix B](#appendix-b--workflow-catalog))
 - **Model directory** (`models\`, symlinked to the project root) — see [Appendix C](#appendix-c--model-download-list)
 - **Docs**: a local clone of the official docs at `refs\ComfyUI-Docs\`; the workspace description in `AGENTS.md`
 
@@ -181,14 +181,13 @@ Comfy/
 │   ├── input/  output/       # input/output (symlink → ../media/七纹刻印)
 │   ├── user/default/workflows  # user workflows (symlink → ../../../workflows)
 │   └── models/               # models (symlink → ../models)
-├── custom_nodes/             # plugin aggregation directory: 45 plugin submodules + H3ReferenceSuite link
+├── custom_nodes/             # plugin aggregation directory: 44 plugin submodules + H3ReferenceSuite link
 │   ├── ComfyUI-FallingTS/    # our own general-purpose utility node pack (22 nodes + world-model nodes + frontend enhancements)
 │   ├── ComfyUI-GGUF/  ComfyUI-KJNodes/   # quantized loading / utility node pack
-│   ├── ComfyUI-OrbitSheets/  # H3 scene/character reference boards (multi-angle camera + visual frame picking into grid images)
 │   └── ...(the other 41, see the directory layout in AGENTS.md)
 ├── docs/                     # 44 categorized docs
 ├── refs/                     # 7 reference submodules (ComfyUI-Docs / Obsidian-Dev-Docs / Obsidian-API / Qwen-Image-2.1 / qwen-image-2.1-skill / MiniMax-H3 / minimax-h3-guide) + Qwen-Image-Edit-Skills (local dir, not a submodule)
-├── workflows/                # 35 user workflows (001x~007x, see Appendix B)
+├── workflows/                # 34 user workflows (001x~007x, see Appendix B)
 ├── models/                   # where models actually live (~263.5 GB, 40 top-level directories, see Appendix C)
 ├── media/                    # input images/audio + generated results (template/ + per-story project dirs, currently 七纹刻印/)
 ├── templates/  webs/         # official template cache + third-party research (RunningHub/Bilibili/AutoDL)
@@ -238,7 +237,6 @@ Comfy/
 | `0030_文生场景` | text → scene video (visual only, no audio track) | T2VA (fl2va) |
 | `0031_首帧场景` | first-frame image → scene video | I2V (fl2va) |
 | `0032_参考场景` | multi-image + multi-video reference → video | R2V (ref2va) |
-| `0033_OrbitSheets场景` | anchor image → H3 multi-angle camera → visual frame picking into a "scene reference board" grid image | I2V (fl2va) + OrbitSheets plugin |
 | `0034_世界模型` | 360° orbit video → panorama strip → view batch → one highest-quality 3DGS PLY | world model (self-owned nodes + HYWM2) |
 | `0035_场景截帧` | load video → frame extraction → 8 single frames + 4-view/8-direction composites auto-saved | — |
 
@@ -252,7 +250,7 @@ Comfy/
 | `0043_关键帧视频` | arbitrary keyframe anchoring via AddGuide | keyframe (fl2va) |
 | `0044_参考视频` | reference image/video → video | R2V (ref2va) |
 
-> 0030/0031/0032 correspond one-to-one with 0040/0041/0042/0044 (the former is the scene-pipeline version, the latter the generic version); the audio track has been removed from all — video + audio are merged in the post pipeline (005x-007x). 0033 supplements scene-reference production: it produces "scene reference board" grid images (for use as reference input to 0032/0044).
+> 0030/0031/0032 correspond one-to-one with 0040/0041/0042/0044 (the former is the scene-pipeline version, the latter the generic version); the audio track has been removed from all — video + audio are merged in the post pipeline (005x-007x).
 
 ### Decomposition class (005x, 2)
 

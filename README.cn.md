@@ -27,12 +27,12 @@
 ## 这是什么
 
 - **ComfyUI 主程序**(`ComfyUI\` 子模块,detached HEAD 跟随上游 release tag,当前 v0.39.2)—— 本地节点式 AI 图像/视频/音频生成引擎
-- **自定义节点**(45 个,集中于根 `custom_nodes\`,经 `ComfyUI\custom_nodes\` **目录级**软链接加载;完整清单见 `AGENTS.md`):
+- **自定义节点**(44 个,集中于根 `custom_nodes\`,经 `ComfyUI\custom_nodes\` **目录级**软链接加载;完整清单见 `AGENTS.md`):
   - `ComfyUI-FallingTS` —— 自研通用工具节点集(22 节点:Continue/Route/Fanout/Selector/Table/Switch/MarkDownTable/FrameRateConvert/ImageComposite/LoadImage/LoadVideo/LoadAudio/VideoComponents/H3AddGuide + 世界模型三节点 WorldSurroundPanorama/WorldPanoramaViews/WorldRefinePLY,以及 PreviewVideo/PreviewImageSave/AutoSaveImage/PreviewAudioSave/AudioTrim,另加 27 个前端增强)
   - `ComfyUI-GGUF` / `ComfyUI-KJNodes` —— GGUF 量化加载 / 大型工具节点包
   - `ComfyUI-SeedVR2_VideoUpscaler` / `ComfyUI-SUPIR` / `ComfyUI_UltimateSDUpscale` —— 超分放大/修复
-  - H3 生态 6 插件(Spectrum / SolAttn / ReservedVRAM / Qwen3-TTS / latent-upscaler / OrbitSheets 场景参考板)+ 其余 39 个
-- **工作流方案**:35 个,按编号分组(001x 万物 / 002x 场景镜头 / 003x 场景生成与世界模型 / 004x 视频生成 / 005x 拆解 / 006x 音频生成 / 007x 音频截取;见[附录 B](#附录-b工作流方案总览))
+  - H3 生态 5 插件(Spectrum / SolAttn / ReservedVRAM / Qwen3-TTS / latent-upscaler)+ 其余 39 个
+- **工作流方案**:34 个,按编号分组(001x 万物 / 002x 场景镜头 / 003x 场景生成与世界模型 / 004x 视频生成 / 005x 拆解 / 006x 音频生成 / 007x 音频截取;见[附录 B](#附录-b工作流方案总览))
 - **模型目录**(`models\`,软链接到项目根)—— 见[附录 C](#附录-c模型下载清单)
 - **文档**:官方文档本地克隆 `refs\ComfyUI-Docs\`;工作区说明 `AGENTS.md`
 
@@ -181,14 +181,13 @@ Comfy/
 │   ├── input/  output/       # 输入/输出(软链接 → ../media/七纹刻印)
 │   ├── user/default/workflows  # 用户工作流(软链接 → ../../../workflows)
 │   └── models/               # 模型(软链接 → ../models)
-├── custom_nodes/             # 插件聚合目录:45 个插件子模块 + H3ReferenceSuite 链接
+├── custom_nodes/             # 插件聚合目录:44 个插件子模块 + H3ReferenceSuite 链接
 │   ├── ComfyUI-FallingTS/    # 自研通用工具节点集(22 节点 + 世界模型节点 + 前端增强)
 │   ├── ComfyUI-GGUF/  ComfyUI-KJNodes/   # 量化加载 / 工具节点包
-│   ├── ComfyUI-OrbitSheets/  # H3 场景/角色参考板(多视角运镜 + 视觉选帧拼网格图)
 │   └── ...(其余 41 个,见 AGENTS.md 目录结构)
 ├── docs/                     # 44 个分类文档
 ├── refs/                     # 7 个参考类子模块(ComfyUI-Docs / Obsidian-Dev-Docs / Obsidian-API / Qwen-Image-2.1 / qwen-image-2.1-skill / MiniMax-H3 / minimax-h3-guide)+ Qwen-Image-Edit-Skills(本地目录,非子模块)
-├── workflows/                # 用户工作流 35 个(001x~007x,见附录 B)
+├── workflows/                # 用户工作流 34 个(001x~007x,见附录 B)
 ├── models/                   # 模型实际存放处(约 263.5GB,40 个顶层目录,见附录 C)
 ├── media/                    # 输入图片/音频 + 生成结果(template/ + 各故事库目录,当前为 七纹刻印/)
 ├── templates/  webs/         # 官方模板缓存 + 三方调研(RunningHub/Bilibili/AutoDL)
@@ -238,7 +237,6 @@ Comfy/
 | `0030_文生场景` | 文本 → 场景视频(仅画面,无音轨) | T2VA(fl2va) |
 | `0031_首帧场景` | 首帧图 → 场景视频 | I2V(fl2va) |
 | `0032_参考场景` | 多图 + 多视频参考 → 视频 | R2V(ref2va) |
-| `0033_OrbitSheets场景` | 锚点图 → H3 多视角运镜 → 视觉选帧拼「场景参考板」网格图 | I2V(fl2va)+ OrbitSheets 插件 |
 | `0034_世界模型` | 360° 环绕视频 → 横向展开长图 → 视角批 → 一个最高质量 3DGS PLY | 世界模型(自研节点 + HYWM2) |
 | `0035_场景截帧` | 加载视频 → 截帧 → 8 单图 + 四图/八向合成自动保存 | — |
 
@@ -252,7 +250,7 @@ Comfy/
 | `0043_关键帧视频` | AddGuide 锚定任意帧 | 关键帧(fl2va) |
 | `0044_参考视频` | 参考图/视频 → 视频 | R2V(ref2va) |
 
-> 0030/0031/0032 与 0040/0041/0042/0044 结构一一对应(前者为场景流水线版,后者为通用版);均已去除音频轨道,视频 + 音频在后期流水线(005x-007x)中合并。0033 为场景参考生产补充:产出「场景参考板」网格图(供 0032/0044 作参考输入)。
+> 0030/0031/0032 与 0040/0041/0042/0044 结构一一对应(前者为场景流水线版,后者为通用版);均已去除音频轨道,视频 + 音频在后期流水线(005x-007x)中合并。
 
 ### 拆解类(005x,2 个)
 

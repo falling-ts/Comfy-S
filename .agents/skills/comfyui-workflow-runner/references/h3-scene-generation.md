@@ -101,11 +101,14 @@ H3 不可靠遵守否定式指令——把"不要倾斜/不要翻滚"这类词�
 
 **唯一可靠来源**：同一段视频的选帧（天然时间一致）。禁止把逐格独立生成的多视图直接当多视图参考。
 
-## 六、OrbitSheets 插件的实测边界
+## 六、场景参考板（OrbitSheets 插件）的实测边界
+
+> ⚠️ **2026-10-21：该插件与工作流 `0033_OrbitSheets场景` 均已从本机移除。** 本节保留为历史实测结论 ——
+> 结论本身就是「拼板不如拆帧」，正好解释了为何不必再装：需要多视角参考时直接用同一段视频拆帧即可。
 
 **它编不出锚点图里没见过的面。** 其文档自己写明：*"told to cut to 'the rear', it either re-frames the facade it already has or invents somewhere else"*。实测三次均印证：缺 1 个方向、凭空加 LED 灯带、少书架、多出柜门。
 
-**最佳参数**：
+**当时的参数配方**（仅供复现历史实验参考；插件已移除，现已无法运行）：
 ```
 coverage               = cut views     # continuous move 在 5 秒内覆盖太窄
 wide_establishing_shot = False         # 开着会浪费槽位（实测 2 格重复）

@@ -1,7 +1,7 @@
 ---
 name: stories
 description: >-
-  Story-library resource-table and prompt conventions, master spec plus every resource type in one skill: general rules and image types (frame terminology, prompt ordering and <br> segmentation, image/H3 size buckets, the H3 language rules, three-view modeling, variation, nine-grid, scene first-frame/pull-in/push-in/orbit, table md field types, overhead view, the 0013/0014/0015 modeling chain); character/object video (text / first-frame / first-last / keyframe / reference / modeling video); scene video (shared 360° rules, the 12-second eight-shot rotation formula, text-to-scene / first-frame / reference scene, the 0034 world-model table, OrbitSheets, measured H3 camera lessons); audio types; the full cinematography shot-language vocabulary. Use when writing or editing ANY story-library resource table (image, video, audio) or when a task needs the shared size, segmentation, language or shot terminology rules, or works on the 0034 world-model table.
+  Story-library resource-table and prompt conventions, master spec plus every resource type in one skill: general rules and image types (frame terminology, prompt ordering and <br> segmentation, image/H3 size buckets, the H3 language rules, three-view modeling, variation, nine-grid, scene first-frame/pull-in/push-in/orbit, table md field types, overhead view, the 0013/0014/0015 modeling chain); character/object video (text / first-frame / first-last / keyframe / reference / modeling video); scene video (shared 360° rules, the 12-second eight-shot rotation formula, text-to-scene / first-frame / reference scene, the 0034 world-model table, measured H3 camera lessons); audio types; the full cinematography shot-language vocabulary. Use when writing or editing ANY story-library resource table (image, video, audio) or when a task needs the shared size, segmentation, language or shot terminology rules, or works on the 0034 world-model table.
 ---
 
 # 故事库资源表与提示词规范（总纲与全集）
@@ -9,7 +9,7 @@ description: >-
 > 本文档是资源表的**总纲与全集**：通用规范（画面术语、尺寸、分段、H3 语言）对**所有**资源类型都适用；其后各部分按类型分列。章节导航：
 > - **第一部分 通用规范与图片类**：画面术语、资源表规则、尺寸、H3 语言规范、万物建模/变化、九宫格、场景首帧/拉镜/推镜/旋镜、表格 md 规范、全图方位、建模链 0013/0014/0015 与 0016/0017
 > - **第二部分 主体/人物视频**：文生视频、首帧视频、首尾视频、关键帧视频、参考视频、建模视频
-> - **第三部分 场景视频**：场景类公共要求、12 秒八镜定式、文生场景、首帧场景、世界模型 0034、参考场景、OrbitSheets、场景参考图与 H3 运镜实测经验
+> - **第三部分 场景视频**：场景类公共要求、12 秒八镜定式、文生场景、首帧场景、世界模型 0034、参考场景、场景参考图与 H3 运镜实测经验
 > - **第四部分 音频类**：背景音乐、环境音效、效果音效、文生人声、参考人声（及无数据表的截帧/拆音/截取声音）
 > - **第五部分 镜头语言词汇表**：静态 9 级景别 + 动态四类基础运动与十一板块 + 剪辑衔接
 >
@@ -644,7 +644,7 @@ integrated_multimodal_description 采用「首帧状态 → 可观察的中间�
 
 重叠区域内的内容（物件、灯光、空间元素）在相邻方位视角画面中互相衔接一致——同一物理区域是前后视角画面边缘处的同一延续（90° 处的正右面衔接前方正面的右缘，180° 处的正后面衔接右面的右缘，270° 处的正左面衔接后面的左缘，回旋正面衔接左前右缘与起始正面左缘）；描述与生成均按此关系交叉印证，360° 环绕每一面稳定、无遗漏地还原。
 
-**参考视角顺序（八方位八视图）硬性要求**：给 H3 提供八方位视角参考图时，必须按**旋转顺序**提供并逐张点名方位，顺序固定为俯视视角下的**顺时针「前→前右→右→右后→后→后左→左→左前」**（与 0033 OrbitSheets 参考板视角顺序一致），其中 **90°、180°、270° 三张主格对应正右、正后、正左三个方位视角**，其余斜向视角为旋转过渡帧。参考段须逐张点明相邻视角为绕主体旋转 45° 的机位（如「图1=正前方视角；图2=顺时针转 45° 的前右视角；图3=再转 45° 的右侧视角；图4=再转 45° 的右后视角；图5=再转 45° 的后方视角；图6=再转 45° 的后左视角；图7=再转 45° 的左侧视角；图8=再转 45° 的左前视角」），并声明「目标镜头沿同一方向顺时针旋转，过渡角度取相邻两图之间的中间视角」。图序是给模型的旋转轨道暗示，必须与目标镜头旋转方向一致，方向相悖会干扰空间连贯（尤其 360° 环绕）；静止/无旋转镜头固定沿用默认顺时针顺序，故事内全局保持一致。
+**参考视角顺序（八方位八视图）硬性要求**：给 H3 提供八方位视角参考图时，必须按**旋转顺序**提供并逐张点名方位，顺序固定为俯视视角下的**顺时针「前→前右→右→右后→后→后左→左→左前」**，其中 **90°、180°、270° 三张主格对应正右、正后、正左三个方位视角**，其余斜向视角为旋转过渡帧。参考段须逐张点明相邻视角为绕主体旋转 45° 的机位（如「图1=正前方视角；图2=顺时针转 45° 的前右视角；图3=再转 45° 的右侧视角；图4=再转 45° 的右后视角；图5=再转 45° 的后方视角；图6=再转 45° 的后左视角；图7=再转 45° 的左侧视角；图8=再转 45° 的左前视角」），并声明「目标镜头沿同一方向顺时针旋转，过渡角度取相邻两图之间的中间视角」。图序是给模型的旋转轨道暗示，必须与目标镜头旋转方向一致，方向相悖会干扰空间连贯（尤其 360° 环绕）；静止/无旋转镜头固定沿用默认顺时针顺序，故事内全局保持一致。
 
 ### 12 秒八镜 360° 旋镜定式（Shot 1–8，场景类默认写法）
 
@@ -804,7 +804,7 @@ integrated_multimodal_description 先在图像中确立场景风格、主体、�
 
 - 实测：提示词写入「一张 2×2 拼合的图片」「每格左上角印有一行白色粗体带黑描边的中文方位标注」之后，模型**把分格线与方位文字直接画进了画面**（reference leakage），须两轮修正才清除
 - **正确写法**：只说明参考图「提供了哪几个方向的视图、用于确定什么」；并补一句正面保护句——「参考图只是布局依据，它本身不会出现在画面中，其中的任何分格、边框、拼贴痕迹或注记文字也都不会出现在画面里」
-- 参考图若已烧录文字标注，除提示词排除外，更根本的是在生成端就不烧字（OrbitSheets 的 `label_prefix` 应清空）
+- 参考图若已烧录文字标注，除提示词排除外，更根本的是在生成端就不烧字（拼参考板时把标注前缀 `label_prefix` 留空）
 
 **三、离散参考视角会导致「吸附」，且提示词改不动**
 
@@ -835,7 +835,7 @@ integrated_multimodal_description 先在图像中确立场景风格、主体、�
 
 | 方式 | 优点 | 代价 |
 | :--- | :--- | :--- |
-| **多镜头硬切**（OrbitSheets 默认） | 每个视角都是静止机位，**结构上不可能翻滚**；视角必然落位 | 背面/侧面是模型「编」的，可能与锚点图布局不符 |
+| **多镜头硬切**（拼参考板时的默认取法） | 每个视角都是静止机位，**结构上不可能翻滚**；视角必然落位 | 背面/侧面是模型「编」的，可能与锚点图布局不符 |
 | **单镜连续旋转** | 每帧只延续上一帧，空间关系连续 | 超过速率上限必翻滚；参考视角处吸附；长片一致性差 |
 
 选法：**要参考板、要视角齐全 → 硬切**；**要一段连续的空间感 → 连续旋转，但必须控速在 40°/s 内、时长足够、且参考图来源一致**
@@ -857,23 +857,6 @@ integrated_multimodal_description 先在图像中确立场景风格、主体、�
 - **数量靠正面清单压**：需要保证"只有一件/一只"时，用正面清点句（「墙面上的挂钟只有后墙门右侧那一只」），不用否定句
 - **硬约束不变**：首帧（硬锚点）里看得见的前面墙与两侧墙**前段**一律照原样，新物件只落在首帧拍不到的墙面（后墙与两侧墙后段）
 - **要额外强调「只有四面墙 + 墙体无镂空」**：旋转到没拍到的区域时，模型容易自己开第二扇门/门洞/通道或把墙打穿。定稿补了两句正面陈述——「房间由四面完整的实心墙围合，一共只有这四面墙，没有第五面墙也没有隔断」+「除前面墙那扇装着玻璃、关着的窗和后墙那扇关着的木门之外，四面墙上没有门洞、拱门、通道、壁龛、窗洞、缺口或开口，每面墙都从地面到天花板连续完整，看不见墙后的任何空间；木门全程关着，门外不出现走廊」——复算后四周墙体完整连续、踢脚线不断、无多余开口（`backups\backup-00001_书房旋镜视频-20260927-强调四面墙后.mp4`）
-
-### OrbitSheets场景
-
-即利用 OrbitSheets 插件(Location Sheet Prompt + Frame Select + Contact Sheet)从现有场景图生成「场景参考板」：锚点图经 H3 多视角运镜(硬切或连续旋转)，视觉模型内容聚类选帧，拼成一张网格参考板图，供后续参考生视频使用。包含ID，原场景(IMAGE)，场景描述(TEXT)，视觉风格(TEXT)，取景秒数(FLOAT)，宽度(INT)，高度(INT)
-
-#### 写入时机
-
-**需要我明确说明写入哪些内容时，才可以写入**；分析正文内容时，**不允许自动写入**。
-
-#### OrbitSheets场景 提示词提取规范
-
-- **原场景**：锚点图，引用已有的场景图(`@{0020_场景首帧/...}` / `@{0021_场景拉镜/...}` / `@{0023_场景旋镜/...}` 等)，作为 H3 运镜的第一帧
-- **场景描述**：location_description，用简洁文字交代场景的空间大小、布局、主要物件与方位关系（供 OrbitSheetsLocationPrompt 生成多视角镜头提示词）
-- **视觉风格**：visual_style，如 `Cinematic, live-action`；默认值即此
-- **取景秒数**：take_seconds，驱动 H3 运镜时长与帧数(17k+5 网格)；默认 5.0（硬切多视角），连续旋转 360° 需 9.0+
-- 空间类型(interior/exterior)、覆盖方式(cut views/continuous move)、旋转(auto/quarter/half/full)、宽景/细节开关为工作流内固定下拉（默认 interior / cut views / auto / True / True），按需在节点上改，不必进表
-- 输出：场景视频(`{ID}.mp4`) + 参考板网格图(`{ID}.png`)；选帧默认 shots=6 按内容聚类、count=6、CLIP 图内判定
 
 ## 第四部分 音频类与拆解类资源
 
