@@ -38,6 +38,5 @@
   - ComfyUI_LayerStyle(56 个)
   - ComfyUI_UltimateSDUpscale(1 个)
   - audio-separation-nodes-comfyui(5 个)
-  - comfyui-mixlab-nodes(22 个)
   - h3-latent-upscaler(2 个)
 - 快速开始(10 个,本地补遗)

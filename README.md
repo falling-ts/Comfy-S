@@ -181,7 +181,7 @@ Comfy/
 │   ├── input/  output/       # input/output (symlink → ../media/七纹刻印)
 │   ├── user/default/workflows  # user workflows (symlink → ../../../workflows)
 │   └── models/               # models (symlink → ../models)
-├── custom_nodes/             # plugin aggregation directory: 44 plugin submodules + H3ReferenceSuite link
+├── custom_nodes/             # plugin aggregation directory: 45 plugin submodules + H3ReferenceSuite link
 │   ├── ComfyUI-FallingTS/    # our own general-purpose utility node pack (22 nodes + world-model nodes + frontend enhancements)
 │   ├── ComfyUI-GGUF/  ComfyUI-KJNodes/   # quantized loading / utility node pack
 │   └── ...(the other 41, see the directory layout in AGENTS.md)
@@ -458,7 +458,7 @@ python main.py --enable-manager
 
 ### H.4 File transfer and symlinks
 
-- The super-project: `git clone --recurse-submodules <remote>` (**54 submodules**)
+- The super-project: `git clone --recurse-submodules <remote>` (**55 submodules**)
 - **models ~263.5 GB are rsynced separately** (`rsync -avP`); the server needs ≥350 GB NVMe reserved
 - Rebuild the symlinks (`ln -s` relative paths, 8 total, see the Appendix A list):
   - `ComfyUI/input → ../media/七纹刻印`, `ComfyUI/output → ../media/七纹刻印`, `ComfyUI/models → ../models`, `ComfyUI/user/default/workflows → ../../../workflows`

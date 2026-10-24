@@ -115,9 +115,6 @@
 [submodule "custom_nodes/ComfyUI-LogicUtils"]
 	path = custom_nodes/ComfyUI-LogicUtils
 	url = https://github.com/aria1th/ComfyUI-LogicUtils
-[submodule "custom_nodes/comfyui-mixlab-nodes"]
-	path = custom_nodes/comfyui-mixlab-nodes
-	url = https://github.com/shadowcz007/comfyui-mixlab-nodes
 [submodule "custom_nodes/ComfyUI-segment-anything-2"]
 	path = custom_nodes/ComfyUI-segment-anything-2
 	url = https://github.com/kijai/ComfyUI-segment-anything-2
