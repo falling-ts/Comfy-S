@@ -457,7 +457,7 @@
         }
       },
       "widgets_values": [
-        "minimax_h3_turbo_v4_step600_ema_pruned_comfyui.safetensors",
+        "minimax_h3_fl2v_turbo_8step_v1.0_comfyui_bf16.safetensors",
         1
       ],
       "widgets_values_named": {
@@ -2993,11 +2993,11 @@
         }
       },
       "widgets_values": [
-        "LTX-2.5/ltx-2.5-22b-distilled-transformer-bf16.safetensors",
+        "ltx-2.5-22b-distilled-transformer-comfy-int8-convrot.safetensors",
         "default"
       ],
       "widgets_values_named": {
-        "unet_name": "LTX-2.5/ltx-2.5-22b-distilled-transformer-bf16.safetensors",
+        "unet_name": "ltx-2.5-22b-distilled-transformer-comfy-int8-convrot.safetensors",
         "weight_dtype": "default"
       },
       "order": 6
@@ -3049,10 +3049,10 @@
         }
       },
       "widgets_values": [
-        "LTX-2.5/ltx-2.5-video-vae-bf16.safetensors"
+        "ltx-2.5-video-vae-bf16.safetensors"
       ],
       "widgets_values_named": {
-        "vae_name": "LTX-2.5/ltx-2.5-video-vae-bf16.safetensors"
+        "vae_name": "ltx-2.5-video-vae-bf16.safetensors"
       },
       "order": 42
     },
@@ -3120,12 +3120,12 @@
         }
       },
       "widgets_values": [
-        "LTX-2.5/gemma4-12b-with-proj-ltx-2.5-bf16.safetensors",
+        "gemma4-12b-with-proj-ltx-2.5-comfy-int8-convrot.safetensors",
         "ltxv",
         "default"
       ],
       "widgets_values_named": {
-        "clip_name": "LTX-2.5/gemma4-12b-with-proj-ltx-2.5-bf16.safetensors",
+        "clip_name": "gemma4-12b-with-proj-ltx-2.5-comfy-int8-convrot.safetensors",
         "type": "ltxv",
         "device": "default"
       },
@@ -3652,10 +3652,10 @@
         }
       },
       "widgets_values": [
-        "LTX-2.5/ltx-2.5-latent-spatial-upscaler-x2-bf16-1.0.safetensors"
+        "ltx-2.5-latent-spatial-upscaler-x2-bf16-1.0.safetensors"
       ],
       "widgets_values_named": {
-        "model_name": "LTX-2.5/ltx-2.5-latent-spatial-upscaler-x2-bf16-1.0.safetensors"
+        "model_name": "ltx-2.5-latent-spatial-upscaler-x2-bf16-1.0.safetensors"
       },
       "order": 38
     },
