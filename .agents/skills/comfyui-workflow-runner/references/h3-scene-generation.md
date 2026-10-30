@@ -1,6 +1,6 @@
 # H3 场景生成：多轮实测结论
 
-本机实测（RTX 4060 8GB / ComfyUI 0.35.0 / H3 4 步 turbo LoRA），5 次真实渲染 + 定量分析。
+本机实测（RTX 4060 8GB / H3 4 步 turbo LoRA），5 次真实渲染 + 定量分析。
 文中每个数字都可用本技能的 `output-verification.md` 方法复现。
 
 ## 一、性能对比总表

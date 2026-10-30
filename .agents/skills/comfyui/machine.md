@@ -8,7 +8,7 @@ the repo.
 > 本文件事实于 **2026-09-30** 重新采集:环境与版本取自运行中的 `/system_stats`,模型清单取自 `/object_info`,计数为盘上实测。
 > 项目根于 2026-09-30 由 `D:\Comfy` 搬到 `D:\AI\Comfy`,又于 2026-10-12 由 `D:\AI\Comfy` 改名为 **`D:\AI\Comfy-S`**(整体搬家,8 条相对软链不受影响)。若服务重启后数值变化,以实时查询为准。
 
-- **ComfyUI**: source install,core path **`D:\AI\Comfy-S\ComfyUI`**,API at **`http://127.0.0.1:8188`**(运行中,ComfyUI **0.37.0** / 前端 **1.52.7** / Python **3.13.13**)。运行环境是**项目内 `.venv`**(2026-08-16 由 conda 环境迁移而来;旧的 conda 专用环境已删除)。Check: `GET /system_stats` -> 200。
+- **ComfyUI**: source install,core path **`D:\AI\Comfy-S\ComfyUI`**,API at **`http://127.0.0.1:8188`**(运行中)。运行环境是**项目内 `.venv`**(2026-08-16 由 conda 环境迁移而来;旧的 conda 专用环境已删除)。Check: `GET /system_stats` -> 200。
 - **GPUs**: 1x `cuda:0` NVIDIA GeForce RTX 4060,VRAM **8.0 GB**(运行中 free 约 6.9 GB)。
 - **Models installed**(2026-09-30 实测 `/object_info`,名称省略 `.safetensors`):
   - UNETLoader (**8**): `qwen_image_2.1_bf16`(2.1 基座)、`qwen_image_2512_fp8_e4m3fn`、`qwen_image_edit_2511_fp8mixed`、`qwen_image_fp8_e4m3fn`、`flux-2-klein-9b-fp8`、`minimax_h3_fl2va_pruned_int8_convrot`、`minimax_h3_ref2va_pruned_int8_convrot`、`triposplat_fp16`
@@ -18,7 +18,7 @@ the repo.
   - LoraLoaderModelOnly (**11**): `Qwen-Image-2512-Lightning-4steps-V1.0-fp32`、`Qwen-Image-Lightning-4steps-V1.0`、`Qwen-Image-Edit-2511-Lightning-4steps-V1.0-bf16`、`qwen-image-edit-2511-multiple-angles-lora`、`[Qwen-Edit]3DChineseStyle_25`、`Kook_Qwen_2512_真实幻想`,加 H3 加速五件:`minimax_h3_fl2v_turbo_4step_v1.0_768p` / `minimax_h3_fl2v_turbo_4step_v1.2_768p` / `minimax_h3_fl2v_turbo_8step_v1.0` / `minimax_h3_ref2v_turbo_4step_v0.1` / `minimax_h3_ref2v_turbo_8step_v1.0_768p`
 - **Shared models dir / extra_model_paths**: 无 extra_model_paths.yaml;模型实际存放 **`D:\AI\Comfy-S\models`**(`ComfyUI\models` 是其相对软链接),input/output 同样软链到 `D:\AI\Comfy-S\media\七纹刻印`(media 按项目分目录,当前项目 = 七纹刻印)。
 - **GUI workflows folder**(bridge 回前端): `D:\AI\Comfy-S\ComfyUI\user\default\workflows\`(该路径是软链接,实际存储 **`D:\AI\Comfy-S\workflows`**,29 个工作流)。可写。
-- **Template library**: **`D:\AI\Comfy-S\templates`**(模板包 `comfyui-workflow-templates` 0.11.66,递归 **790** 个 json,按 13 个分类分目录)+ `D:\AI\Comfy-S\ComfyUI\blueprints`(顶层 **116** 个蓝图 json)。⚠️ 本机**没有** kit 默认的 `~/comfyui-agent-kit-data/workflow_templates` 与 `_quick_index.json`;`TASKS.md` 若按该路径找模板索引会落空,直接用上面本地目录。
+- **Template library**: **`D:\AI\Comfy-S\templates`**(递归 **790** 个 json,按 13 个分类分目录)+ `D:\AI\Comfy-S\ComfyUI\blueprints`(顶层 **116** 个蓝图 json)。⚠️ 本机**没有** kit 默认的 `~/comfyui-agent-kit-data/workflow_templates` 与 `_quick_index.json`;`TASKS.md` 若按该路径找模板索引会落空,直接用上面本地目录。
 - **Launch command**(服务未运行、:8188 关闭时): `cd /d D:\AI\Comfy-S\ComfyUI && D:\AI\Comfy-S\.venv\Scripts\python.exe main.py --enable-manager --disable-pinned-memory --fast-disk`(当前进程 argv 实测即 `main.py --enable-manager --disable-pinned-memory --fast-disk --port 8188`)。也可在项目根跑 `bash comfy-server.sh`(跨平台后台服务式:停旧服务 → 后台启动 → 等端口)。**勿用系统 Python 或 conda 环境运行**(`.venv\Scripts\python.exe`)。若 :8188 已被占用,勿重复启动。
 - **Known local quirks**(本机与 docs 不符之处,省时的关键):
   - **知识独立安装,无 MCP 驱动层**:未安装 `comfyui-mcp`(npm 全局实测无),SKILL.md 里 `health_check / get_node_info / list_installed_nodes` 等 MCP 工具**不存在**。与 API 通信一律用本目录 `comfy_client.py`(stdlib)直连 :8188,或直接 HTTP。

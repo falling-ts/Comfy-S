@@ -1,6 +1,6 @@
 # H3 镜头顺序与时长：散文管不住，硬锚定能钉死 —— 但非必要不加（多轮实测）
 
-本机实测（RTX 4060 8GB / ComfyUI 0.37.0 / H3 `ref2va` + turbo 4 步 LoRA / 832×480 / 15s = 362 帧 /
+本机实测（RTX 4060 8GB / H3 `ref2va` + turbo 4 步 LoRA / 832×480 / 15s = 362 帧 /
 种子固定）。对象 = `workflows/0044_参考视频.json` 第 1 行 `00001_书房开场四镜`，数据表
 `stories/七纹刻印/0044_参考视频.md`。文中每个数字都可用 `scripts/motion-profile.py` 加抽帧复核。
 

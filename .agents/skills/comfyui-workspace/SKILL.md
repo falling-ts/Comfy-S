@@ -13,7 +13,7 @@ ComfyUI 及自定义节点的本地开发工作区。下文路径均相对项目
 
 | 路径 | 说明 |
 |------|------|
-| `ComfyUI` | ComfyUI 主程序(git submodule,detached HEAD 跟随上游 release tag,当前 `v0.39.2`):源码/入口在本目录;`models`/`input`/`output`/`user\default\workflows`/`custom_nodes` 均为相对软链接(见「软链接映射」);`blueprints\` 内置 116 个蓝图;其余结构遵循上游官方布局,不再逐一展开 |
+| `ComfyUI` | ComfyUI 主程序(git submodule,detached HEAD 跟随上游 release tag):源码/入口在本目录;`models`/`input`/`output`/`user\default\workflows`/`custom_nodes` 均为相对软链接(见「软链接映射」);`blueprints\` 内置 116 个蓝图;其余结构遵循上游官方布局,不再逐一展开 |
 | **`custom_nodes`** | **插件聚合目录**:45 个插件子模块 + `H3ReferenceSuite` 链接集中于此,`ComfyUI\custom_nodes` 为目录级相对软链接指向它(§B)。按功能归类: |
 | └ 自有插件 | `ComfyUI-FallingTS`:通用工具节点集(共 **22 节点** + 27 个前端增强,已开源);另含**世界模型三节点**:`world-panorama` 的 `WorldSurroundPanorama`(**360° 环绕视频 → 横向展开长图**(等距圆柱条带, 上行=天、无黑边、无重影): 自动定抽帧步长 + 一圈闭环吸附 + ORB/RANSAC 纯偏航单应与「重叠区稠密光度一致性」联立定焦距 + 逐像素 winner-take-all(从不帧间平均), 真 equirect 视频可直接抽帧; 2026-09-28 v2 重做同时修掉 v1 的「长图倒立 + 上下各 30% 黑边 + 帧间平均糊掉细节(拉普拉斯锐度差 4.3 倍)」)、`WorldPanoramaViews`(长图 → 视角批 + **每视角精确 w2c 外参/内参**, 外参口径与 HYWM2 `SamplePanorama` 一致; 等距圆柱竖直朝向按世界地图口径修正, 多 `v_range`/`v_center` 竖向范围), 以及 `world-refine` 的 `WorldRefinePLY`(视角批(可接相机先验) → 504 前馈 + 3DGS **全参数**精修(mode=all + 几何信任域) → 一个 PLY; 接上 `extrinsics/intrinsics` 时把位姿作为先验注入前馈 `cond_flags=[cam,0,intr]`, 从源头消掉上游推理不做跨视图融合留下的多视图双重曝光/重影。2026-09-28 并入并扩到「360 视频进、PLY 出」) |
 | └ H3 生态(5 插件 + 链接) | `ComfyUI-Spectrum-MiniMax-H3`(加速)、`ComfyUI-SolAttn_triton`(注意力加速)、`ComfyUI-ReservedVRAM`(显存预留)、`ComfyUI-Qwen3-TTS`(H3 语音)、`h3-latent-upscaler`(latent 放大)、`H3ReferenceSuite`(软链接,见 `refs`) |
@@ -40,7 +40,7 @@ ComfyUI 及自定义节点的本地开发工作区。下文路径均相对项目
 | └ 其余已就绪槽位 | `controlnet` / `facerestore_models` / `clip_vision` / `embeddings`(H3 动作嵌入 10 个)/ `model_patches`(H3 fun-controlnet)/ `latent_upscale_models`(H3 latent 放大)/ `geometry_estimation`(Depth-Anything-3)/ `vae_approx`(`taeh3`)/ `hywm2`(HY-World 2.0 权重 3.05GB)/ `configs` |
 | └ 标准空槽位 | 其余 **21 个**槽位目录尚无模型:`clip` / `unet` / `detection` / `reactor` / `SEEDVR2` / `ultralytics` / `yolo` / `diffusers` / `style_models` / `frame_interpolation` / `optical_flow` / `gligen` / `hypernetworks` / `photomaker` / `mesh2motion` / `nlf` / `LLM` / `classifiers` / `ASR` / `speaker_models` / `audio_encoders` |
 | `media` | 输入/输出文件(`ComfyUI\input`、`output` 软链接到 `media\七纹刻印`):按**项目**分目录——`template\`(模板, 入库占位)+ 各故事库目录(如 `七纹刻印\`, 实际产物, 不入库);input/output 指向哪个项目, 产物就落在哪个项目目录下 |
-| `templates` | ComfyUI 官方模板库本地缓存(**833 个工作流 JSON**,2026-10-10 随模板包 0.11.78 更新):14 个分类子目录——官方核心 598 个分 11 类(`图像`198/`视频`197/`图像工具`46/`3D模型`43/`音频`33/`视频工具`25/`LLM`20/`角色与时尚`12/`产品与广告`11/`品牌与设计`8/`节点基础`5),另有 `自定义节点\`218 个(按插件分子目录)+ `快速开始\`10 个、`矢量\`7 个(本地补遗);`workflow-templates-list.md` 为索引,由模板拉取工具从运行中的服务重建(2026-08-09 曾归档的个人工作流已迁回 `workflows\`) |
+| `templates` | ComfyUI 官方模板库本地缓存(**833 个工作流 JSON**):14 个分类子目录——官方核心 598 个分 11 类(`图像`198/`视频`197/`图像工具`46/`3D模型`43/`音频`33/`视频工具`25/`LLM`20/`角色与时尚`12/`产品与广告`11/`品牌与设计`8/`节点基础`5),另有 `自定义节点\`218 个(按插件分子目录)+ `快速开始\`10 个、`矢量\`7 个(本地补遗);`workflow-templates-list.md` 为索引,由模板拉取工具从运行中的服务重建(2026-08-09 曾归档的个人工作流已迁回 `workflows\`) |
 | `webs` | 三方网站调研聚合目录(已入库跟踪):三个调研源 |
 | └ `RunningHub` | RunningHub 调研:`RunningHub-API读取指南.md` + `workflows-list.md` + `workflows\`(**4571 个**收集工作流,按 **24 个**分类子目录:图像/视频/音频/数字人/室内外设计/风格化/插件 等) |
 | └ `Bilibili` | B 站教程调研:`B站教程调研.md` + `Qwen-Image-Edit-镜头控制与360度视角-教程调研-2026-08-09.md` + `工作流大全\`(**474 个**配套工作流) |
