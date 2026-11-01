@@ -186,9 +186,9 @@ Comfy/
 │   ├── ComfyUI-GGUF/  ComfyUI-KJNodes/   # 量化加载 / 工具节点包
 │   └── ...(其余 41 个,见 AGENTS.md 目录结构)
 ├── docs/                     # 44 个分类文档
-├── refs/                     # 7 个参考类子模块(ComfyUI-Docs / Obsidian-Dev-Docs / Obsidian-API / Qwen-Image-2.1 / qwen-image-2.1-skill / MiniMax-H3 / minimax-h3-guide)+ Qwen-Image-Edit-Skills(本地目录,非子模块)
+├── refs/                     # 8 个参考类子模块(ComfyUI-Docs / Obsidian-Dev-Docs / Obsidian-API / Qwen-Image-2.1 / qwen-image-2.1-skill / MiniMax-H3 / MiniMax-H3-Turbo / minimax-h3-guide)+ Qwen-Image-Edit-Skills(本地目录,非子模块)
 ├── workflows/                # 用户工作流 34 个(001x~007x,见附录 B)
-├── models/                   # 模型实际存放处(约 263.5GB,40 个顶层目录,见附录 C)
+├── models/                   # 模型实际存放处(约 309.6GB,42 个顶层目录,见附录 C)
 ├── media/                    # 输入图片/音频 + 生成结果(template/ + 各故事库目录,当前为 七纹刻印/)
 ├── templates/  webs/         # 官方模板缓存 + 三方调研(RunningHub/Bilibili/AutoDL)
 ├── stories/                  # Obsidian 故事写作工作区
@@ -279,7 +279,7 @@ Comfy/
 
 ## 附录 C · 模型下载清单
 
-> 方案原则:全开源、本地推理、零 API 费用。以下清单与本地 `models\` 目录**一一对应**(2026-10-11 核查:约 263.5GB,40 个顶层目录),状态列反映本地实际就绪情况;全新环境(Linux 5090 服务器)需按下载地址重新获取,或按[附录 H.4](#h4-文件搬运与软链接)随 `models` 整体 rsync 迁移。**下载顺序建议**:先音频小件(Qwen3-TTS 全套、SenseVoice、Stable Audio 3)→ 视频大件(MiniMax H3 全套,fl2va 与 ref2va 都要下)→ 图片大件(Qwen-Image 2512/Edit 2511、Qwen-Image 2.1、FLUX.2 Klein)。注意 `flux-2-klein-9b-fp8` 为**门控仓库**(需登录 HF 接受 BFL 协议);模型放好后**重启 ComfyUI** 才会被识别。
+> 方案原则:全开源、本地推理、零 API 费用。以下清单与本地 `models\` 目录**一一对应**(2026-11-01 核查:约 309.6GB,42 个顶层目录),状态列反映本地实际就绪情况;全新环境(Linux 5090 服务器)需按下载地址重新获取,或按[附录 H.4](#h4-文件搬运与软链接)随 `models` 整体 rsync 迁移。**下载顺序建议**:先音频小件(SenseVoice、Stable Audio 3、ACE-Step)→ 视频大件(MiniMax H3 全套,fl2va 与 ref2va 都要下;另加 LTX-2.5)→ 图片大件(Qwen-Image 2512/Edit 2511、Qwen-Image 2.1)。FLUX.2 Klein 已于 2026-11-01 移出本工作区;模型放好后**重启 ComfyUI** 才会被识别。
 
 ### 图片类
 
@@ -289,15 +289,11 @@ Comfy/
 | `qwen_image_fp8_e4m3fn.safetensors`(2512 前代,备用) | `models\diffusion_models\` | ✅ 已就绪 | <https://huggingface.co/Comfy-Org/Qwen-Image_ComfyUI/resolve/main/split_files/diffusion_models/qwen_image_fp8_e4m3fn.safetensors> |
 | `qwen_image_edit_2511_fp8mixed.safetensors` | `models\diffusion_models\` | ✅ 已就绪 | <https://www.modelscope.cn/models/Kakazhuce/qwen_image_edit_2511_fp8mixed/resolve/master/qwen_image_edit_2511_fp8mixed.safetensors> |
 | `qwen_image_2.1_bf16.safetensors`(Qwen-Image 2.1 基座,7B 统一「生成+编辑」) | `models\diffusion_models\` | ✅ 已就绪 | <https://huggingface.co/Comfy-Org/Qwen-Image-2.1_ComfyUI/resolve/main/split_files/diffusion_models/qwen_image_2.1_bf16.safetensors> |
-| `flux-2-klein-9b-fp8.safetensors` | `models\diffusion_models\` | ✅ 已就绪 | <https://huggingface.co/black-forest-labs/FLUX.2-klein-9b-fp8/resolve/main/flux-2-klein-9b-fp8.safetensors> ⚠️门控 |
 | `triposplat_fp16.safetensors`(历史遗留,当前工作流未使用) | `models\diffusion_models\` | ✅ 已就绪 | 本地文件(早期实验保留) |
-| `qwen_3_8b_fp8mixed.safetensors`(Klein 文本编码器) | `models\text_encoders\` | ✅ 已就绪 | <https://huggingface.co/Comfy-Org/flux2-klein-9B/resolve/main/split_files/text_encoders/qwen_3_8b_fp8mixed.safetensors> |
-| `full_encoder_small_decoder.safetensors`(Klein/FLUX.2 解码器) | `models\vae\` | ✅ 已就绪 | <https://huggingface.co/black-forest-labs/FLUX.2-small-decoder/resolve/main/full_encoder_small_decoder.safetensors> |
 | `qwen_2.5_vl_7b_fp8_scaled.safetensors`(Qwen-Edit 文本编码器) | `models\text_encoders\` | ✅ 已就绪 | <https://huggingface.co/Comfy-Org/HunyuanVideo_1.5_repackaged/resolve/main/split_files/text_encoders/qwen_2.5_vl_7b_fp8_scaled.safetensors> |
 | `qwen3vl_8b_bf16.safetensors`(Qwen-Image 2.1 文本编码器) | `models\text_encoders\` | ✅ 已就绪 | <https://huggingface.co/Comfy-Org/Qwen-Image-2.1_ComfyUI/resolve/main/split_files/text_encoders/qwen3vl_8b_bf16.safetensors> |
 | `qwen_image_vae.safetensors` | `models\vae\` | ✅ 已就绪 | <https://huggingface.co/Comfy-Org/Qwen-Image_ComfyUI/resolve/main/split_files/vae/qwen_image_vae.safetensors> |
 | `qwen_image_2.1_vae_bf16.safetensors`(Qwen-Image 2.1 VAE,64 通道 RGBA) | `models\vae\` | ✅ 已就绪 | <https://huggingface.co/Comfy-Org/Qwen-Image-2.1_ComfyUI/resolve/main/split_files/vae/qwen_image_2.1_vae_bf16.safetensors> |
-| `flux2-vae.safetensors`(历史遗留,当前工作流未使用) | `models\vae\` | ✅ 已就绪 | 本地文件(早期实验保留) |
 | `triposplat_vae_decoder_fp16.safetensors`(历史遗留,当前工作流未使用) | `models\vae\` | ✅ 已就绪 | 本地文件(早期实验保留) |
 | `4xNomos8kDAT.safetensors`(放大,推荐) | `models\upscale_models\` | ✅ 已就绪 | <https://huggingface.co/Phips/4xNomos8kDAT/resolve/main/4xNomos8kDAT.safetensors> |
 | `Qwen-Image-2512-Lightning-4steps-V1.0-fp32.safetensors`(2512 加速 LoRA) | `models\loras\` | ✅ 已就绪 | <https://huggingface.co/Comfy-Org/Qwen-Image_ComfyUI/resolve/main/split_files/loras/Qwen-Image-2512-Lightning-4steps-V1.0-fp32.safetensors> |
@@ -458,8 +454,8 @@ python main.py --enable-manager
 
 ### H.4 文件搬运与软链接
 
-- 超项目:`git clone --recurse-submodules <remote>`(**54 个子模块**)
-- **models 约 263.5GB 单独 rsync**(`rsync -avP`);服务器需预留 ≥350GB NVMe
+- 超项目:`git clone --recurse-submodules <remote>`(**55 个子模块**)
+- **models 约 309.6GB 单独 rsync**(`rsync -avP`);服务器需预留 ≥350GB NVMe
 - 软链接重建(`ln -s` 相对路径,共 8 个,见附录 A 清单):
   - `ComfyUI/input → ../media/七纹刻印`、`ComfyUI/output → ../media/七纹刻印`、`ComfyUI/models → ../models`、`ComfyUI/user/default/workflows → ../../../workflows`
   - `ComfyUI/custom_nodes → ../custom_nodes`(**目录级,聚合 45 插件**)、`custom_nodes/H3ReferenceSuite → ../refs/minimax-h3-guide/custom_nodes/H3ReferenceSuite`、`.claude → .agents`、`stories/.obsidian/plugins → ../plugins`

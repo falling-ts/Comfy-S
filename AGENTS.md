@@ -7,7 +7,7 @@ ComfyUI 及自定义节点的本地开发工作区。下文路径均相对项目
 ## 技术栈与运行(速查)
 
 - **环境**:项目内 `.venv`(RTX 4060 8GB),**一律用 `.venv\Scripts\python.exe`**(类 Unix `.venv/bin/python`),禁用系统 Python 与 conda
-- **ComfyUI**(submodule,detached HEAD 跟随上游 tag);模型合计约 263.5 GB
+- **ComfyUI**(submodule,detached HEAD 跟随上游 tag);模型合计约 309.6 GB
 - **启动**:`cd ComfyUI && python main.py --enable-manager`,或直接 `.venv\Scripts\python.exe main.py --enable-manager`,或项目根 `bash comfy-server.sh`;前端 `http://127.0.0.1:8188`
 - 改自定义节点代码后**重启 ComfyUI 生效**(经软链接即时加载,无需复制)
 - ⚠️ **重启前先确认真能杀掉旧进程**:提权启动的进程在同权限会话外会 `Access is denied`,而 `comfy-server.sh` 会吞掉失败、且"端口已监听"被判据**旧进程**满足 ⇒ 打印就绪却仍跑旧代码。判据:对比 `Get-NetTCPConnection -LocalPort 8188 -State Listen` 的 PID 与启动前是否一致
@@ -21,13 +21,13 @@ ComfyUI 及自定义节点的本地开发工作区。下文路径均相对项目
 |------|------|
 | `ComfyUI` | 主程序(submodule);`models`/`input`/`output`/`workflows`/`custom_nodes` 均为**相对软链接**外挂 |
 | `custom_nodes` | 插件聚合目录(45 插件子模块 + `H3ReferenceSuite` 链接);自有插件 **ComfyUI-FallingTS** |
-| `models` | 模型实际存放处(40 个顶层槽位,空槽位仅占位) |
-| `workflows` | 用户工作流实际存储处(35 个,编号 0010~0070) |
+| `models` | 模型实际存放处(42 个顶层槽位,空槽位仅占位) |
+| `workflows` | 用户工作流实际存储处(34 个,编号 0010~0070) |
 | `stories` | Obsidian 故事库工作区(`七纹刻印` 为当前项目;`plugins\` 为插件聚合目录) |
 | `media` | input/output 软链目标,按**项目**分目录(`七纹刻印\` 为当前项目,真实产物) |
-| `docs` | 本地参考文档(44 篇专题 md) |
-| `refs` | 参考资料聚合(7 个子模块 + `Qwen-Image-Edit-Skills` 本地目录) |
-| `templates` | 官方模板库缓存(833 个 JSON)/ `webs` 三方调研 / `backups` 修改前备份(本地暂存) |
+| `docs` | 本地参考文档(45 篇专题 md) |
+| `refs` | 参考资料聚合(8 个子模块 + `Qwen-Image-Edit-Skills` 本地目录) |
+| `templates` | 官方模板库缓存(803 个 JSON)/ `webs` 三方调研 / `backups` 修改前备份(本地暂存) |
 | `scripts` | 可复跑工具链脚本(自动定位仓根、幂等): `wf_layout_all.py` 全量布局重排等,见 `comfyui` 技能 |
 | `.agents` | 技能聚合目录(`.claude` 软链指向它) |
 

@@ -33,14 +33,14 @@ ComfyUI 及自定义节点的本地开发工作区。下文路径均相对项目
 | └ `MiniMax-H3` | MiniMax H3 官方模型仓库(自带 9 个官方 Skills,子模块;原 `h3\`) |
 | └ `minimax-h3-guide` | H3 参考加载套件(其 `H3ReferenceSuite` 由根 `custom_nodes` 子链接指向,子模块;原 `h3\`) |
 | └ `Qwen-Image-Edit-Skills` | Qwen-Image-Edit 官方 Skills 源码参考(`aliyun-image-skill\` 阿里云百炼 API 版 + `comfyui-agent-kit\` 的 comfyui skill 知识文件,共 67 文件)。⚠️ **本地目录、非子模块** —— 由**根仓库以普通文件(非 gitlink)跟踪**,故搬移只需 `git add .` 记重命名,不涉及 gitdir/`.gitmodules`;原 `docs\` |
-| **`workflows`** | **用户工作流实际存储处**(前端保存即在此,可经 `GET /userdata?dir=workflows` 读取),共 35 个,按编号-用途分组(详见下方「工作流编号体系」) |
-| `models` | 模型实际存放处(`ComfyUI\models` 软链接指向);**40 个顶层目录**(39 个标准槽位各带 `.gitignore`(内容 `*`+`!.gitignore`)忽略模型文件、仅占位入库;另 1 个运行时缓存 `.cache`,无 `.gitignore`、不入库)。当前合计约 **263.5 GB**。已就绪模型见 `comfyui` 技能的 `workspace-env.md` |
+| **`workflows`** | **用户工作流实际存储处**(前端保存即在此,可经 `GET /userdata?dir=workflows` 读取),共 34 个,按编号-用途分组(详见下方「工作流编号体系」) |
+| `models` | 模型实际存放处(`ComfyUI\models` 软链接指向);**42 个顶层目录**(37 个标准槽位 + 3 个插件新增槽位 `foley`/`hywm2`/`TTS` + 2 个缓存 `.cache`/`HF-cache`;标准槽位各带 `.gitignore`(内容 `*`+`!.gitignore`)忽略模型文件、仅占位入库,缓存目录无 `.gitignore`、不入库)。当前合计约 **309.6 GB**。已就绪模型见 `comfyui` 技能的 `workspace-env.md` |
 | └ 核心生成 | `diffusion_models` / `text_encoders` / `vae` / `loras` / `checkpoints` / `upscale_models` / `background_removal`(已就绪) |
-| └ 语音 | `TTS`(Qwen3-TTS 五变体 + SenseVoiceSmall)/ 空槽位 `ASR` / `speaker_models` / `audio_encoders` |
-| └ 其余已就绪槽位 | `controlnet` / `facerestore_models` / `clip_vision` / `embeddings`(H3 动作嵌入 10 个)/ `model_patches`(H3 fun-controlnet)/ `latent_upscale_models`(H3 latent 放大)/ `geometry_estimation`(Depth-Anything-3)/ `vae_approx`(`taeh3`)/ `hywm2`(HY-World 2.0 权重 3.05GB)/ `configs` |
-| └ 标准空槽位 | 其余 **21 个**槽位目录尚无模型:`clip` / `unet` / `detection` / `reactor` / `SEEDVR2` / `ultralytics` / `yolo` / `diffusers` / `style_models` / `frame_interpolation` / `optical_flow` / `gligen` / `hypernetworks` / `photomaker` / `mesh2motion` / `nlf` / `LLM` / `classifiers` / `ASR` / `speaker_models` / `audio_encoders` |
+| └ 语音 | `TTS`(SenseVoiceSmall ASR;人声合成走 `TTS-Audio-Suite` 的 IndexTTS-2.5,权重由插件自行管理、不在本目录)/ 空槽位 `ASR` / `speaker_models` / `audio_encoders` |
+| └ 其余已就绪槽位 | `controlnet` / `facerestore_models` / `clip_vision` / `embeddings`(H3 动作嵌入 10 个)/ `model_patches`(H3 fun-controlnet)/ `latent_upscale_models`(H3 latent 放大 + LTX-2.5)/ `geometry_estimation`(Depth-Anything-3)/ `vae_approx`(`taeh3`)/ `hywm2`(HY-World 2.0 权重 3.05GB)/ `foley`(HunyuanVideo-Foley 配音)/ `configs` |
+| └ 标准空槽位 | 其余 **22 个**槽位目录尚无模型:`clip` / `unet` / `detection` / `reactor` / `SEEDVR2` / `ultralytics` / `yolo` / `diffusers` / `style_models` / `frame_interpolation` / `optical_flow` / `gligen` / `hypernetworks` / `photomaker` / `mesh2motion` / `nlf` / `LLM` / `classifiers` / `ASR` / `speaker_models` / `audio_encoders` / `configs` |
 | `media` | 输入/输出文件(`ComfyUI\input`、`output` 软链接到 `media\七纹刻印`):按**项目**分目录——`template\`(模板, 入库占位)+ 各故事库目录(如 `七纹刻印\`, 实际产物, 不入库);input/output 指向哪个项目, 产物就落在哪个项目目录下 |
-| `templates` | ComfyUI 官方模板库本地缓存(**833 个工作流 JSON**):14 个分类子目录——官方核心 598 个分 11 类(`图像`198/`视频`197/`图像工具`46/`3D模型`43/`音频`33/`视频工具`25/`LLM`20/`角色与时尚`12/`产品与广告`11/`品牌与设计`8/`节点基础`5),另有 `自定义节点\`218 个(按插件分子目录)+ `快速开始\`10 个、`矢量\`7 个(本地补遗);`workflow-templates-list.md` 为索引,由模板拉取工具从运行中的服务重建(2026-08-09 曾归档的个人工作流已迁回 `workflows\`) |
+| `templates` | ComfyUI 官方模板库本地缓存(**803 个工作流 JSON**):14 个分类子目录——官方核心 598 个分 11 类(`图像`198/`视频`197/`图像工具`46/`3D模型`43/`音频`33/`视频工具`25/`LLM`20/`角色与时尚`12/`产品与广告`11/`品牌与设计`8/`节点基础`5),另有 `自定义节点\`188 个(按插件分子目录)+ `快速开始\`10 个、`矢量\`7 个(本地补遗);`workflow-templates-list.md` 为索引,由模板拉取工具从运行中的服务重建(2026-08-09 曾归档的个人工作流已迁回 `workflows\`) |
 | `webs` | 三方网站调研聚合目录(已入库跟踪):三个调研源 |
 | └ `RunningHub` | RunningHub 调研:`RunningHub-API读取指南.md` + `workflows-list.md` + `workflows\`(**4571 个**收集工作流,按 **24 个**分类子目录:图像/视频/音频/数字人/室内外设计/风格化/插件 等) |
 | └ `Bilibili` | B 站教程调研:`B站教程调研.md` + `Qwen-Image-Edit-镜头控制与360度视角-教程调研-2026-08-09.md` + `工作流大全\`(**474 个**配套工作流) |
@@ -57,9 +57,9 @@ ComfyUI 及自定义节点的本地开发工作区。下文路径均相对项目
 
 > ⚠️ **2026-10-11 结构精简**:根 `scripts\`(临时脚本目录)、根 `input\`(本地测试素材约 11MB:HYWM2 示例场景 eth_courtyard/kitchen/workspace + 全景图)、根 `temp\`(验证用 db) **已全部删除**。临时脚本不再落盘进项目 —— 一次性逻辑用 stdin 就地执行(`.venv\Scripts\python.exe - <<'PY' ... PY`),需落盘时用系统临时目录;要能复跑的工具链统一放 `custom_nodes\ComfyUI-FallingTS\dev\`。⚠️ **注意区分**:`ComfyUI\input\`(用户上传)与 `ComfyUI\temp\` 是 ComfyUI 运行时的真实目录/软链,**不受本次调整影响**,`ComfyUI\input\`(软链→`media\<项目>\`)是真实数据严禁删。
 
-## 工作流编号体系(35 个)
+## 工作流编号体系(34 个)
 
-`workflows\` 共 35 个,按编号-用途分组:
+`workflows\` 共 34 个,按编号-用途分组:
 
 | 组 | 工作流 |
 |----|--------|

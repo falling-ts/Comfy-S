@@ -185,10 +185,10 @@ Comfy/
 │   ├── ComfyUI-FallingTS/    # our own general-purpose utility node pack (22 nodes + world-model nodes + frontend enhancements)
 │   ├── ComfyUI-GGUF/  ComfyUI-KJNodes/   # quantized loading / utility node pack
 │   └── ...(the other 41, see the directory layout in AGENTS.md)
-├── docs/                     # 44 categorized docs
-├── refs/                     # 7 reference submodules (ComfyUI-Docs / Obsidian-Dev-Docs / Obsidian-API / Qwen-Image-2.1 / qwen-image-2.1-skill / MiniMax-H3 / minimax-h3-guide) + Qwen-Image-Edit-Skills (local dir, not a submodule)
+├── docs/                     # 45 categorized docs
+├── refs/                     # 8 reference submodules (ComfyUI-Docs / Obsidian-Dev-Docs / Obsidian-API / Qwen-Image-2.1 / qwen-image-2.1-skill / MiniMax-H3 / MiniMax-H3-Turbo / minimax-h3-guide) + Qwen-Image-Edit-Skills (local dir, not a submodule)
 ├── workflows/                # 34 user workflows (001x~007x, see Appendix B)
-├── models/                   # where models actually live (~263.5 GB, 40 top-level directories, see Appendix C)
+├── models/                   # where models actually live (~309.6 GB, 42 top-level directories, see Appendix C)
 ├── media/                    # input images/audio + generated results (template/ + per-story project dirs, currently 七纹刻印/)
 ├── templates/  webs/         # official template cache + third-party research (RunningHub/Bilibili/AutoDL)
 ├── stories/                  # Obsidian story-writing workspace
@@ -279,7 +279,7 @@ Comfy/
 
 ## Appendix C · Model download list
 
-> Scheme principles: fully open-source, local inference, zero API cost. The list below corresponds **one-to-one** with the local `models\` directory (verified 2026-10-11: ~263.5 GB across 40 top-level directories); the status column reflects what is actually ready locally. A brand-new environment (Linux 5090 server) must re-fetch from the download URLs, or migrate `models` wholesale via rsync per [Appendix H.4](#h4--file-transfer-and-symlinks). **Recommended download order**: audio small items first (the full Qwen3-TTS set, SenseVoice, Stable Audio 3) → video large items (the full MiniMax H3 set — download both fl2va and ref2va) → image large items (Qwen-Image 2512/Edit 2511, Qwen-Image 2.1, FLUX.2 Klein). Note that `flux-2-klein-9b-fp8` is a **gated repo** (you must log in to HF and accept the BFL terms); after placing models, **restart ComfyUI** so they are recognized.
+> Scheme principles: fully open-source, local inference, zero API cost. The list below corresponds **one-to-one** with the local `models\` directory (verified 2026-11-01: ~309.6 GB across 42 top-level directories); the status column reflects what is actually ready locally. A brand-new environment (Linux 5090 server) must re-fetch from the download URLs, or migrate `models` wholesale via rsync per [Appendix H.4](#h4--file-transfer-and-symlinks). **Recommended download order**: audio small items first (SenseVoice, Stable Audio 3, ACE-Step) → video large items (the full MiniMax H3 set — download both fl2va and ref2va — plus LTX-2.5) → image large items (Qwen-Image 2512/Edit 2511, Qwen-Image 2.1). FLUX.2 Klein has been dropped from this workspace (2026-11-01); after placing models, **restart ComfyUI** so they are recognized.
 
 ### Image class
 
@@ -289,15 +289,11 @@ Comfy/
 | `qwen_image_fp8_e4m3fn.safetensors` (predecessor of 2512, backup) | `models\diffusion_models\` | ✅ ready | <https://huggingface.co/Comfy-Org/Qwen-Image_ComfyUI/resolve/main/split_files/diffusion_models/qwen_image_fp8_e4m3fn.safetensors> |
 | `qwen_image_edit_2511_fp8mixed.safetensors` | `models\diffusion_models\` | ✅ ready | <https://www.modelscope.cn/models/Kakazhuce/qwen_image_edit_2511_fp8mixed/resolve/master/qwen_image_edit_2511_fp8mixed.safetensors> |
 | `qwen_image_2.1_bf16.safetensors` (Qwen-Image 2.1 base, 7B unified generate+edit) | `models\diffusion_models\` | ✅ ready | <https://huggingface.co/Comfy-Org/Qwen-Image-2.1_ComfyUI/resolve/main/split_files/diffusion_models/qwen_image_2.1_bf16.safetensors> |
-| `flux-2-klein-9b-fp8.safetensors` | `models\diffusion_models\` | ✅ ready | <https://huggingface.co/black-forest-labs/FLUX.2-klein-9b-fp8/resolve/main/flux-2-klein-9b-fp8.safetensors> ⚠️ gated |
 | `triposplat_fp16.safetensors` (legacy, not used by any current workflow) | `models\diffusion_models\` | ✅ ready | local file (kept from an earlier experiment) |
-| `qwen_3_8b_fp8mixed.safetensors` (Klein text encoder) | `models\text_encoders\` | ✅ ready | <https://huggingface.co/Comfy-Org/flux2-klein-9B/resolve/main/split_files/text_encoders/qwen_3_8b_fp8mixed.safetensors> |
-| `full_encoder_small_decoder.safetensors` (Klein/FLUX.2 decoder) | `models\vae\` | ✅ ready | <https://huggingface.co/black-forest-labs/FLUX.2-small-decoder/resolve/main/full_encoder_small_decoder.safetensors> |
 | `qwen_2.5_vl_7b_fp8_scaled.safetensors` (Qwen-Edit text encoder) | `models\text_encoders\` | ✅ ready | <https://huggingface.co/Comfy-Org/HunyuanVideo_1.5_repackaged/resolve/main/split_files/text_encoders/qwen_2.5_vl_7b_fp8_scaled.safetensors> |
 | `qwen3vl_8b_bf16.safetensors` (Qwen-Image 2.1 text encoder) | `models\text_encoders\` | ✅ ready | <https://huggingface.co/Comfy-Org/Qwen-Image-2.1_ComfyUI/resolve/main/split_files/text_encoders/qwen3vl_8b_bf16.safetensors> |
 | `qwen_image_vae.safetensors` | `models\vae\` | ✅ ready | <https://huggingface.co/Comfy-Org/Qwen-Image_ComfyUI/resolve/main/split_files/vae/qwen_image_vae.safetensors> |
 | `qwen_image_2.1_vae_bf16.safetensors` (Qwen-Image 2.1 VAE, 64-channel RGBA) | `models\vae\` | ✅ ready | <https://huggingface.co/Comfy-Org/Qwen-Image-2.1_ComfyUI/resolve/main/split_files/vae/qwen_image_2.1_vae_bf16.safetensors> |
-| `flux2-vae.safetensors` (legacy, not used by any current workflow) | `models\vae\` | ✅ ready | local file (kept from an earlier experiment) |
 | `triposplat_vae_decoder_fp16.safetensors` (legacy, not used by any current workflow) | `models\vae\` | ✅ ready | local file (kept from an earlier experiment) |
 | `4xNomos8kDAT.safetensors` (upscaling, recommended) | `models\upscale_models\` | ✅ ready | <https://huggingface.co/Phips/4xNomos8kDAT/resolve/main/4xNomos8kDAT.safetensors> |
 | `Qwen-Image-2512-Lightning-4steps-V1.0-fp32.safetensors` (2512 acceleration LoRA) | `models\loras\` | ✅ ready | <https://huggingface.co/Comfy-Org/Qwen-Image_ComfyUI/resolve/main/split_files/loras/Qwen-Image-2512-Lightning-4steps-V1.0-fp32.safetensors> |
@@ -459,7 +455,7 @@ python main.py --enable-manager
 ### H.4 File transfer and symlinks
 
 - The super-project: `git clone --recurse-submodules <remote>` (**55 submodules**)
-- **models ~263.5 GB are rsynced separately** (`rsync -avP`); the server needs ≥350 GB NVMe reserved
+- **models ~309.6 GB are rsynced separately** (`rsync -avP`); the server needs ≥350 GB NVMe reserved
 - Rebuild the symlinks (`ln -s` relative paths, 8 total, see the Appendix A list):
   - `ComfyUI/input → ../media/七纹刻印`, `ComfyUI/output → ../media/七纹刻印`, `ComfyUI/models → ../models`, `ComfyUI/user/default/workflows → ../../../workflows`
   - `ComfyUI/custom_nodes → ../custom_nodes` (**directory-level, aggregates 45 plugins**), `custom_nodes/H3ReferenceSuite → ../refs/minimax-h3-guide/custom_nodes/H3ReferenceSuite`, `.claude → .agents`, `stories/.obsidian/plugins → ../plugins`

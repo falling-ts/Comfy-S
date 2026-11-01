@@ -20,7 +20,7 @@
 | `ComfyUI\custom_nodes` | SymbolicLink(目录级) | `..\custom_nodes` | 根 `custom_nodes`(插件聚合目录,45 插件 + H3ReferenceSuite 链接) |
 | `custom_nodes\H3ReferenceSuite` | SymbolicLink(子链接) | `..\refs\minimax-h3-guide\custom_nodes\H3ReferenceSuite` | `refs\minimax-h3-guide\custom_nodes\H3ReferenceSuite`(2026-09-30 由 `h3\` 迁来;盘上必须写**反斜杠**目标 —— 实测 reparse 目标里的正斜杠解析失败 WinError 123,而 git 入库时会统一规范成正斜杠 `../refs/...`) |
 
-- 根 `custom_nodes` 由**根仓库**跟踪:45 个插件以 gitlink 形式登记(全仓共 54 个子模块:`ComfyUI` 1 + `custom_nodes\` 45 + `refs\` 7 + `stories\plugins\Obsidian-Comfy` 1;`.gitmodules` 条目数同为 54,2026-09-30 搬迁后复核一致 —— 其中 `ComfyUI-HYWM2` 是 2026-09-28 新登记的,`refs\` 7 个是 2026-09-30 由 `docs\`(5)+`h3\`(2)迁入的),`H3ReferenceSuite` 为符号链接;本地文件 `example_node.py.example`、`websocket_image_save.py` 被根 `.gitignore` 排除(保留磁盘副本供加载)。`ComfyUI\custom_nodes` 是目录级符号链接,其目标内容不受 ComfyUI 子模块 git 影响
+- 根 `custom_nodes` 由**根仓库**跟踪:45 个插件以 gitlink 形式登记(全仓共 55 个子模块:`ComfyUI` 1 + `custom_nodes\` 45 + `refs\` 8 + `stories\plugins\Obsidian-Comfy` 1;`.gitmodules` 条目数同为 55,2026-11-01 复核一致 —— 其中 `ComfyUI-HYWM2` 是 2026-09-28 新登记的,`refs\` 8 个是 2026-09-30 由 `docs\`(5)+`h3\`(2)迁入、2026-11-01 补计 `MiniMax-H3-Turbo`),`H3ReferenceSuite` 为符号链接;本地文件 `example_node.py.example`、`websocket_image_save.py` 被根 `.gitignore` 排除(保留磁盘副本供加载)。`ComfyUI\custom_nodes` 是目录级符号链接,其目标内容不受 ComfyUI 子模块 git 影响
 - `ComfyUI\temp\`(真实目录,非链接):运行中生成的临时文件/预览图(如 `ComfyUI_temp_*.png`),可随时清理
 - ⚠️ **`ComfyUI\input\`(用户上传)与 `output\`(生成结果)是真实数据所在(经软链落入 `media\<项目>\`):严禁整体删除、移动或批量清理**;只有 `temp\` 可清理
 

@@ -35,6 +35,9 @@ pnpm-debug.log*
 # 根目录 temp/:超大文件编辑的应急脚本落盘处(见 AGENTS.md 开发规范),不入库
 /temp/
 
+# 技能临时产物(校验脚本落盘处,见 AGENTS.md 三条铁律 ③),不入库
+/.agents/tmp/
+
 # 运行时临时文件(ComfyUI/temp 为运行时目录)
 ComfyUI/temp/
 

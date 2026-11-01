@@ -39,32 +39,33 @@ python main.py --enable-manager
 - **前端终端**:浏览器 ComfyUI 界面底部终端(经 WebSocket 推送的环形缓冲)也能实时看到同样的日志,排查前端扩展报错可直接看它。
 - **注意**:`logs\comfyui*.log` 是用户自建重定向(如启动脚本),**不是官方位置**,可能缺部分输出;查不到关键日志时先看 `user\comfyui_<port>.log`。
 
-## 模型与蓝图(2026-10-11 现状)
+## 模型与蓝图(2026-11-01 现状)
 
-模型实际存放在 `models\` 下(`ComfyUI\models` 为软链接),当前合计约 **263.5 GB**。已就绪:
+模型实际存放在 `models\` 下(`ComfyUI\models` 为软链接),当前合计约 **309.6 GB**。已就绪:
 
 | 目录 | 已就绪 |
 |------|--------|
-| diffusion_models | `qwen_image_2512_fp8_e4m3fn`、`qwen_image_fp8_e4m3fn`、`qwen_image_edit_2511_fp8mixed`、`qwen_image_2.1_bf16`(2.1 基座)、`flux-2-klein-9b-fp8`、`triposplat_fp16`、`minimax_h3_fl2va_pruned_int8_convrot`、`minimax_h3_ref2va_pruned_int8_convrot` |
-| text_encoders | `qwen_2.5_vl_7b_fp8_scaled`(Qwen-Edit)、`qwen3vl_8b_bf16`(Qwen-Image 2.1)、`qwen_3_8b_fp8mixed`(Klein)、`qwen3.5_2b_bf16`(音频)、`t5gemma_b_b_ul2`(音频)、`qwen3vl_32b_minimax_h3_nvfp4_awq` + `qwen3vl_32b_minimax_h3_int8_convrot`(H3 视频,两档量化并存) |
-| vae | `qwen_image_vae`、`qwen_image_2.1_vae_bf16`(2.1,64 通道 RGBA)、`full_encoder_small_decoder`(Klein/FLUX.2)、`flux2-vae`、`triposplat_vae_decoder_fp16`、`minimax_h3_video_vae_fp16` + `minimax_h3_video_vae_int8_convrot`(H3 视频,两档)+ `minimax_h3_audio_vae_fp32` |
-| loras | `Qwen-Image-2512-Lightning-4steps-V1.0-fp32`、`Qwen-Image-Lightning-4steps-V1.0`、`Qwen-Image-Edit-2511-Lightning-4steps-V1.0-bf16`、`qwen-image-edit-2511-multiple-angles-lora`(多视角,配 `ComfyUI-qwenmultiangle` 插件)、`[Qwen-Edit]3DChineseStyle_25`、`Kook_Qwen_2512_真实幻想`、H3 加速**五件**:`minimax_h3_fl2v_turbo_4step_v1.0_768p_comfyui_bf16` / `minimax_h3_fl2v_turbo_4step_v1.2_768p_comfyui_bf16` / `minimax_h3_fl2v_turbo_8step_v1.0_comfyui_bf16` / `minimax_h3_ref2v_turbo_4step_v0.1_comfyui_bf16` / `minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16` |
-| checkpoints | `stable_audio_3_medium.safetensors`(音频,8.59 GB) |
+| diffusion_models | `qwen_image_2512_fp8_e4m3fn`、`qwen_image_fp8_e4m3fn`、`qwen_image_edit_2511_fp8mixed`、`qwen_image_2.1_bf16`(2.1 基座)、`triposplat_fp16`、`minimax_h3_fl2va_pruned_int8_convrot`、`minimax_h3_ref2va_pruned_int8_convrot`、`minimax_h3_hybrid_fl2va_ref2va_b25-49-int8`、`ltx-2.5-22b-distilled-transformer-comfy-int8-convrot` |
+| text_encoders | `qwen_2.5_vl_7b_fp8_scaled`(Qwen-Edit)、`qwen3vl_8b_bf16`(Qwen-Image 2.1)、`qwen3.5_2b_bf16`(音频)、`t5gemma_b_b_ul2`(音频)、`qwen3vl_32b_minimax_h3_nvfp4_awq` + `qwen3vl_32b_minimax_h3_int8_convrot`(H3 视频,两档量化并存)、`gemma4-12b-with-proj-ltx-2.5-comfy-int8-convrot`(LTX-2.5) |
+| vae | `qwen_image_vae`、`qwen_image_2.1_vae_bf16`(2.1,64 通道 RGBA)、`triposplat_vae_decoder_fp16`、`minimax_h3_video_vae_fp16` + `minimax_h3_video_vae_int8_convrot`(H3 视频,两档)+ `minimax_h3_audio_vae_fp32`、`ltx-2.5-video-vae-bf16`(LTX-2.5) |
+| loras | `Qwen-Image-2512-Lightning-4steps-V1.0-fp32`、`Qwen-Image-Lightning-4steps-V1.0`、`Qwen-Image-Edit-2511-Lightning-4steps-V1.0-bf16`、`qwen-image-edit-2511-multiple-angles-lora`(多视角,配 `ComfyUI-qwenmultiangle` 插件)、`[Qwen-Edit]3DChineseStyle_25`、`Kook_Qwen_2512_真实幻想`、`ltx-2.5-22b-ic-lora-ingredients-0.9`(LTX-2.5)、`h3-realism-people-t2v-i2v-r2v`、H3 加速**五件**:`minimax_h3_fl2v_turbo_4step_v1.0_768p_comfyui_bf16` / `minimax_h3_fl2v_turbo_4step_v1.2_768p_comfyui_bf16` / `minimax_h3_fl2v_turbo_8step_v1.0_comfyui_bf16` / `minimax_h3_ref2v_turbo_4step_v0.1_comfyui_bf16` / `minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16` |
+| checkpoints | `ace_step_1.5_turbo_aio`(ACE-Step 音乐,9.34 GB)、`stable_audio_3_medium`(音频,8.59 GB)、`stable_audio_3_small_sfx`(音效,2.11 GB) |
+| foley | `hunyuanvideo_foley` + `vae_128d_48k_fp16` + `synchformer_state_dict_fp16`(HunyuanVideo-Foley 视频配音,共 11.86 GB) |
 | upscale_models | `4xNomos8kDAT`(原 `4x-UltraSharp.pth`、`RealESRGAN_x4plus.pth` 已移除) |
 | background_removal | `birefnet.safetensors` |
 | controlnet | `Qwen-Image-InstantX-ControlNet-Inpainting`(InstantX Inpainting,扩图/局部重绘用) |
 | facerestore_models | `GFPGANv1.4`、`GFPGANv1.3`、`codeformer-v0.1.0`、`GPEN-BFR-512`(人脸修复,Impact-Pack/ReActor 自动下载) |
 | embeddings | `minimaxh3_*` 十个 H3 动作嵌入(`art_is_explosion`/`blooming_flowers`/`bullet_time`/`dark_magic`/`fire_breath`/`four_seasons`/`kiss_camera`/`spiral_ascent`/`storm_magic`/`truman_show`) |
 | model_patches | `minimax_h3_fun_controlnet_union_pruned_int8_convrot`(H3 fun-controlnet) |
-| latent_upscale_models | `minimax_h3_latent_upscaler_3d_fp16`(配 `h3-latent-upscaler` 插件) |
+| latent_upscale_models | `minimax_h3_latent_upscaler_3d_fp16`(配 `h3-latent-upscaler` 插件)、`ltx-2.5-latent-spatial-upscaler-x2-bf16-1.0`(LTX-2.5) |
 | geometry_estimation | `depth_anything_3_base` / `depth_anything_3_mono_large` / `depth_anything_3_small` |
 | clip_vision | `dino_v3_vit_h.safetensors` |
 | vae_approx | `taeh3.safetensors`(H3 预览用近似 VAE) |
 | hywm2 | `model.safetensors` + `config.json`(HY-World 2.0 世界重建权重,3.05 GB) |
 | configs | SD1.x/SD2.x 标准推理配置 11 个 yaml(上游自带) |
-| TTS | `TTS\Qwen\` 下 Qwen3-TTS-12Hz 五变体(0.6B-Base / 0.6B-CustomVoice / 1.7B-Base / 1.7B-CustomVoice / 1.7B-VoiceDesign,各含主模型 + speech_tokenizer);`TTS\SenseVoiceSmall`(ASR,`model.pt` 936 MB) |
+| TTS | 仅 `TTS\SenseVoiceSmall`(ASR 语音识别,`model.pt` 893 MB);`CosyVoice`/`dramabox`/`higgs_audio_v3` 为空槽。⚠️ 人声合成(`0063`/`0064`)实为 `TTS-Audio-Suite` 插件的 **IndexTTS-2.5 + Qwen0.6B-emo** 引擎,权重由插件自行下载管理,不在 `models\TTS\` 下;旧文档所述「Qwen3-TTS-12Hz 五变体」已不在盘上 |
 
-路线:Qwen-Image(国漫/中文更优)+ MiniMax H3(视频)+ FLUX.2-Klein(图像)。**已就绪的 `triposplat_fp16` / `triposplat_vae_decoder_fp16` 与 `flux2-vae` 属历史遗留,当前工作流未使用**;曾清理 FLUX.2 全套、旧版 qwen_image、LTX-2.3/Wan 2.2 等,后续按需重新引入(以表格为准)。`ComfyUI\blueprints\` 内置 116 个蓝图(位于 ComfyUI 目录内;除 Qwen 2511 外均缺模型)。
+路线:Qwen-Image(国漫/中文更优)+ MiniMax H3(视频主链)+ LTX-2.5(视频,新接入)+ Stable Audio / ACE-Step / HunyuanVideo-Foley(音频)。**FLUX.2 全套已于 2026-11-01 删除**(`flux-2-klein-9b-fp8` / `qwen_3_8b_fp8mixed` / `flux2-vae` / `full_encoder_small_decoder`,共 17.4 GB);`triposplat_fp16` / `triposplat_vae_decoder_fp16` 与 `taeh3` 属历史遗留,当前工作流未使用,后续按需重新引入(以表格为准)。`ComfyUI\blueprints\` 内置 116 个蓝图(位于 ComfyUI 目录内;除 Qwen 2511 外均缺模型)。
 
 ## 网络与代理
 
