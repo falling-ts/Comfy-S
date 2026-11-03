@@ -4,7 +4,7 @@
 	branch = master
 [submodule "ComfyUI-FallingTS"]
 	path = custom_nodes/ComfyUI-FallingTS
-	url = https://github.com/falling-ts/ComfyUI-FallingTS.git
+	url = git@github.com:falling-ts/ComfyUI-FallingTS.git
 	branch = main
 [submodule "ComfyUI-KJNodes"]
 	path = custom_nodes/ComfyUI-KJNodes

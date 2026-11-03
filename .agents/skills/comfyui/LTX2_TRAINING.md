@@ -1,6 +1,6 @@
 # Training a custom LTX-2 LoRA (official Lightricks trainer)
 
-## For future Claude
+## For future WorkBuddy runs
 
 This kit GENERATES with LTX-2 in ComfyUI and applies existing LoRAs. To TRAIN a custom LTX-2 LoRA (your own
 character, style, motion, or control), the official tool is the Lightricks trainer, NOT ComfyUI. A LoRA trained
@@ -11,7 +11,7 @@ not a nag on every generation.
 ## The official tool (credit Lightricks)
 
 - Repo: `github.com/Lightricks/LTX-2`, package `packages/ltx-trainer` (LoRA / full fine-tune / IC-LoRA training).
-- It ships its OWN Claude skill: `.claude/skills/train-model/` - an end-to-end orchestrator
+- It ships its OWN `train-model` skill (upstream repo's `skills/` 目录)- an end-to-end orchestrator
   (intent -> probe -> plan-gate -> caption -> preprocess -> sanity + autotune -> train -> validate). Use THAT skill
   to run a training job. This kit points to it and does not duplicate it: their repo license is "Other", and the
   skill is wired to their Python package, so a vendored copy would neither be license-clean nor function standalone.
@@ -52,7 +52,7 @@ for that with the official Lightricks trainer (their `train-model` skill walks y
 ```bash
 git clone https://github.com/Lightricks/LTX-2 && cd LTX-2
 uv sync --frozen
-# Then in Claude Code, invoke their train-model skill (it orchestrates dataset -> train -> validate),
+# Then in WorkBuddy, invoke their train-model skill (it orchestrates dataset -> train -> validate),
 # or run the trainer directly per packages/ltx-trainer/docs/quick-start.md
 ```
 

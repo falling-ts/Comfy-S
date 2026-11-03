@@ -49,7 +49,7 @@ ComfyUI 及自定义节点的本地开发工作区。下文路径均相对项目
 | `logs` | ComfyUI 运行日志(`comfyui*.log`/`comfyui-console*.log`,已 gitignore;可随时清空,保留 `.gitignore` 占位) |
 | `backups` | **工作流/重要文件的修改前备份**(2026-08-04 起):`backup-<文件名>-<YYYYMMDD>-<说明>.*` 命名;**纯本地暂存目录** —— `.gitignore` 忽略全部内容(只有 `.gitignore` 本身入库), **可随时整体清空、不承担归档职责**:环境快照(pip-freeze/conda export)、本地 wheel、文档归档一律不留档, 需要时现场重建(`pip freeze`/重新下载);2026-09-30 已全清一次(1646 文件 / 372.8 MB 直接删除),此后又累积了数份(2026-10-11 现存 **5 份**备份: 2 份 `0020_场景首帧` + 1 份 `0031_首帧场景` + 2 份 `0044_参考视频`, 均为 2026-10-11 的「卧室凌晨三点」改稿, 可随时清) |
 | `.agents` | 技能聚合目录(Skill 定义, 每个技能一个子目录含 `SKILL.md` + 附件);`.claude` 软链接指向它(§C)。当前 **15 个**技能:`comfyui`/`comfyui-headless-control`/`comfyui-workflow-runner`/`comfyui-workspace`、`stories`(故事库总纲与全集, 2026-10-11 由原名 `stories-*` 五个技能合并)、`qwen-image-2-1-prompting`、`h3-prompt-writing`、`aliyun-image`、`3d-animation-short-generator` 等各类视频生成器技能 |
-| `.claude` | SymbolicLink → `.agents`(Claude Code 兼容垫片,技能聚合目录,见「软链接映射 §C」) |
+| `.claude` | SymbolicLink → `.agents`(历史兼容垫片;本工作区统一用 WorkBuddy,该链接仅保留兼容,见「软链接映射 §C」) |
 | `README.md` / `README.cn.md` / `LICENSE` | 项目说明(中英双份)与许可 |
 | `.gitmodules` | 子模块登记(git submodule) |
 | `comfy-server.sh` | **统一**后台服务式启动脚本(跨平台: Linux + Windows Git Bash;杀 8188 旧进程 → 静默后台启动 → 等待端口就绪,日志默认写调用时所在目录 `comfy-server-8188.log`;Windows 等价 `python main.py --enable-manager --disable-pinned-memory --fast-disk`,Linux 用 conda 环境 comfy + `--reserve-vram 22`;覆盖 `PORT`/`WAIT`/`PY_BIN`/`LOG`/`RESERVE_VRAM`) |

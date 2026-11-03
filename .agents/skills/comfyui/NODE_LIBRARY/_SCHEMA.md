@@ -79,4 +79,4 @@ check KIJAI.md and `search_custom_nodes` first). Record the decision (and why) i
 3. Fill the template; mark confirmed/inferred + date.
 4. Put the entry in the right category file; add its row to `_INDEX.md` (name, one-line purpose, link).
 5. Cross-link KNOWN_ISSUES.md if it has a live bug; KIJAI.md if it is a kijai node.
-6. Sync the changed file to `~/.claude/skills/comfyui/` per CLAUDE.md.
+6. Sync the changed file back into this skill directory (`<项目根>/.agents/skills/comfyui/`,WorkBuddy 读的是这一份)。

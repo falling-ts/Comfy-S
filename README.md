@@ -2,7 +2,7 @@
 
 > This repository is a **ready-to-use ComfyUI all-modal workspace**: the ComfyUI main program, MiniMax H3 video + Qwen-series image + Stable Audio/Qwen3-TTS audio generation, 44 custom node packs (GGUF/KJNodes/upscaling/speedup, etc.), 34 image/video/audio workflows, and a model catalog plan.
 >
-> **Core idea: all installing, configuring, running, generating, and workflow training is delegated to the AI (OpenCode).** You only need to: install Git → clone this repository → install OpenCode → let it work.
+> **Core idea: all installing, configuring, running, generating, and workflow training is delegated to the AI assistant (WorkBuddy).** You only need to: install Git → clone this repository → install WorkBuddy → let it work. This workspace uses **WorkBuddy only** — no other agent tooling.
 
 ---
 
@@ -12,13 +12,11 @@
 - [Before you start](#before-you-start)
 - [Step 1: Install Git](#step-1-install-git)
 - [Step 2: Clone this project](#step-2-clone-this-project)
-- [Step 3: Install OpenCode (Desktop)](#step-3-install-opencode-desktop)
-- [Step 4: Run OpenCode as administrator and set up the symlinks](#step-4-run-opencode-as-administrator-and-set-up-the-symlinks)
-- [Step 5: Have OpenCode install its own CLI (optional)](#step-5-have-opencode-install-its-own-cli-optional)
-- [Step 6: Have OpenCode install other AI tools (optional)](#step-6-have-opencode-install-other-ai-tools-optional)
-- [Step 7: Have OpenCode set up the Python environment](#step-7-have-opencode-set-up-the-python-environment)
-- [Step 8: Have OpenCode install ComfyUI dependencies and start it](#step-8-have-opencode-install-comfyui-dependencies-and-start-it)
-- [Step 9: From here on, everything is the AI's job](#step-9-from-here-on-everything-is-the-ais-job)
+- [Step 3: Install WorkBuddy (Desktop)](#step-3-install-workbuddy-desktop)
+- [Step 4: Run WorkBuddy as administrator and set up the symlinks](#step-4-run-workbuddy-as-administrator-and-set-up-the-symlinks)
+- [Step 5: Have WorkBuddy set up the Python environment](#step-5-have-workbuddy-set-up-the-python-environment)
+- [Step 6: Have WorkBuddy install ComfyUI dependencies and start it](#step-6-have-workbuddy-install-comfyui-dependencies-and-start-it)
+- [Step 7: From here on, everything goes to WorkBuddy](#step-7-from-here-on-everything-goes-to-workbuddy)
 - [FAQ](#faq)
 - [Appendices](#appendices)
 
@@ -43,7 +41,8 @@
 - **System**: Windows 10/11 or Linux (this repo is written for Windows deployment by default; see "Appendix H: Migrating to Linux" for Linux/macOS deployment)
 - **Hardware**: 16 GB+ RAM; an **NVIDIA GPU** gives the best experience; it runs without an NVIDIA card, but slowly
 - **Network**: just needs external internet access; some regions need a proxy; for model downloads inside China use the `hf-mirror.com` mirror (see Appendix E)
-- **You don't need to install anything in advance** — Python, CUDA, the virtualenv, and all the CLIs are installed by the AI for you
+- **You don't need to install anything in advance** — Python, CUDA, and the virtualenv are installed by WorkBuddy for you
+- **WorkBuddy is the only agent tool**: installing, configuring, and running all go through it — no other agent tool or AI CLI (Codex / Claude Code / CLI switchers) is used
 
 ---
 
@@ -68,22 +67,22 @@ When done you have a complete workspace containing `ComfyUI\`, the various `Comf
 
 ---
 
-## Step 3: Install OpenCode (Desktop)
+## Step 3: Install WorkBuddy (Desktop)
 
-OpenCode is the AI workhorse between you and this workspace — it installs software, configures the environment, and runs workflows.
+WorkBuddy is the AI workhorse between you and this workspace — it installs software, configures the environment, and runs workflows. **This workspace uses WorkBuddy only; you don't need any other agent tool or AI CLI.**
 
-1. Open **https://opencode.ai/zh/download** in a browser and download the **Desktop** edition
-2. Install and launch OpenCode
-3. In the left panel, **Add project**, and select the `Comfy` directory you just cloned
-4. After that, just talk to the AI inside this project
+1. Open **https://www.workbuddy.cn** in a browser and download the Windows **Desktop** edition
+2. Install and launch WorkBuddy
+3. Add the `Comfy` directory you just cloned as its working directory
+4. After that, just talk to it inside this project
 
 ---
 
-## Step 4: Run OpenCode as administrator and set up the symlinks
+## Step 4: Run WorkBuddy as administrator and set up the symlinks
 
-> ⚠️ **Important**: this workspace relies on **relative-path symbolic links** pointing the relevant directories inside `ComfyUI\` at the project root (`models\`, `media\`, `workflows\`, the plugin directories). **Creating symlinks requires administrator privileges, so run OpenCode as administrator.**
+> ⚠️ **Important**: this workspace relies on **relative-path symbolic links** pointing the relevant directories inside `ComfyUI\` at the project root (`models\`, `media\`, `workflows\`, the plugin directories). **Creating symlinks requires administrator privileges, so run WorkBuddy as administrator.**
 
-1. Find OpenCode in the Start menu, right-click → **Run as administrator**
+1. Find WorkBuddy in the Start menu, right-click → **Run as administrator**
 2. Open this project (add the `Comfy` directory) and send it the following:
 
 > Please check and repair this project's symlinks per the "symlink plan" below (all **relative-path** symlinks, 8 total; the full list is in `AGENTS.md` "Symlink map"):
@@ -95,25 +94,13 @@ OpenCode is the AI workhorse between you and this workspace — it installs soft
 >
 > Note: only replace real directories; keep real directories like `ComfyUI\temp\`; all links use relative paths so they survive moving the whole project folder.
 
-3. With the symlinks ready, continue to [Step 5](#step-5-have-opencode-install-its-own-cli-optional).
+3. With the symlinks ready, continue to [Step 5](#step-5-have-workbuddy-set-up-the-python-environment).
 
 ---
 
-## Step 5: Have OpenCode install its own CLI (optional)
+## Step 5: Have WorkBuddy set up the Python environment
 
-If you like the command line, say "install the opencode CLI for me — search the web for the specific download/install"; once installed, `cd Comfy && opencode` and go.
-
----
-
-## Step 6: Have OpenCode install other AI tools (optional)
-
-When needed, say "install the following AI tools for me: codex, claude code, cc-switch — search the web for the specific download/install"; you get a swappable AI CLI suite.
-
----
-
-## Step 7: Have OpenCode set up the Python environment
-
-Send this to OpenCode (to create a `.venv` virtualenv at the project root):
+Send this to WorkBuddy (to create a `.venv` virtualenv at the project root):
 
 > Create a Python 3.13 virtualenv `.venv` in the project root (if the system has no Python 3.13, install the official Python 3.13 first). Search the web for the specific download/install.
 >
@@ -128,9 +115,9 @@ python --version
 
 ---
 
-## Step 8: Have OpenCode install ComfyUI dependencies and start it
+## Step 6: Have WorkBuddy install ComfyUI dependencies and start it
 
-Send this to OpenCode (it will, in order: install the CUDA build of PyTorch → install the main dependencies → install each plugin's dependencies → start):
+Send this to WorkBuddy (it will, in order: install the CUDA build of PyTorch → install the main dependencies → install each plugin's dependencies → start):
 
 > Enter the `ComfyUI` directory and, in order:
 >
@@ -147,23 +134,23 @@ After startup, open **http://127.0.0.1:8188** in a browser — that's the ComfyU
 
 ---
 
-## Step 9: From here on, everything is the AI's job
+## Step 7: From here on, everything goes to WorkBuddy
 
-Once the environment is ready, you can have the AI do everything:
+Once the environment is ready, you can have WorkBuddy do everything:
 
 - Download models (per [Appendix C](#appendix-c--model-download-list); just say "download model xx into models\yyy\")
 - Run / modify / create workflows (in `workflows\`)
 - Install new custom nodes, debug, tune parameters, generate images, train
 - Video/audio/image generation (MiniMax H3, Stable Audio, Qwen series, etc.)
 
-In one sentence: **you say "what you want"; the AI handles "how to do it".**
+In one sentence: **you say "what you want"; WorkBuddy handles "how to do it".**
 
 ---
 
 ## FAQ
 
 - **Proxy / slow downloads**: direct connection by default; on failure use a local proxy (e.g. Clash's `127.0.0.1:7890`); for HuggingFace models inside China use the `hf-mirror.com` mirror — just replace the `huggingface.co` prefix in the link with `hf-mirror.com` (see Appendix E)
-- **Symlinks**: `ComfyUI\custom_nodes` (directory-level, aggregates 45 plugins), `models`/`input`/`output`/`workflows`, etc. — 8 relative-path symlinks in total. Creating links needs administrator privileges; the recommended way is to **run OpenCode as administrator** and have it repair them (see [Step 4](#step-4-run-opencode-as-administrator-and-set-up-the-symlinks)); or manually enable "Developer Mode" (Settings → Privacy & security → For developers → Developer mode on)
+- **Symlinks**: `ComfyUI\custom_nodes` (directory-level, aggregates 45 plugins), `models`/`input`/`output`/`workflows`, etc. — 8 relative-path symlinks in total. Creating links needs administrator privileges; the recommended way is to **run WorkBuddy as administrator** and have it repair them (see [Step 4](#step-4-run-workbuddy-as-administrator-and-set-up-the-symlinks)); or manually enable "Developer Mode" (Settings → Privacy & security → For developers → Developer mode on)
 - **Not enough VRAM**: the Klein 9B distilled version is VRAM-hungry (a 24G card is tight at 1024 tiles; drop to 768 if OOM); MiniMax H3 needs a lot of VRAM — for low-VRAM cards use the quantized version or the cloud (see the Appendix C notes)
 - **After placing models, remember to restart ComfyUI** so the loaders pick up the new models
 

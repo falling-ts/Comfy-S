@@ -1,46 +1,34 @@
-# Agents: how each one connects
+# WorkBuddy:本工作区唯一的 agent
 
-The hard part (driving ComfyUI) is the **same MCP server** for every agent: `comfyui-mcp`. What differs per agent
-is (a) where the knowledge file lives and its format, and (b) how the MCP is registered. This kit ships one shared
-core (`shared/comfyui/`) and a thin adapter per agent (`agents/<name>/`).
+本工作区统一使用 **WorkBuddy**。除它以外的 agent(Claude Code / Codex / Gemini CLI / Qwen Code 等)一律不做适配,
+也不提供多 agent 安装脚本;驱动 ComfyUI 的硬核部分对所有 agent 本来都是同一个 MCP server(`comfyui-mcp`)。
 
-| Agent | Knowledge file | Where it goes | MCP registration | Skill auto-load? |
-|---|---|---|---|---|
-| **Claude Code** | `SKILL.md` (frontmatter) | `~/.claude/skills/comfyui/` | `claude mcp add comfyui --scope user -- comfyui-mcp` (→ `~/.claude.json`) | yes, progressive disclosure |
-| **Codex CLI** | `SKILL.md` (same format!) | `~/.agents/skills/comfyui/` | `~/.codex/config.toml` `[mcp_servers.comfyui]` or `codex mcp add` | yes, progressive disclosure |
-| **Gemini CLI** | `GEMINI.md` (no frontmatter) | `~/.gemini/extensions/comfyui/` | `gemini-extension.json` → `mcpServers.comfyui` | no, always-on context |
-| **Qwen Code** | `QWEN.md` | `~/.qwen/extensions/comfyui/` | `qwen-extension.json` → `mcpServers.comfyui` | no, always-on context |
+| 项目 | WorkBuddy 的对应做法 |
+|---|---|
+| 知识文件 | 本目录 `SKILL.md`(带 `name` + `description` frontmatter) |
+| 项目级技能位置 | `<项目根>/.workbuddy/skills/comfyui/` |
+| 用户级技能位置 | `~/.workbuddy/skills/comfyui/` |
+| MCP 注册 | `~/.workbuddy/mcp.json` 的 `mcpServers` 段(改完需在连接器页面对新服务点「信任」才生效) |
+| 技能加载方式 | 按需自动加载(渐进披露:先读 `SKILL.md`,再按需展开下面的专题 md) |
 
-Verified against each tool's official docs (June 2026). Two notable facts:
-- **Codex uses the same skill format as Claude** (`SKILL.md` with `name` + `description` frontmatter, loaded on
-  demand). Only the directory differs: Codex scans `~/.agents/skills`, not `~/.codex/skills`.
-- **Gemini and Qwen have no skill auto-loader.** Their "extension" bundles the MCP server plus a context file
-  (`GEMINI.md` / `QWEN.md`) that is always loaded. The adapter generates that context from the shared `SKILL.md`
-  body (frontmatter stripped). Qwen Code is a Gemini-CLI fork; the only real differences are the config dir
-  (`~/.qwen`) and the manifest name (`qwen-extension.json`).
+## 安装
 
-## GLM 5.2 (Zhipu / z.ai)
+1. 把本目录整体复制到上面任一技能位置(项目级或用户级),目录名保持 `comfyui`;
+2. 需要 MCP 驱动层时,在 `~/.workbuddy/mcp.json` 里注册 `comfyui-mcp`
+   (`"command": "npx"`, `"args": ["-y", "comfyui-mcp"]`),重启会话后在连接器页面确认「信任」;
+3. 只想让 WorkBuddy 读懂工作区、不装 MCP 也可以——本目录的知识文件独立可用
+   (本机实况见 `machine.md`,常见坑见 `KNOWN_ISSUES.md`)。
 
-GLM has **no first-party standalone CLI.** "GLM Coding Plan" is an API endpoint you drive from an existing harness.
-The common path is **stock Claude Code** pointed at z.ai's Anthropic-compatible endpoint, configured in
-`~/.claude/settings.json`:
+## 本目录知识文件导航
 
-```json
-{
-  "env": {
-    "ANTHROPIC_BASE_URL": "https://api.z.ai/api/anthropic",
-    "ANTHROPIC_AUTH_TOKEN": "your_zai_api_key"
-  }
-}
-```
-
-Because that is unmodified Claude Code, it reads the **same `~/.claude/skills/`** this kit installs. So **the
-`claude` adapter already covers GLM**: install it for `claude` and run GLM through Claude Code; nothing GLM-specific
-to build. (If instead you run GLM via Cline / OpenCode / Roo with z.ai's OpenAI-compatible endpoint
-`https://api.z.ai/api/coding/paas/v4`, register `comfyui-mcp` in that tool's own MCP settings; the knowledge in
-`shared/comfyui/SKILL.md` still applies as that tool's instructions file.)
-
-## Install
-
-The top-level `install.ps1` / `install.sh` runs the shared setup once, then auto-detects which of `claude`,
-`codex`, `gemini`, `qwen` are on PATH and installs for each. Limit with `-Agents` / `--agents`. Re-runnable.
+| 文件 | 内容 |
+|---|---|
+| `SKILL.md` | 唯一入口:何时用、按什么顺序读 |
+| `MODELS.md` / `MODEL_INDEX.md` / `MODELS/` | 按模型查提示词配方 |
+| `NODES.md` / `NODE_LIBRARY/` | 节点清单与用途 |
+| `LAYERS.md` | 四层安装结构 |
+| `BOOTSTRAP.md` | 首次上机环境准备 |
+| `ADVANCED.md` / `TASKS.md` / `workflow-layout.md` | 进阶用法、任务范式、工作流排版规范 |
+| `LTX2_TRAINING.md` | LTX-2 训练流程 |
+| `UPDATING.md` | 模型与 bug 的周期性更新 |
+| `KNOWN_ISSUES.md` / `machine.md` / `workspace-env.md` | 已知问题、本机实况、工作区环境 |

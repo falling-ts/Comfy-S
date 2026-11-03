@@ -120,12 +120,12 @@ Picture 1: <|vision_start|><|image_pad|><|vision_end|>Picture 2: <|vision_start|
 
 ## 五、GitHub 可用 Skills 调研
 
-> 结论:截至 2026-08-11,**没有**专门针对"ComfyUI TextEncodeQwenImageEditPlus 三参考图提示词格式"的现成 Claude Code skill。以下为最相关的 skill / 知识源。
+> 结论:截至 2026-08-11,**没有**专门针对"ComfyUI TextEncodeQwenImageEditPlus 三参考图提示词格式"的现成 agent skill。以下为最相关的 skill / 知识源。
 
 | 仓库 | ★ | 类型 | 与 qwen-image-edit 的关系 |
 |------|---|------|--------------------------|
-| `SlavaSexton/ComfyUI-Agent-Kit` | 69 | Claude Code/Codex skill + MCP,驱动本地 ComfyUI | ✅ 最对口:`MODELS/image-open.md` 明确 Qwen-Image-Edit 提示词规范(surgical 指令、"Image 1" 编号引用、上限 3、负提示词不支持用单空格) |
-| `StanleyChanH/aliyun-image-skill` | 5 | OpenClaw/Claude SKILL,阿里云百炼 API | ✅ 覆盖 Qwen-Image-Edit(单图编辑 + 多图融合 + 图像翻译),`references/image-edit.md` 含输入 1-3 张、参数、分辨率;需 `DASHSCOPE_API_KEY` |
+| `SlavaSexton/ComfyUI-Agent-Kit` | 69 | agent skill + MCP,驱动本地 ComfyUI | ✅ 最对口:`MODELS/image-open.md` 明确 Qwen-Image-Edit 提示词规范(surgical 指令、"Image 1" 编号引用、上限 3、负提示词不支持用单空格) |
+| `StanleyChanH/aliyun-image-skill` | 5 | agent SKILL,阿里云百炼 API | ✅ 覆盖 Qwen-Image-Edit(单图编辑 + 多图融合 + 图像翻译),`references/image-edit.md` 含输入 1-3 张、参数、分辨率;需 `DASHSCOPE_API_KEY` |
 | `bearstonem/comfyui-qwen-imagegen` | 0 | ComfyUI SKILL | ⚠️ 仅 Qwen Image 2.5 **文生图**,非编辑 |
 | `runapi-ai/qwen-image` | 0 | RunAPI SKILL | ⚠️ 通用 agent 生图(API) |
 | `catherineliaooo/qwen-image-gen` 等 | 1-2 | 阿里云百炼 API skill | ⚠️ 文生图,含提示词手册 |
@@ -136,10 +136,10 @@ Picture 1: <|vision_start|><|image_pad|><|vision_end|>Picture 2: <|vision_start|
 - `aliyun-image-skill\` — 阿里云 API 版 Qwen-Image-Edit skill 全量源码(纯存档,未安装)
 - `comfyui-agent-kit\` — ComfyUI-Agent-Kit 的 comfyui skill 知识文件(56 文件:SKILL.md、MODELS 提示词规范、NODE_LIBRARY、comfy_client.py 等)
 
-**安装状态(2026-08-11)**:**`comfyui` skill 已安装到项目 `.claude\skills\comfyui\`**(知识独立安装,未装 npm MCP 驱动层;`machine.md` 已按本机真实环境填好,见其"Known local quirks")。后续更新可从 `refs\Qwen-Image-Edit-Skills\comfyui-agent-kit\` 重新复制。
+**安装状态(2026-08-11)**:**`comfyui` skill 已安装到项目 `.agents\skills\comfyui\`**(知识独立安装,未装 npm MCP 驱动层;`machine.md` 已按本机真实环境填好,见其"Known local quirks")。后续更新可从 `refs\Qwen-Image-Edit-Skills\comfyui-agent-kit\` 重新复制。
 
 ## 六、建议
 
 - **提示词写作**:统一用 **"图N" 编号引用**(中文工作流通行)或 **"Picture N"**(正规),指令只描述改动(surgical instruction),文字编辑把目标文字用引号括起。
 - **负提示词**:原生 Qwen-Image-Edit 负提示词支持有限,留空或单空格即可(Agent-Kit 规范)。
-- **skill 安装**:若需让 Claude Code 具备写 qwen-image-edit 提示词能力,推荐基于本调研自建一个适配本地 ComfyUI 的 `qwen-image-edit-prompt-writing` skill(结构参考 `h3-prompt-writing`),而非直接安装依赖 API key 的第三方 skill。
+- **skill 安装**:若需让 WorkBuddy 具备写 qwen-image-edit 提示词能力,推荐基于本调研自建一个适配本地 ComfyUI 的 `qwen-image-edit-prompt-writing` skill(结构参考 `h3-prompt-writing`),而非直接安装依赖 API key 的第三方 skill。

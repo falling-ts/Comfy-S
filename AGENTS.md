@@ -29,7 +29,7 @@ ComfyUI 及自定义节点的本地开发工作区。下文路径均相对项目
 | `refs` | 参考资料聚合(8 个子模块 + `Qwen-Image-Edit-Skills` 本地目录) |
 | `templates` | 官方模板库缓存(803 个 JSON)/ `webs` 三方调研 / `backups` 修改前备份(本地暂存) |
 | `scripts` | 可复跑工具链脚本(自动定位仓根、幂等): `wf_layout_all.py` 全量布局重排等,见 `comfyui` 技能 |
-| `.agents` | 技能聚合目录(`.claude` 软链指向它) |
+| `.agents` | 技能聚合目录(技能入口,WorkBuddy 按需加载;`.claude` 为历史兼容软链) |
 
 目录逐条说明、8 条软链接映射(A~D)、工作流编号体系、Qwen-Image 2.1 工作流 → **`comfyui-workspace` 技能**。
 
@@ -146,6 +146,7 @@ ComfyUI 及自定义节点的本地开发工作区。下文路径均相对项目
 
 ## 开发规范
 
+- **Agent 工具只用 WorkBuddy**:描述文件、技能、脚本文档里凡是「让某个 agent 来做」的表述一律写 **WorkBuddy**;不引入、不指导安装其它 agent 工具或 AI CLI(OpenCode / Claude Code / Codex 等),`.claude` 仅作历史兼容软链保留,不再新增同类链接
 - **临时脚本不落盘进项目**:一次性逻辑经 stdin 就地执行(`.venv\Scripts\python.exe - <<'PY' ... PY`;Node 用 `node - <<'JS' ... JS`);确需落盘用系统临时目录;**能复跑的工具链**一律放 `custom_nodes\ComfyUI-FallingTS\dev\`
 - **超大文件例外**:修改超大文件、添加超多内容,实在没法用编辑工具(`edit`/`write`)时,才允许写脚本代劳;脚本文件**只能放根目录 `temp\`**(该目录已 git 忽略),用完即删
 - **根目录是 git 仓库**(`main`),子模块经 `.gitmodules` 以**指针提交**(gitlink)跟踪:子模块内先 commit/push,再回根仓库 `git add <路径>`;不要留子模块脏工作树,也不要混入无关文件

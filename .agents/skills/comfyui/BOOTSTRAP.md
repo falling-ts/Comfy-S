@@ -1,10 +1,10 @@
 # BOOTSTRAP: run once on a new machine
 
-After `install.ps1` / `install.sh` finishes and ComfyUI is running, have Claude do this ONE time. It detects
+After setup finishes and ComfyUI is running, have WorkBuddy do this ONE time. It detects
 the real machine and writes `machine.md` next to the installed `SKILL.md` so
 every later ComfyUI task starts from accurate facts instead of the kit author's example.
 
-## What Claude should do
+## What WorkBuddy should do
 
 1. **Confirm the API is up.** MCP `health_check`, or `comfy_client.alive()` + `GET /system_stats`. If down,
    ask the owner to start ComfyUI (Desktop: open the app; source: run its launcher), then capture the launch

@@ -2,7 +2,7 @@
 
 > 本仓库是一套开箱即用的 **ComfyUI 全模态工作区**:包含 ComfyUI 主程序、MiniMax H3 视频 + Qwen 系列图像 + Stable Audio/Qwen3-TTS 音频生成、45 个自定义节点(GGUF/KJNodes/超分/加速等)、35 个图片/视频/音频工作流,以及模型目录规划。
 >
-> **核心思路:所有安装、配置、运行、出图、训练工作流,都交给 AI(OpenCode)来做。** 你只需要:装 Git → 克隆本仓库 → 装 OpenCode → 让它干活。
+> **核心思路:所有安装、配置、运行、出图、训练工作流,都交给 AI 助手(WorkBuddy)来做。** 你只需要:装 Git → 克隆本仓库 → 装 WorkBuddy → 让它干活。本工作区**只用 WorkBuddy** 一个 agent 工具。
 
 ---
 
@@ -12,13 +12,11 @@
 - [开始之前](#开始之前)
 - [第 1 步:安装 Git](#第-1-步安装-git)
 - [第 2 步:克隆本项目](#第-2-步克隆本项目)
-- [第 3 步:安装 OpenCode(桌面版)](#第-3-步安装-opencode桌面版)
-- [第 4 步:以管理员身份运行 OpenCode,建立软连接](#第-4-步以管理员身份运行-opencode按软连接方案建立软连接)
-- [第 5 步:让 OpenCode 装它自己的 CLI(可选)](#第-5-步让-opencode-装它自己的-cli可选)
-- [第 6 步:让 OpenCode 安装其它 AI 工具(可选)](#第-6-步让-opencode-安装其它-ai-工具可选)
-- [第 7 步:让 OpenCode 配置 Python 环境](#第-7-步让-opencode-配置-python-环境)
-- [第 8 步:让 OpenCode 安装 ComfyUI 依赖并启动](#第-8-步让-opencode-安装-comfyui-依赖并启动)
-- [第 9 步:之后一切都交给 AI](#第-9-步之后一切都交给-ai)
+- [第 3 步:安装 WorkBuddy(桌面版)](#第-3-步安装-workbuddy桌面版)
+- [第 4 步:以管理员身份运行 WorkBuddy,建立软连接](#第-4-步以管理员身份运行-workbuddy按软连接方案建立软连接)
+- [第 5 步:让 WorkBuddy 配置 Python 环境](#第-5-步让-workbuddy-配置-python-环境)
+- [第 6 步:让 WorkBuddy 安装 ComfyUI 依赖并启动](#第-6-步让-workbuddy-安装-comfyui-依赖并启动)
+- [第 7 步:之后一切都交给 WorkBuddy](#第-7-步之后一切都交给-workbuddy)
 - [常见问题](#常见问题)
 - [附录](#附录)
 
@@ -43,7 +41,8 @@
 - **系统**:Windows 10/11 或 Linux(本仓库默认按 Windows 部署编写,Linux/macOS 部署见「附录 H 迁移 Linux」)
 - **硬件**:内存 16G 以上;**有 NVIDIA 显卡**(N 卡)体验最佳;无 N 卡也能跑,但慢
 - **网络**:能访问外网即可;部分地区需代理;国内下载模型可用 `hf-mirror.com` 镜像(见附录 E)
-- **你不需要提前装任何东西**——Python、CUDA、虚拟环境、各种 CLI 都由 AI 帮你装
+- **你不需要提前装任何东西**——Python、CUDA、虚拟环境都由 WorkBuddy 帮你装
+- **AI 工具只用 WorkBuddy**:安装、配环境、跑工作流全部通过它完成,不需要再装其它 agent 工具或 AI CLI(Codex / Claude Code / CLI 切换器之类一律不引入)
 
 ---
 
@@ -68,23 +67,23 @@ cd Comfy
 
 ---
 
-## 第 3 步:安装 OpenCode(桌面版)
+## 第 3 步:安装 WorkBuddy(桌面版)
 
-OpenCode 是你和这套工作区之间的 AI 主力,负责装软件、配环境、跑工作流。
+WorkBuddy 是你和这套工作区之间的 AI 主力,负责装软件、配环境、跑工作流。**本工作区只用 WorkBuddy,不需要再装任何其它 agent 工具或 AI CLI。**
 
-1. 浏览器打开 **https://opencode.ai/zh/download** ,下载「**桌面端**」
-2. 安装并启动 OpenCode
-3. 在左侧「**添加项目**」,选择刚才克隆的 `Comfy` 目录
-4. 之后在这个项目里和 AI 对话即可
+1. 浏览器打开 **https://www.workbuddy.cn** ,下载 Windows「**桌面端**」
+2. 安装并启动 WorkBuddy
+3. 把刚才克隆的 `Comfy` 目录作为工作目录加入 WorkBuddy
+4. 之后在这个项目里和它对话即可
 
 ---
 
-## 第 4 步:以管理员身份运行 OpenCode,按软连接方案建立软连接
+## 第 4 步:以管理员身份运行 WorkBuddy,按软连接方案建立软连接
 
-> ⚠️ **很重要**:本工作区依赖「相对路径符号链接」,把 `ComfyUI\` 里的相关目录指向项目根(`models\`、`media\`、`workflows\`、各插件目录)。**创建符号链接需要管理员权限,所以必须以管理员身份运行 OpenCode。**
+> ⚠️ **很重要**:本工作区依赖「相对路径符号链接」,把 `ComfyUI\` 里的相关目录指向项目根(`models\`、`media\`、`workflows\`、各插件目录)。**创建符号链接需要管理员权限,所以必须以管理员身份运行 WorkBuddy。**
 
-1. 在开始菜单找到 OpenCode,右键 →「**以管理员身份运行**」
-2. 打开本项目(添加 `Comfy` 目录),把下面这段话发给它:
+1. 在开始菜单找到 WorkBuddy,右键 →「**以管理员身份运行**」
+2. 打开本项目(把 `Comfy` 目录作为工作目录),把下面这段话发给它:
 
 > 请按以下「软连接方案」检查并修复本项目的软链接(全部用**相对路径**符号链接,共 8 个,完整清单见 `AGENTS.md`「软链接映射」):
 >
@@ -95,25 +94,13 @@ OpenCode 是你和这套工作区之间的 AI 主力,负责装软件、配环境
 >
 > 注意:只能替换真实目录;`ComfyUI\temp\` 等真实目录保留;所有链接一律用相对路径,保证整个项目文件夹移动后不失效。
 
-3. 软链接就绪后,继续[第 5 步](#第-5-步让-opencode-装它自己的-cli可选)。
+3. 软链接就绪后,继续[第 5 步](#第-5-步让-workbuddy-配置-python-环境)。
 
 ---
 
-## 第 5 步:让 OpenCode 装它自己的 CLI(可选)
+## 第 5 步:让 WorkBuddy 配置 Python 环境
 
-习惯命令行的话,对它说「帮我安装 opencode cli 版本,具体下载安装,你从网络搜索」,装好后 `cd Comfy && opencode` 即可使用。
-
----
-
-## 第 6 步:让 OpenCode 安装其它 AI 工具(可选)
-
-需要时对它说「帮我安装以下 AI 工具:codex、claude code、cc-switch。具体下载安装,你从网络搜索」,即可获得可随时切换的 AI CLI 组合。
-
----
-
-## 第 7 步:让 OpenCode 配置 Python 环境
-
-把这段话发给 OpenCode(让它在项目根目录创建 `.venv` 虚拟环境):
+把这段话发给 WorkBuddy(让它在项目根目录创建 `.venv` 虚拟环境):
 
 > 在项目根目录创建 Python 3.13 虚拟环境 `.venv`(若系统没有 Python 3.13,先安装官方 Python 3.13)。具体下载安装,你从网络搜索。
 >
@@ -128,9 +115,9 @@ python --version
 
 ---
 
-## 第 8 步:让 OpenCode 安装 ComfyUI 依赖并启动
+## 第 6 步:让 WorkBuddy 安装 ComfyUI 依赖并启动
 
-把这段话发给 OpenCode(它会依次完成:装 CUDA 版 PyTorch → 装主程序依赖 → 装各插件依赖 → 启动):
+把这段话发给 WorkBuddy(它会依次完成:装 CUDA 版 PyTorch → 装主程序依赖 → 装各插件依赖 → 启动):
 
 > 进入 `ComfyUI` 目录,按顺序:
 >
@@ -147,23 +134,23 @@ python --version
 
 ---
 
-## 第 9 步:之后一切都交给 AI
+## 第 7 步:之后一切都交给 WorkBuddy
 
-环境就绪后,所有工作都可以让 AI 帮你做:
+环境就绪后,所有工作都可以让 WorkBuddy 帮你做:
 
 - 下载模型(按[附录 C](#附录-c模型下载清单),直接说"下载 xx 模型到 models\yyy\")
 - 运行 / 修改 / 新建工作流(在 `workflows\` 里)
 - 安装新自定义节点、排错、调参、出图、训练
 - 视频/音频/图片生成(MiniMax H3、Stable Audio、Qwen 系列等)
 
-一句话总结:**你负责"想要什么",AI 负责"怎么做"。**
+一句话总结:**你负责"想要什么",WorkBuddy 负责"怎么做"。**
 
 ---
 
 ## 常见问题
 
 - **代理 / 下载慢**:默认直连;失败时用本机代理(如 Clash 的 `127.0.0.1:7890`);HuggingFace 模型国内可用 `hf-mirror.com` 镜像,把链接前缀 `huggingface.co` 换成 `hf-mirror.com` 即可(见附录 E)
-- **符号链接**:`ComfyUI\custom_nodes`(目录级,聚合 45 插件)、`models`/`input`/`output`/`workflows` 等共 8 个相对路径符号链接。创建链接需要管理员权限,推荐**以管理员身份运行 OpenCode**再让它修复(见[第 4 步](#第-4-步以管理员身份运行-opencode按软连接方案建立软连接));或手动开启「开发者模式」(设置 → 隐私和安全性 → 开发者选项 → 开启开发者模式)
+- **符号链接**:`ComfyUI\custom_nodes`(目录级,聚合 45 插件)、`models`/`input`/`output`/`workflows` 等共 8 个相对路径符号链接。创建链接需要管理员权限,推荐**以管理员身份运行 WorkBuddy**再让它修复(见[第 4 步](#第-4-步以管理员身份运行-workbuddy按软连接方案建立软连接));或手动开启「开发者模式」(设置 → 隐私和安全性 → 开发者选项 → 开启开发者模式)
 - **显存不足**:Klein 9B 蒸馏版较吃显存(24G 卡跑 1024 tile 偏紧,爆显存降到 768);MiniMax H3 需大显存,低显存建议用量化版或云端(详见附录 C 备注)
 - **模型放好后记得重启 ComfyUI**,加载节点才会识别新模型
 

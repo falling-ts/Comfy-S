@@ -1,11 +1,11 @@
 # The four layers
 
-The kit is a stack. Each layer is independent; together they let Claude drive ComfyUI end to end and show its
+The kit is a stack. Each layer is independent; together they let WorkBuddy drive ComfyUI end to end and show its
 work in the owner's canvas.
 
 ## Layer 1: Knowledge + client (the skill)
 
-`~/.claude/skills/comfyui/SKILL.md` + `comfy_client.py`.
+`.workbuddy/skills/comfyui/SKILL.md` + `comfy_client.py` (or `~/.workbuddy/skills/comfyui/` for a user-level install).
 
 The skill is the operating manual: workflow JSON formats (GUI vs API), how to parameterize a graph, the
 template flow, multi-GPU placement, the GUI bridge, VRAM gotchas, the restart gotcha, and the per-task
@@ -15,7 +15,7 @@ nothing else installed.
 
 ## Layer 2: MCP driver
 
-`comfyui-mcp` (npm, by artokun, MIT) registered as a Claude Code MCP server. Gives ~90 structured tools:
+`comfyui-mcp` (npm, by artokun, MIT) registered as an MCP server in WorkBuddy (`~/.workbuddy/mcp.json`). Gives ~90 structured tools:
 `health_check`, `generate_image` / `generate_audio`, `create_workflow` / `modify_workflow` /
 `validate_workflow`, `get_object_info` / `get_node_info`, `download_model` / `search_models`, queue control,
 `clear_vram`, logs, and more. When these tools are present, prefer them over hand-POSTing `/prompt`; they
@@ -65,7 +65,7 @@ unattended pipeline). When you are driving, write the prompt yourself.
 
 ## Layer 4: Node-building skills
 
-`~/.claude/skills/comfyui-node-*` (by jtydhr88 / Terry Jia): nine skills covering the ComfyUI V3 custom-node
+`~/.workbuddy/skills/comfyui-node-*` (by jtydhr88 / Terry Jia): nine skills covering the ComfyUI V3 custom-node
 API, basics, inputs, outputs, datatypes, advanced, lifecycle, frontend, migration, packaging. Pull these only
 when the task is to write or modify a custom node, not for ordinary generation.
 
@@ -73,5 +73,5 @@ when the task is to write or modify a custom node, not for ordinary generation.
 
 The official `Comfy-Org/workflow_templates` repo, sparse-cloned locally (~900MB). It is the source of truth for
 how to do any task in ComfyUI: 500+ templates + reusable subgraph blueprints. `shared/tools/gen_quick_index.py` builds
-`templates/_quick_index.json` so Claude can match a request to a template fast. Update with `git pull` + rerun
+`templates/_quick_index.json` so WorkBuddy can match a request to a template fast. Update with `git pull` + rerun
 the generator.

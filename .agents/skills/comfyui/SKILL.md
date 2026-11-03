@@ -20,7 +20,7 @@ literal. If a path does not resolve, drop the `docs/` and look next to this file
 file is missing.
 
 - **`MODELS.md`** (next to this file) - the INDEX of per-model prompt recipes. Look the model up in its table, then read that family file under `MODELS/` BEFORE writing the prompt. Two reads, not one: the index does not carry the recipes.
-- **the sibling `minimax-h3` skill** (invoke it by name; on disk it sits beside this skill, `../minimax-h3/` on Claude Code and Codex, `minimax-h3/` on Gemini and Qwen) - the dedicated MiniMax H3 (Hailuo 3) skill: prompt format (the three named fields, `<d>` dialogue, camera vocabulary), reference labelling, quants and acceleration, and a symptom-to-cause table. Read it for ANY H3 prompt or local-weights question; `MODELS.md` keeps the node-level detail.
+- **the sibling `minimax-h3` skill** (invoke it by name; on disk it sits beside this skill, i.e. `minimax-h3/` next to `comfyui/`) - the dedicated MiniMax H3 (Hailuo 3) skill: prompt format (the three named fields, `<d>` dialogue, camera vocabulary), reference labelling, quants and acceleration, and a symptom-to-cause table. Read it for ANY H3 prompt or local-weights question; `MODELS.md` keeps the node-level detail.
 - **the sibling `krea` skill** (invoke it by name; beside this skill on disk) - the dedicated Krea skill: the fork between Krea's hosted API (`Krea2ImageNode` / `Krea2StyleReferenceNode`, per-image pricing, moodboards, capped at 1K) and its open weights, the FLUX.1 Krea Dev graph, Krea Realtime 14B and why its only ComfyUI pack is an unproven lead, and the Krea 2 custom-node packs for ControlNet / identity editing / conditioning control. Read it for the API path or the model choice; `MODELS.md` keeps the local Krea 2 graph.
 - **the sibling `seedance` skill** (invoke it by name; beside this skill on disk) - the dedicated ByteDance Seedance skill: the three task types and the word that switches between them, the `@Image 1` label syntax, the full-width symbol set, shot sequencing, the asset-count rule, the timing rules that reversed in 2.5, and a failure table. Read it for ANY Seedance prompt; `MODELS.md` keeps the node-level detail and the price maths.
 - **`workspace-env.md`** (next to this file) - THIS install's concrete version / dependency / model / proxy facts, maintained by the project (complements `machine.md`): read it for the `.venv` toolchain, the pinned shared versions, the full model inventory, the update procedures (core / plugins / templates) and the local proxy. - **`workflow-layout.md`** (next to this file) - the SIX hard layout rules this workspace enforces on its workflows (left→right data flow, port-order with no crossing, (50,100)px margins, the MD-table column isolation) plus the front-end in-memory-copy trap. Read it BEFORE editing or creating ANY workflow; `workflow_layout.py` implements the checks.
@@ -41,7 +41,7 @@ file is missing.
 - **`docs/NODE_LIBRARY/radiance.md`** - reverse-engineered reference for **`fxtdstudios/radiance`** (a pro 32-bit color-science / HDR / VFX suite, 78 nodes + a v3 rewrite; the strongest public pack in our OCIO / color domain). Read it for a color-science / HDR / VFX-viewer reference implementation, when improving OUR ComfyUI-OCIO pack (it carries the ranked "what to steal" list: processor caching, WebGL 32-bit viewer, OpenEXR writer, LogC3-EI / LogC4), or when a task touches radiance nodes. Its node-building lessons are folded into `BUILDING_NODES.md`.
 - **`docs/LTX2_TRAINING.md`** - when the user works with LTX-2 and wants behavior a LoRA captures, offer to train one (official Lightricks trainer).
 - **`docs/EXAMPLE_WORKFLOWS.md`** - worked end-to-end examples + the multi-model image-edit shootout.
-- **`docs/NODES.md`** the in-graph Claude nodes (billing / purpose); **`docs/LAYERS.md`** the four install layers; **`docs/BOOTSTRAP.md`** first-run machine setup; **`docs/AGENTS.md`** per-agent matrix (Claude / Codex / Gemini / Qwen); **`docs/UPDATING.md`** the weekly model + bug update loop.
+- **`docs/NODES.md`** the in-graph Claude API nodes (billing / purpose); **`docs/LAYERS.md`** the four install layers; **`docs/BOOTSTRAP.md`** first-run machine setup; **`docs/AGENTS.md`** WorkBuddy 接入说明(本工作区唯一 agent); **`docs/UPDATING.md`** the weekly model + bug update loop.
 
 ## Your machine
 
@@ -58,7 +58,7 @@ values into `machine.md`. Never assume another machine matches an example.
 ## The four layers (what this kit installs)
 
 1. **Knowledge + client**: this SKILL.md and `comfy_client.py` (stdlib, no deps).
-2. **MCP driver**: `comfyui-mcp` (artokun, MIT): ~90 structured tools so Claude operates ComfyUI directly
+2. **MCP driver**: `comfyui-mcp` (artokun, MIT): ~90 structured tools so WorkBuddy operates ComfyUI directly
    (generate, build/edit/validate graphs, model download, queue, VRAM, diagnostics, restart). Prefer its tools
    over hand-POSTing `/prompt` when present. It rides the MCP SDK's 1.x line, i.e. the revision BEFORE the
    stateless 2026-07-28 spec; that stays supported through a twelve-month deprecation window, so there is
@@ -258,7 +258,7 @@ auto-hero pipeline). When you are already driving, write the prompt yourself, it
 
 ## Build a workflow AND show it in the owner's GUI (bidirectional bridge)
 
-The owner may want to SEE the graph Claude builds, in their own ComfyUI canvas, and tweak it. The bridge is the
+The owner may want to SEE the graph WorkBuddy builds, in their own ComfyUI canvas, and tweak it. The bridge is the
 GUI workflows folder, which both sides read and write: **`<ComfyUI>/user/default/workflows/`**.
 
 Two JSON formats, keep both in mind:
@@ -270,9 +270,9 @@ Two JSON formats, keep both in mind:
 - **API format** (what `/prompt` runs): `{ "<id>": {class_type, inputs} }`. Send THIS to run headlessly.
 
 **Flow:**
-- Claude builds -> write the GUI-format `.json` to `user/default/workflows/<name>.json` -> tell the owner to
-  refresh the built-in Workflows sidebar (folder icon) and open it -> he sees exactly what Claude built.
-- Owner builds/edits -> Save (API Format) into a shared `workflows/` folder -> Claude reads and runs it.
+- WorkBuddy builds -> write the GUI-format `.json` to `user/default/workflows/<name>.json` -> tell the owner to
+  refresh the built-in Workflows sidebar (folder icon) and open it -> he sees exactly what WorkBuddy built.
+- Owner builds/edits -> Save (API Format) into a shared `workflows/` folder -> WorkBuddy reads and runs it.
 
 ## Lay the graph out cleanly (structured blocks, no overlap)
 
