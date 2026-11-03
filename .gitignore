@@ -60,3 +60,12 @@ ComfyUI/temp/
 # docs/codex 为 OpenAI Codex 源码克隆(约 62 MB / 6.5k 文件),
 # 全量 git add 会被识别为嵌入式仓库,故显式排除
 /docs/codex/
+
+# ---- 已退役/未登记的本地插件残留(独立 git clone,不属根仓库) ----
+# comfyui-mixlab-nodes: 上游已移除(理由: 强改画布视图)
+# ComfyUI-OrbitSheets:  工作流 0033 已退役
+# ComfyUI-Qwen3-TTS:    人声链已改用 IndexTTS-2.5(TTS-Audio-Suite)
+# 目录保留在磁盘供 ComfyUI 加载,不入库;确需清理时手动删除
+/custom_nodes/comfyui-mixlab-nodes/
+/custom_nodes/ComfyUI-OrbitSheets/
+/custom_nodes/ComfyUI-Qwen3-TTS/
