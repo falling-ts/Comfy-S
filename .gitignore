@@ -53,14 +53,6 @@ ComfyUI/temp/
 /custom_nodes/example_node.py.example
 /custom_nodes/websocket_image_save.py
 
-# ---- 临时下载核对清单 ----
-/_temp.md
-
-# ---- 第三方源码克隆(独立 git 仓库,仅本地参考,不入根仓库) ----
-# docs/codex 为 OpenAI Codex 源码克隆(约 62 MB / 6.5k 文件),
-# 全量 git add 会被识别为嵌入式仓库,故显式排除
-/docs/codex/
-
 # ---- 已退役/未登记的本地插件残留(独立 git clone,不属根仓库) ----
 # comfyui-mixlab-nodes: 上游已移除(理由: 强改画布视图)
 # ComfyUI-OrbitSheets:  工作流 0033 已退役
