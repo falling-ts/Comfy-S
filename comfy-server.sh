@@ -13,7 +13,11 @@
 #
 # 平台自适应:
 #   - Windows (Git Bash): 解释器默认 .venv/Scripts/python.exe,
-#     参数 --enable-manager --disable-pinned-memory(本地 RTX 4060 8GB)
+#     参数 --enable-manager(本机 RTX 3060 12GB / 32GB RAM)
+#     ⚠️ 不要加 --disable-pinned-memory: 关掉后 get_pin 恒为 None, handle_pin 走
+#        "文件→显存"分支, 每个采样步每个 block 都要从磁盘重读; 本机是 SATA SSD,
+#        会打爆 Windows Overlapped I/O(GetOverlappedResult error=1450 系统资源不足)。
+#        恢复后 pinned 总量由 MAX_PINNED_MEMORY=ram*0.40(约12.7GB) 封顶, 不会锁死内存。
 #   - Linux: 解释器默认 .venv/bin/python, 缺失时回退 conda 环境 comfy
 #     (/root/miniconda3/envs/comfy/bin/python, ai-server 实例),
 #     参数 --enable-manager --fast-disk --reserve-vram $RESERVE_VRAM(默认 22,
@@ -39,7 +43,7 @@ esac
 
 if [ "$IS_WINDOWS" -eq 1 ]; then
   PY_BIN="${PY_BIN:-$ROOT/.venv/Scripts/python.exe}"
-  ARGS=(--enable-manager --disable-pinned-memory --port "$PORT")
+  ARGS=(--enable-manager --port "$PORT")
 else
   PY_BIN="${PY_BIN:-$ROOT/.venv/bin/python}"
   [ -x "$PY_BIN" ] || PY_BIN="/root/miniconda3/envs/comfy/bin/python"

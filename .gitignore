@@ -61,3 +61,8 @@ ComfyUI/temp/
 /custom_nodes/comfyui-mixlab-nodes/
 /custom_nodes/ComfyUI-OrbitSheets/
 /custom_nodes/ComfyUI-Qwen3-TTS/
+
+# ---- 本地运行时二进制(ffmpeg 等,体积大且可公开下载,不入库) ----
+# tools/ffmpeg/ 合计约 523 MB,其中 ffmpeg.exe 单文件 169 MB
+# 超过 GitHub 100 MB 单文件上限,提交会遭 push 拒绝
+/tools/
