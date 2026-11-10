@@ -100,9 +100,6 @@
 [submodule "custom_nodes/ComfyUI_IPAdapter_plus"]
 	path = custom_nodes/ComfyUI_IPAdapter_plus
 	url = https://github.com/cubiq/ComfyUI_IPAdapter_plus
-[submodule "custom_nodes/ComfyUI-ReActor"]
-	path = custom_nodes/ComfyUI-ReActor
-	url = https://github.com/Gourieff/ComfyUI-ReActor
 [submodule "custom_nodes/ComfyUI-Inspire-Pack"]
 	path = custom_nodes/ComfyUI-Inspire-Pack
 	url = https://github.com/ltdrdata/ComfyUI-Inspire-Pack
