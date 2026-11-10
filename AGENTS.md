@@ -7,7 +7,7 @@ ComfyUI 及自定义节点的本地开发工作区。下文路径均相对项目
 ## 技术栈与运行(速查)
 
 - **环境**:项目内 `.venv`(RTX 4060 8GB),**一律用 `.venv\Scripts\python.exe`**(类 Unix `.venv/bin/python`),禁用系统 Python 与 conda
-- **ComfyUI**(submodule,detached HEAD 跟随上游 tag);模型合计约 309.6 GB
+- **ComfyUI**(submodule,detached HEAD 跟随上游 tag);模型合计约 243 GB(53 个模型文件,仅 10 个目录有内容)
 - **启动**:`cd ComfyUI && python main.py --enable-manager`,或直接 `.venv\Scripts\python.exe main.py --enable-manager`,或项目根 `bash comfy-server.sh`;前端 `http://127.0.0.1:8188`
 - 改自定义节点代码后**重启 ComfyUI 生效**(经软链接即时加载,无需复制)
 - ⚠️ **重启前先确认真能杀掉旧进程**:提权启动的进程在同权限会话外会 `Access is denied`,而 `comfy-server.sh` 会吞掉失败、且"端口已监听"被判据**旧进程**满足 ⇒ 打印就绪却仍跑旧代码。判据:对比 `Get-NetTCPConnection -LocalPort 8188 -State Listen` 的 PID 与启动前是否一致

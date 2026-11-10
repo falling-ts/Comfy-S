@@ -175,7 +175,7 @@ Comfy/
 ├── docs/                     # 45 categorized docs
 ├── refs/                     # 8 reference submodules (ComfyUI-Docs / Obsidian-Dev-Docs / Obsidian-API / Qwen-Image-2.1 / qwen-image-2.1-skill / MiniMax-H3 / MiniMax-H3-Turbo / minimax-h3-guide) + Qwen-Image-Edit-Skills (local dir, not a submodule)
 ├── workflows/                # 34 user workflows (001x~007x, see Appendix B)
-├── models/                   # where models actually live (~309.6 GB, 42 top-level directories, see Appendix C)
+├── models/                   # where models actually live (~243 GB, 53 model files across 42 top-level slots, see Appendix C)
 ├── media/                    # input images/audio + generated results (template/ + per-story project dirs, currently 七纹刻印/)
 ├── templates/  webs/         # official template cache + third-party research (RunningHub/Bilibili/AutoDL)
 ├── stories/                  # Obsidian story-writing workspace
@@ -266,7 +266,7 @@ Comfy/
 
 ## Appendix C · Model download list
 
-> Scheme principles: fully open-source, local inference, zero API cost. The list below corresponds **one-to-one** with the local `models\` directory (verified 2026-11-01: ~309.6 GB across 42 top-level directories); the status column reflects what is actually ready locally. A brand-new environment (Linux 5090 server) must re-fetch from the download URLs, or migrate `models` wholesale via rsync per [Appendix H.4](#h4--file-transfer-and-symlinks). **Recommended download order**: audio small items first (SenseVoice, Stable Audio 3, ACE-Step) → video large items (the full MiniMax H3 set — download both fl2va and ref2va — plus LTX-2.5) → image large items (Qwen-Image 2512/Edit 2511, Qwen-Image 2.1). FLUX.2 Klein has been dropped from this workspace (2026-11-01); after placing models, **restart ComfyUI** so they are recognized.
+> Scheme principles: fully open-source, local inference, zero API cost. The list below reflects the **actual measured state** of the local `models\` directory (verified 2026-11-10: ~243 GB / 53 model files across 42 top-level slots, of which only 10 hold content); the status column reflects what is actually ready locally. ⚠️ **This audit found many entries marked "ready" that were not on disk; each has been corrected to the measured value.** A brand-new environment (Linux 5090 server) must re-fetch from the download URLs, or migrate `models` wholesale via rsync per [Appendix H.4](#h4--file-transfer-and-symlinks). **Recommended download order**: audio small items first (ACE-Step, Stable Audio 3) → video large items (MiniMax H3 fl2va + hybrid, plus LTX-2.5) → image large items (Qwen-Image 2512/Edit 2511, Qwen-Image 2.1). FLUX.2 Klein has been dropped from this workspace (2026-11-01); after placing models, **restart ComfyUI** so they are recognized.
 
 ### Image class
 
@@ -282,30 +282,32 @@ Comfy/
 | `qwen_image_vae.safetensors` | `models\vae\` | ✅ ready | <https://huggingface.co/Comfy-Org/Qwen-Image_ComfyUI/resolve/main/split_files/vae/qwen_image_vae.safetensors> |
 | `qwen_image_2.1_vae_bf16.safetensors` (Qwen-Image 2.1 VAE, 64-channel RGBA) | `models\vae\` | ✅ ready | <https://huggingface.co/Comfy-Org/Qwen-Image-2.1_ComfyUI/resolve/main/split_files/vae/qwen_image_2.1_vae_bf16.safetensors> |
 | `triposplat_vae_decoder_fp16.safetensors` (legacy, not used by any current workflow) | `models\vae\` | ✅ ready | local file (kept from an earlier experiment) |
-| `4xNomos8kDAT.safetensors` (upscaling, recommended) | `models\upscale_models\` | ✅ ready | <https://huggingface.co/Phips/4xNomos8kDAT/resolve/main/4xNomos8kDAT.safetensors> |
+| `4xNomos8kDAT.safetensors` (upscaling, recommended) | `models\upscale_models\` | ❌ not downloaded (directory empty) | <https://huggingface.co/Phips/4xNomos8kDAT/resolve/main/4xNomos8kDAT.safetensors> |
 | `Qwen-Image-2512-Lightning-4steps-V1.0-fp32.safetensors` (2512 acceleration LoRA) | `models\loras\` | ✅ ready | <https://huggingface.co/Comfy-Org/Qwen-Image_ComfyUI/resolve/main/split_files/loras/Qwen-Image-2512-Lightning-4steps-V1.0-fp32.safetensors> |
 | `Qwen-Image-Lightning-4steps-V1.0.safetensors` (predecessor 2512 acceleration LoRA, backup) | `models\loras\` | ✅ ready | <https://huggingface.co/Comfy-Org/Qwen-Image_ComfyUI/resolve/main/split_files/loras/Qwen-Image-Lightning-4steps-V1.0.safetensors> |
 | `Qwen-Image-Edit-2511-Lightning-4steps-V1.0-bf16.safetensors` (2511 acceleration LoRA) | `models\loras\` | ✅ ready | <https://huggingface.co/Comfy-Org/Qwen-Image-Edit_ComfyUI/resolve/main/split_files/loras/Qwen-Image-Edit-2511-Lightning-4steps-V1.0-bf16.safetensors> |
 | `qwen-image-edit-2511-multiple-angles-lora.safetensors` (multi-angle LoRA, pairs with the `ComfyUI-qwenmultiangle` plugin) | `models\loras\` | ✅ ready | community LoRA (local file; migrated with `models` on 5090) |
-| `birefnet.safetensors` (matting/background removal) | `models\background_removal\` | ✅ ready | <https://huggingface.co/Comfy-Org/birefnet> |
+| `birefnet.safetensors` (matting/background removal) | `models\background_removal\` | ❌ not downloaded (directory empty) | <https://huggingface.co/Comfy-Org/birefnet> |
 | `Kook_Qwen_2512_真实幻想.safetensors` (2512 realistic/fantasy style LoRA, used by image-01 text-to-image) | `models\loras\` | ✅ ready | local file (community LoRA, no fixed URL; migrated with `models` on 5090, see [Appendix H.4](#h4--file-transfer-and-symlinks)) |
 | `[Qwen-Edit]3DChineseStyle_25.safetensors` (Qwen-Edit 3D Chinese-style LoRA, used by image-01 text-to-image) | `models\loras\` | ✅ ready | local file (community LoRA, no fixed URL; migrated with `models` on 5090, see [Appendix H.4](#h4--file-transfer-and-symlinks)) |
 | `Qwen-Image-InstantX-ControlNet-Inpainting.safetensors` (Qwen-Image Inpainting ControlNet, outpainting/partial redraw; used by the scene pull/push "outpainting" stage) | `models\controlnet\` | ✅ ready | <https://huggingface.co/Comfy-Org/Qwen-Image-InstantX-ControlNets/resolve/main/split_files/controlnet/Qwen-Image-InstantX-ControlNet-Inpainting.safetensors> |
 
-### Face restoration (facerestore_models, auto-downloaded on first use of Impact-Pack Detailer / ReActor)
+### Face restoration (facerestore_models)
+
+⚠️ **Verified 2026-11-10: `models\facerestore_models\` is empty** — all four files below are no longer on disk, and the `ComfyUI-ReActor` plugin was removed the same day. Re-download from the URLs below if face restoration is needed (Impact-Pack Detailer can still auto-download).
 
 | Model | Target directory | Status | Download URL |
 |------|---------|------|---------|
-| `GFPGANv1.4.pth` (general face restoration, preferred) | `models\facerestore_models\` | ✅ ready | <https://huggingface.co/datasets/Gourieff/ReActor/resolve/main/models/facerestore_models/GFPGANv1.4.pth> |
-| `GFPGANv1.3.pth` (backup) | same as above | ✅ ready | <https://huggingface.co/datasets/Gourieff/ReActor/resolve/main/models/facerestore_models/GFPGANv1.3.pth> |
-| `codeformer-v0.1.0.pth` (CodeFormer detail enhancement, non-commercial license) | same as above | ✅ ready | <https://huggingface.co/datasets/Gourieff/ReActor/resolve/main/models/facerestore_models/codeformer-v0.1.0.pth> |
-| `GPEN-BFR-512.onnx` (GPEN, lightweight speedup) | same as above | ✅ ready | <https://huggingface.co/datasets/Gourieff/ReActor/resolve/main/models/facerestore_models/GPEN-BFR-512.onnx> |
+| `GFPGANv1.4.pth` (general face restoration, preferred) | `models\facerestore_models\` | ❌ not downloaded | <https://huggingface.co/datasets/Gourieff/ReActor/resolve/main/models/facerestore_models/GFPGANv1.4.pth> |
+| `GFPGANv1.3.pth` (backup) | same as above | ❌ not downloaded | <https://huggingface.co/datasets/Gourieff/ReActor/resolve/main/models/facerestore_models/GFPGANv1.3.pth> |
+| `codeformer-v0.1.0.pth` (CodeFormer detail enhancement, non-commercial license) | same as above | ❌ not downloaded | <https://huggingface.co/datasets/Gourieff/ReActor/resolve/main/models/facerestore_models/codeformer-v0.1.0.pth> |
+| `GPEN-BFR-512.onnx` (GPEN, lightweight speedup) | same as above | ❌ not downloaded | <https://huggingface.co/datasets/Gourieff/ReActor/resolve/main/models/facerestore_models/GPEN-BFR-512.onnx> |
 
-### Other ready slots (2026-10-11)
+### Other slots (verified 2026-11-10)
 
 | Model | Target directory | Status | Download URL |
 |------|---------|------|---------|
-| `minimax_h3_fun_controlnet_union_pruned_int8_convrot.safetensors` (H3 fun-controlnet) | `models\model_patches\` | ✅ ready | <https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/model_patches/minimax_h3_fun_controlnet_union_pruned_int8_convrot.safetensors> |
+| `minimax_h3_fun_controlnet_union_pruned_int8_convrot.safetensors` (H3 fun-controlnet) | `models\model_patches\` | ❌ not downloaded (directory empty) | <https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/model_patches/minimax_h3_fun_controlnet_union_pruned_int8_convrot.safetensors> |
 | `minimax_h3_latent_upscaler_3d_fp16.safetensors` (pairs with the `h3-latent-upscaler` plugin) | `models\latent_upscale_models\` | ✅ ready | <https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/latent_upscale_models/minimax_h3_latent_upscaler_3d_fp16.safetensors> |
 | `minimaxh3_*.safetensors` — 10 H3 motion embeddings (`art_is_explosion`/`blooming_flowers`/`bullet_time`/`dark_magic`/`fire_breath`/`four_seasons`/`kiss_camera`/`spiral_ascent`/`storm_magic`/`truman_show`) | `models\embeddings\` | ✅ ready | <https://huggingface.co/Comfy-Org/MiniMax-H3/tree/main/embeddings> |
 | `depth_anything_3_base` / `depth_anything_3_mono_large` / `depth_anything_3_small` | `models\geometry_estimation\` | ✅ ready | <https://huggingface.co/depth-anything/Depth-Anything-3> |
@@ -328,7 +330,7 @@ Comfy/
 | SenseVoiceSmall (ASR auto-transcription of reference text, required by workflow ⑤, ~0.9 GB) | auto-downloaded by the plugin | ✅ ready | <https://huggingface.co/FunAudioLLM/SenseVoiceSmall> |
 > **Notes on downloading Qwen3-TTS**: all are **directory-type models** and must be downloaded as whole directories (downloading only the safetensors won't load); `Qwen3TTSLoader`'s `auto_download` (on by default) automatically downloads the whole directory from ModelScope. For manual download: place the 5 Qwen3-TTS models at `models/TTS/Qwen/<model-name>/`, and `SenseVoiceSmall` at `models/TTS/SenseVoiceSmall/`.
 
-| `qwen3.5_2b_bf16.safetensors` (audio encoder) | `models\text_encoders\` | ✅ ready | <https://huggingface.co/Comfy-Org/Qwen3.5/resolve/main/text_encoders/qwen3.5_2b_bf16.safetensors> |
+| `qwen3.5_2b_bf16.safetensors` (audio encoder) | `models\text_encoders\` | ❌ not downloaded (`t5gemma_b_b_ul2` is used instead) | <https://huggingface.co/Comfy-Org/Qwen3.5/resolve/main/text_encoders/qwen3.5_2b_bf16.safetensors> |
 
 ### Video class (MiniMax H3, Comfy-Org/MiniMax-H3 repo)
 
@@ -350,7 +352,7 @@ Comfy/
 
 | Model | Target directory | Status | Download URL |
 |------|---------|------|---------|
-| `minimax_h3_fl2v_turbo_4step_v1.0_768p_comfyui_bf16.safetensors` (fl2va 4-step, 768p training domain, 1.82 GB, workflow default) | `models\loras\` | ✅ ready | <https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/loras/minimax_h3_fl2v_turbo_4step_v1.0_768p_comfyui_bf16.safetensors> |
+| `minimax_h3_fl2v_turbo_4step_v1.0_768p_comfyui_bf16.safetensors` (fl2va 4-step, 768p, older revision) | `models\loras\` | ❌ not downloaded (**v1.2 is installed instead**, see next row) | <https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/loras/minimax_h3_fl2v_turbo_4step_v1.0_768p_comfyui_bf16.safetensors> |
 | `minimax_h3_fl2v_turbo_4step_v1.2_768p_comfyui_bf16.safetensors` (fl2va 4-step v1.2, newer revision) | `models\loras\` | ✅ ready | <https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/loras/minimax_h3_fl2v_turbo_4step_v1.2_768p_comfyui_bf16.safetensors> |
 | `minimax_h3_fl2v_turbo_8step_v1.0_comfyui_bf16.safetensors` (fl2va 8-step, higher quality, 1.82 GB) | `models\loras\` | ✅ ready | <https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/loras/minimax_h3_fl2v_turbo_8step_v1.0_comfyui_bf16.safetensors> |
 | `minimax_h3_ref2v_turbo_4step_v0.1_comfyui_bf16.safetensors` (ref2va 4-step, for R2V workflows, 0.36 GB) | `models\loras\` | ✅ ready | <https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/loras/minimax_h3_ref2v_turbo_4step_v0.1_comfyui_bf16.safetensors> |
@@ -442,7 +444,7 @@ python main.py --enable-manager
 ### H.4 File transfer and symlinks
 
 - The super-project: `git clone --recurse-submodules <remote>` (**55 submodules**)
-- **models ~309.6 GB are rsynced separately** (`rsync -avP`); the server needs ≥350 GB NVMe reserved
+- **models ~243 GB are rsynced separately** (`rsync -avP`); the server needs ≥290 GB NVMe reserved
 - Rebuild the symlinks (`ln -s` relative paths, 8 total, see the Appendix A list):
   - `ComfyUI/input → ../media/七纹刻印`, `ComfyUI/output → ../media/七纹刻印`, `ComfyUI/models → ../models`, `ComfyUI/user/default/workflows → ../../../workflows`
   - `ComfyUI/custom_nodes → ../custom_nodes` (**directory-level, aggregates 45 plugins**), `custom_nodes/H3ReferenceSuite → ../refs/minimax-h3-guide/custom_nodes/H3ReferenceSuite`, `.claude → .agents`, `stories/.obsidian/plugins → ../plugins`
