@@ -38,6 +38,9 @@ pnpm-debug.log*
 # 技能临时产物(校验脚本落盘处,见 AGENTS.md 三条铁律 ③),不入库
 /.agents/tmp/
 
+# 运行时残留(记录上次运行 prompt 的 pid,每次执行都会变),不入库
+/.agents/tmp_last_pid.txt
+
 # 运行时临时文件(ComfyUI/temp 为运行时目录)
 ComfyUI/temp/
 

@@ -16,5 +16,8 @@
 !plugins/Obsidian-Comfy
 !template/
 !template/**
+# 工作流 JSON 统一存放在 stories\workflows, 纳入版本管理(2026-11-11 起)
+!workflows/
+!workflows/**
 !AGENTS.md
 !CLAUDE.md
