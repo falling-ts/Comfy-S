@@ -52,7 +52,7 @@ ComfyUI 及自定义节点的本地开发工作区。下文路径均相对项目
 | `.claude` | SymbolicLink → `.agents`(历史兼容垫片;本工作区统一用 WorkBuddy,该链接仅保留兼容,见「软链接映射 §C」) |
 | `README.md` / `README.cn.md` / `LICENSE` | 项目说明(中英双份)与许可 |
 | `.gitmodules` | 子模块登记(git submodule) |
-| `comfy-server.sh` | **统一**后台服务式启动脚本(跨平台: Linux + Windows Git Bash;杀 8188 旧进程 → 静默后台启动 → 等待端口就绪,日志默认写调用时所在目录 `comfy-server-8188.log`;Windows 等价 `python main.py --enable-manager --disable-pinned-memory --fast-disk`,Linux 用 conda 环境 comfy + `--reserve-vram 22`;覆盖 `PORT`/`WAIT`/`PY_BIN`/`LOG`/`RESERVE_VRAM`) |
+| `comfy-server.sh` | **统一**后台服务式启动脚本(跨平台: Linux + Windows Git Bash;杀 8188 旧进程 → 静默后台启动 → 等待端口就绪,日志默认写调用时所在目录 `comfy-server-8188.log`;**默认 `--listen 0.0.0.0` 绑全部网卡**(本机 `http://192.168.100.4:8188`,就绪时会打印各内网地址),只给本机用传 `LISTEN=127.0.0.1`;Windows 等价 `python main.py --enable-manager --listen 0.0.0.0`,Linux 用 conda 环境 comfy + `--fast-disk --reserve-vram 22`;覆盖 `LISTEN`/`PORT`/`WAIT`/`PY_BIN`/`LOG`/`RESERVE_VRAM`) |
 | `sync-server.sh` | Syncthing 双机同步的**统一**后台启动脚本(与 `comfy-server.sh` 同风格: 停旧服务 → 后台启动 → 等端口;默认 API 端口 `8384`、日志写调用时所在目录 `sync-server-<port>.log`;Windows 默认 `C:\Program Files\Syncthing\syncthing.exe`,Linux 回退 PATH;覆盖 `PORT`/`WAIT`/`SYNCTHING`/`LOG`)。方案与 Git 侧同步约定见 `docs\双机同步-Syncthing实时文件同步与Git代码同步-2026-08-19.md`;⚠️ 当前 8384 **未在监听**(Syncthing 未运行) |
 
 > ⚠️ **2026-10-11 结构精简**:根 `scripts\`(临时脚本目录)、根 `input\`(本地测试素材约 11MB:HYWM2 示例场景 eth_courtyard/kitchen/workspace + 全景图)、根 `temp\`(验证用 db) **已全部删除**。临时脚本不再落盘进项目 —— 一次性逻辑用 stdin 就地执行(`.venv\Scripts\python.exe - <<'PY' ... PY`),需落盘时用系统临时目录;要能复跑的工具链统一放 `custom_nodes\ComfyUI-FallingTS\dev\`。⚠️ **注意区分**:`ComfyUI\input\`(用户上传)与 `ComfyUI\temp\` 是 ComfyUI 运行时的真实目录/软链,**不受本次调整影响**,`ComfyUI\input\`(软链→`media\<项目>\`)是真实数据严禁删。

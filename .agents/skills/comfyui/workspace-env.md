@@ -30,9 +30,10 @@ cd ComfyUI
 python main.py --enable-manager
 ```
 
-- 或直接 `.venv\Scripts\python.exe main.py --enable-manager`(在 `ComfyUI` 下;类 Unix 用 `.venv/bin/python`);或运行 `bash comfy-server.sh`(统一跨平台后台服务式,Windows Git Bash / Linux 均可:停旧服务 → 后台启动 → 等端口;可覆盖 `PORT`/`WAIT`/`PY_BIN`/`LOG`/`RESERVE_VRAM`)
-- ⚠️ **Windows 上不要加 `--disable-pinned-memory`**:关掉后 `get_pin` 恒为 `None`、`handle_pin` 走另一条分支,会让 Qwen Image 2.1 采样崩在 `Overlapped I/O 1450`(2026-11-06 由提交 `eb43108` 修复,`comfy-server.sh` 的 Windows 分支因此只传 `--enable-manager --port`)。Linux 分支仍用 `--fast-disk --reserve-vram 22`(conda 环境 comfy)
-- 前端默认地址 `http://127.0.0.1:8188`
+- 或直接 `.venv\Scripts\python.exe main.py --enable-manager`(在 `ComfyUI` 下;类 Unix 用 `.venv/bin/python`);或运行 `bash comfy-server.sh`(统一跨平台后台服务式,Windows Git Bash / Linux 均可:停旧服务 → 后台启动 → 等端口;可覆盖 `LISTEN`/`PORT`/`WAIT`/`PY_BIN`/`LOG`/`RESERVE_VRAM`)
+- ⚠️ **Windows 上不要加 `--disable-pinned-memory`**:关掉后 `get_pin` 恒为 `None`、`handle_pin` 走另一条分支,会让 Qwen Image 2.1 采样崩在 `Overlapped I/O 1450`(2026-11-06 由提交 `eb43108` 修复,`comfy-server.sh` 的 Windows 分支因此只传 `--enable-manager --listen --port`)。Linux 分支仍用 `--fast-disk --reserve-vram 22`(conda 环境 comfy)
+- **监听地址**:`comfy-server.sh` 默认 `LISTEN=0.0.0.0`(绑全部网卡),启动成功会额外打印本机各内网地址,如 `局域网访问 -> http://192.168.100.4:8188/`。只想本机用:`LISTEN=127.0.0.1 bash comfy-server.sh`。手动起服时对应 `--listen 0.0.0.0`(不带值等价 `0.0.0.0,::`,同时听 IPv4/IPv6);`--listen` 默认是 `127.0.0.1`,所以裸 `main.py` 从别的机器连不上。⚠️ ComfyUI **无鉴权**,`0.0.0.0` 只应在可信内网使用,必要时用防火墙限定来源 IP
+- 前端默认地址 `http://127.0.0.1:8188`;局域网 `http://192.168.100.4:8188`
 - 注意:主程序必须用 `.venv` 的 Python 运行(`.venv\Scripts\python.exe`,类 Unix 为 `.venv/bin/python`),不要用系统级 Python 或任何 conda 环境运行
 - 改自定义节点代码后**重启 ComfyUI 生效**,无需复制文件(经软链接即时加载)
 - ⚠️ **重启前先确认能不能杀掉旧进程**:`comfy-server.sh` 的停旧服务在 Windows 用 `netstat` + `taskkill /F /T`,但**进程由提权(管理员)shell 启动时,非提权会话会 `Access is denied`**,而脚本把失败 `|| true` 吞掉;更坑的是它的"端口已监听"就绪判据会被**旧进程**满足 ⇒ 打印 `OK: ComfyUI 就绪` 却仍是旧代码在跑(实测 2026-09-30:新实例 `Port 8188 is already in use` 死在日志里,新加的 `/fallingts_prerun/run` 路由一直 405)。**判据**:`Get-NetTCPConnection -LocalPort 8188 -State Listen | % OwningProcess` 与启动前对比 PID;PID 没变就是没重启成功,此时只能让用户自己重启(或在用户同意下用 `Start-Process -Verb RunAs` 走 UAC)

@@ -5,22 +5,28 @@
 # 参照 harness-server.sh 风格, 三步: 停旧服务 → 后台启动 → 等待端口就绪。
 #
 # 用法:
-#   bash comfy-server.sh                   # 默认端口 8188
+#   bash comfy-server.sh                   # 默认端口 8188, 监听 0.0.0.0(局域网可访问)
 #   PORT=8189 bash comfy-server.sh         # 自定义端口
+#   LISTEN=127.0.0.1 bash comfy-server.sh  # 仅监听本机回环, 不对外暴露
 #   WAIT=300 bash comfy-server.sh          # 加长启动等待
 #   PY_BIN=... bash comfy-server.sh        # 自定义 Python 解释器
 #   LOG=... bash comfy-server.sh           # 自定义日志路径
 #
+# 监听地址(LISTEN):
+#   默认 0.0.0.0 —— 绑全部网卡, 局域网内用 http://<本机IP>:<PORT>/ 直接访问
+#   (本机 192.168.100.4, 见下方【本机局域网访问】)。0.0.0.0 意味同网段任何人都能连,
+#   ComfyUI 无鉴权, 只在可信内网使用; 需要收窄时用 LISTEN=127.0.0.1 或防火墙限定来源 IP。
+#
 # 平台自适应:
 #   - Windows (Git Bash): 解释器默认 .venv/Scripts/python.exe,
-#     参数 --enable-manager(本机 RTX 3060 12GB / 32GB RAM)
+#     参数 --enable-manager --listen $LISTEN(本机 RTX 3060 12GB / 32GB RAM)
 #     ⚠️ 不要加 --disable-pinned-memory: 关掉后 get_pin 恒为 None, handle_pin 走
 #        "文件→显存"分支, 每个采样步每个 block 都要从磁盘重读; 本机是 SATA SSD,
 #        会打爆 Windows Overlapped I/O(GetOverlappedResult error=1450 系统资源不足)。
 #        恢复后 pinned 总量由 MAX_PINNED_MEMORY=ram*0.40(约12.7GB) 封顶, 不会锁死内存。
 #   - Linux: 解释器默认 .venv/bin/python, 缺失时回退 conda 环境 comfy
 #     (/root/miniconda3/envs/comfy/bin/python, ai-server 实例),
-#     参数 --enable-manager --fast-disk --reserve-vram $RESERVE_VRAM(默认 22,
+#     参数 --enable-manager --fast-disk --listen $LISTEN --reserve-vram $RESERVE_VRAM(默认 22,
 #     ai-server 上 llama.cpp 占 ~22GB 显存, 留给 ComfyUI 余量; RESERVE_VRAM=0 则不带该参数),
 #     有 setsid 时 detach 会话(SSH 断开后存活)
 #   - 日志默认写**调用时所在目录** comfy-server-<port>.log(两平台一致, 同 harness-server.sh)
@@ -32,6 +38,7 @@ set -u
 
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 PORT="${PORT:-8188}"
+LISTEN="${LISTEN:-0.0.0.0}"                     # 默认绑全部网卡, 局域网可访问
 WAIT_SECS="${WAIT:-120}"
 COMFY_DIR="$ROOT/ComfyUI"
 LOG="${LOG:-$(pwd)/comfy-server-${PORT}.log}"   # 日志写调用时所在目录
@@ -43,14 +50,26 @@ esac
 
 if [ "$IS_WINDOWS" -eq 1 ]; then
   PY_BIN="${PY_BIN:-$ROOT/.venv/Scripts/python.exe}"
-  ARGS=(--enable-manager --port "$PORT")
+  ARGS=(--enable-manager --listen "$LISTEN" --port "$PORT")
 else
   PY_BIN="${PY_BIN:-$ROOT/.venv/bin/python}"
   [ -x "$PY_BIN" ] || PY_BIN="/root/miniconda3/envs/comfy/bin/python"
   RESERVE_VRAM="${RESERVE_VRAM:-22}"
-  ARGS=(--enable-manager --fast-disk --port "$PORT")
+  ARGS=(--enable-manager --fast-disk --listen "$LISTEN" --port "$PORT")
   [ "$RESERVE_VRAM" = "0" ] || ARGS+=(--reserve-vram "$RESERVE_VRAM")
 fi
+
+# 列出本机所有可用的 IPv4 内网地址(仅用于绑 0.0.0.0 后打印提示, 失败不影响启动)
+get_lan_ips() {
+  if [ "$IS_WINDOWS" -eq 1 ]; then
+    ipconfig 2>/dev/null | tr -d '\r' | awk '
+      /IPv4/ { for (i = 1; i <= NF; i++) if ($i ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) print $i }
+    ' | grep -vE '^(127\.|169\.254\.)' | sort -u
+  else
+    (hostname -I 2>/dev/null || ip -4 -o addr show scope global 2>/dev/null | awk '{print $4}' | cut -d/ -f1) |
+      tr ' ' '\n' | grep -E '^[0-9]+(\.[0-9]+){3}$' | grep -vE '^(127\.|169\.254\.)' | sort -u
+  fi
+}
 
 # [1/3] 停掉占用端口的旧服务
 kill_port() {
@@ -105,7 +124,7 @@ kill_port() {
 echo "[1/3] 停掉 $PORT 上的旧服务..."
 kill_port
 
-echo "[2/3] 后台启动 ComfyUI (log: $LOG)..."
+echo "[2/3] 后台启动 ComfyUI (listen: $LISTEN, log: $LOG)..."
 cd "$COMFY_DIR" || { echo "ERROR: 无法进入 $COMFY_DIR" >&2; exit 1; }
 
 # Linux 用 setsid 完全脱离终端(SSH 断开后存活); Git Bash 无 setsid, nohup 已够
@@ -122,6 +141,12 @@ i=0
 while [ "$i" -lt "$WAIT_SECS" ]; do
   if (exec 3<>"/dev/tcp/127.0.0.1/$PORT") 2>/dev/null; then
     echo "OK: ComfyUI 就绪 -> http://127.0.0.1:$PORT/"
+    # 绑 0.0.0.0 时额外列出各网卡的内网地址, 方便从别的机器直接打开
+    if [ "$LISTEN" = "0.0.0.0" ]; then
+      for ip in $(get_lan_ips); do
+        echo "    局域网访问 -> http://$ip:$PORT/"
+      done
+    fi
     exit 0
   fi
   i=$((i + 1))
