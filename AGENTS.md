@@ -22,7 +22,8 @@ ComfyUI 及自定义节点的本地开发工作区。下文路径均相对项目
 | `ComfyUI` | 主程序(submodule);`models`/`input`/`output`/`workflows`/`custom_nodes` 均为**相对软链接**外挂 |
 | `custom_nodes` | 插件聚合目录(45 插件子模块 + `H3ReferenceSuite` 链接);自有插件 **ComfyUI-FallingTS** |
 | `models` | 模型实际存放处(42 个顶层槽位,空槽位仅占位) |
-| `workflows` | 用户工作流实际存储处(34 个,编号 0010~0070) |
+| `stories/workflows` | **用户工作流主存储处(34 个,编号 0010~0070),2026-11-11 起纳入版本管理**(`stories/.gitignore` 已放行该目录) |
+| `workflows` | 仅存 0060~0064 的**无数据表版**(5 个,新版覆盖写);其余 29 个已迁至 `stories/workflows`,两处并存不是残留 |
 | `stories` | Obsidian 故事库工作区(`七纹刻印` 为当前项目;`plugins\` 为插件聚合目录) |
 | `media` | input/output 软链目标,按**项目**分目录(`七纹刻印\` 为当前项目,真实产物) |
 | `docs` | 本地参考文档(45 篇专题 md) |
