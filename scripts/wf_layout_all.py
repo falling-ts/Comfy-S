@@ -112,8 +112,16 @@ _PARAM_TYPES = {
     "PrimitiveNode", "RandomNoise", "KSamplerSelect", "DisableNoise",
     "ManualSigmas", "ComfyMathExpression",
 }
+# note 类节点: 官方 MarkdownNote + 自有的可复制版 FallingTSNote。
+# ⚠️ 必须把 FallingTSNote 一起算进来。本工作区的 note 已全部换成 FallingTSNote,
+# 漏掉它就会被当成普通功能节点并进参数列, 与参数节点挤在同一个 x 上 —— 前端把
+# note 撑高后直接压在下方节点上(用户报的「note 被节点覆盖」)。实测 0060~0064
+# 七个工作流的 note 全部踩中这个坑。
+_NOTE_TYPES = {"FallingTSNote", "MarkdownNote"}
+# MD 数据表(独立成集: note 可以在它左侧, 但两者都独占列)
+_MD_TYPES = {"FallingTSMarkDownTable"}
 # MD 表与 note 各自独占一列, 同样不参与划区
-_BUS_TYPES = {"FallingTSMarkDownTable", "MarkdownNote"}
+_BUS_TYPES = _MD_TYPES | _NOTE_TYPES
 # 结果/预览类节点(一段的这类节点不得被继续节点屏障推走)
 _RESULT_TYPES = (
     "PreviewVideo", "PreviewAudio", "PreviewImageSave", "PreviewAudioSave",
@@ -391,8 +399,8 @@ def layout(wf, keep_size=True):
         own = n.get("size") or [0, 0]
         size[nid] = [max(own[0], est[0]), max(own[1], est[1])]
 
-    md_ids = [nid for nid, n in nodes.items() if n["type"] == "FallingTSMarkDownTable"]
-    note_ids = [nid for nid, n in nodes.items() if n["type"] == "MarkdownNote"]
+    md_ids = [nid for nid, n in nodes.items() if n["type"] in _MD_TYPES]
+    note_ids = [nid for nid, n in nodes.items() if n["type"] in _NOTE_TYPES]
     isolated = set(md_ids) | set(note_ids)
     others = [nid for nid in nodes if nid not in isolated]
 
@@ -1103,16 +1111,19 @@ def check(wf):
     r = W.inspect(wf)
     bad_lr = [(l[1], l[3]) for l in links
               if nodes[l[1]]["pos"][0] + nodes[l[1]]["size"][0] > nodes[l[3]]["pos"][0]]
-    mds = [n for n in wf["nodes"] if n["type"] in ("FallingTSMarkDownTable", "MarkdownNote")]
+    # note 与 MD 表都必须独占一列: 任何功能节点的 x 区间不得与它们横向相交。
+    # ⚠️ 必须用 _BUS_TYPES(含 FallingTSNote) —— 只认 MarkdownNote 时本工作区的
+    # note 完全不受检查, 被并进参数列也判 PASS, 正是「note 被节点覆盖」漏检的原因。
+    mds = [n for n in wf["nodes"] if n["type"] in _BUS_TYPES]
     md_inv = 0
     for md in mds:
         mx0, mx1 = md["pos"][0], md["pos"][0] + md["size"][0]
         md_inv += sum(1 for n in wf["nodes"]
-                      if n["id"] != md["id"] and n["type"] not in ("FallingTSMarkDownTable", "MarkdownNote")
+                      if n["id"] != md["id"] and n["type"] not in _BUS_TYPES
                       and not (n["pos"][0] + n["size"][0] <= mx0 or n["pos"][0] >= mx1))
     note_left = 0
-    for md in [n for n in wf["nodes"] if n["type"] == "FallingTSMarkDownTable"]:
-        for note in [n for n in wf["nodes"] if n["type"] == "MarkdownNote"]:
+    for md in [n for n in wf["nodes"] if n["type"] in _MD_TYPES]:
+        for note in [n for n in wf["nodes"] if n["type"] in _NOTE_TYPES]:
             if not (note["pos"][0] + note["size"][0] + 50 <= md["pos"][0]):
                 note_left += 1
     gaps = []
