@@ -69,3 +69,15 @@ ComfyUI/temp/
 # tools/ffmpeg/ 合计约 523 MB,其中 ffmpeg.exe 单文件 169 MB
 # 超过 GitHub 100 MB 单文件上限,提交会遭 push 拒绝
 /tools/
+
+# 注:models/ 下各子目录各自带一个 .gitignore(内容 `*` + `!.gitignore`),
+# 根仓库只跟踪这些忽略文件本身,权重一律不入库。
+# models/mmaudio/ 由 ComfyUI-MMAudio 插件下载,约 6.8 GB,同样自带该忽略文件。
+
+# ---- 未在 .gitmodules 登记的本地插件 clone(按规范不入库) ----
+# ComfyUI-MMAudio: kijai/ComfyUI-MMAudio, 独立 git clone, 供 00610 环境音效工作流使用
+# 若日后要纳入版本管理, 应先 git submodule add 登记, 再删掉本行
+/custom_nodes/ComfyUI-MMAudio/
+
+# ---- 误创建的垃圾文件(0 字节,由 shell 重定向误产生) ----
+/$
